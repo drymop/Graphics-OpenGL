@@ -38,9 +38,11 @@ INCL = $(GL_INCL)
 LIBS = $(GL_LIBS)
 
 OBJS = \
-       main.o
+       main.o \
+       Sphere.o \
+       Ray.o
 
-EXECUTABLE = spiderling
+EXECUTABLE = spiderling.out
 
 default: $(EXECUTABLE)
 

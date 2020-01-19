@@ -28,6 +28,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
 
+#include "Sphere.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
 
@@ -173,6 +175,8 @@ specialKeyPressed(GLint _key, GLint _x, GLint _y) {
 /// @return Application success status
 int
 main(int _argc, char** _argv) {
+  Sphere sss(glm::vec3(0, 0, 0), 1.0);
+
   //////////////////////////////////////////////////////////////////////////////
   // Initialize GLUT Window
   std::cout << "Initializing GLUTWindow" << std::endl;

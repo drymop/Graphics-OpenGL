@@ -1,2 +1,5 @@
 *.o
 *.out
+Dependencies
+proj.sublime-project
+proj.sublime-workspace
