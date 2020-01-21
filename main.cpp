@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <vector>
 
 // GL
 #define GL_GLEXT_PROTOTYPES
@@ -34,8 +35,8 @@
 // Global variables - avoid these
 
 // Window
-int g_width{1360};
-int g_height{768};
+int g_width{1280};
+int g_height{720};
 int g_window{0};
 std::unique_ptr<glm::vec4[]> g_frame{nullptr}; ///< Framebuffer
 
@@ -46,6 +47,16 @@ std::chrono::high_resolution_clock::time_point g_frameTime{
   std::chrono::high_resolution_clock::now()};
 float g_delay{0.f};
 float g_framesPerSecond{0.f};
+
+// Define perspective viewport (note: 16:9 width:height ratio)
+float g_viewTop    = 4.5;
+float g_viewBottom = -4.5;
+float g_viewLeft   = -8;
+float g_viewRight  = 8;
+float g_viewFocal  = 2;
+
+// Objects to render
+std::vector<Sphere> g_spheres = {Sphere(glm::vec3(-1, 0, -2), 1.5), Sphere(glm::vec3(1, 0, -5), 1.5)};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
@@ -90,6 +101,29 @@ timer(int _v) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+/// @brief Ray trace to find the color of a pixel
+/// @param i Pixel index along the X axis
+/// @param j Pixel index along the Y axis
+glm::vec4
+renderPixel(int i, int j) {
+  // find the X and Y coordinate of the pixel's center
+  float x = g_viewLeft + (g_viewRight - g_viewLeft) * (i + 0.5f) / g_width;
+  float y = g_viewBottom + (g_viewTop - g_viewBottom) * (j + 0.5f) / g_height;
+  // calculate ray direction
+  glm::vec3 d(x, y, -g_viewFocal);
+  Ray ray(glm::vec3(0, 0, 0), glm::vec3(x, y, -g_viewFocal));
+  float t = 99999999;
+  // for now, as long as a sphere intersects this ray, return black
+  // otherwise, return white
+  for (auto& sphere : g_spheres) {
+    if (sphere.intersect(ray) > 0) {
+      return glm::vec4(0, 0, 0, 0);
+    }
+  }
+  return glm::vec4(1, 1, 1, 0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 /// @brief Draw function for single frame
 void
 draw() {
@@ -105,10 +139,11 @@ draw() {
   //////////////////////////////////////////////////////////////////////////////
   // Draw
 
-  // Simple static :P
-  // for(int i = 0; i < g_width*g_height; ++i)
-  //   g_frame[i] = glm::vec4(float(rand())/RAND_MAX, float(rand())/RAND_MAX,
-  //                          float(rand())/RAND_MAX, 1.f);
+  for(int i = 0; i < g_width; i++) {
+    for (int j = 0; j < g_height; j++) {
+      g_frame[j * g_width + i] = renderPixel(i, j);
+    }
+  }
 
   glDrawPixels(g_width, g_height, GL_RGBA, GL_FLOAT, g_frame.get());
 
