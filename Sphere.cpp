@@ -18,15 +18,14 @@ intersect(Ray _ray) {
   glm::vec3 p = _ray.getOrigin();
   glm::vec3 d = _ray.getDirection();
   glm::vec3 pMinusC = p - m_center;
-  float a = glm::length2(d);
   float bHalf = glm::dot(d, pMinusC);
   float c = glm::length2(pMinusC) - m_radius * m_radius;
 
-  float discriminant = bHalf * bHalf - a * c;
+  float discriminant = bHalf * bHalf - c;
   // no intersection
   if (discriminant <= 0) {
     return -1;
   }
   // return the smaller t
-  return (-bHalf - sqrt(discriminant)) / a;
+  return -bHalf - sqrt(discriminant);
 }
