@@ -9,10 +9,10 @@ class PerspectiveView : public View
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Construct a perspective view with a given physical frame dimension
     /// and a FOV in the y-axis
-    /// @param _frame_width  Width of the frame, in pixel
-    /// @param _frame_height Height of the frame, in pixel
-    /// @param _fovY          Field of view angle, in radian
-    PerspectiveView(int _frame_width, int _frame_height, float _fovY);
+    /// @param _frameWidth  Width of the frame, in pixel
+    /// @param _frameHeight Height of the frame, in pixel
+    /// @param _fovY        Field of view angle, in radian
+    PerspectiveView(int _frameWidth, int _frameHeight, float _fovY);
 
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Create a ray from the camera through the center of the virtual 
@@ -29,16 +29,16 @@ class PerspectiveView : public View
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Resize the view as the physical frame size changes, keeping the
     /// same FOV
-    void resize(int _frame_width, int _frame_height);
+    void resize(int _frameWidth, int _frameHeight);
 
   private:
     float m_fov;
-    float m_plane_left;
-    float m_plane_bottom;
-    float m_plane_width;
-    float m_plane_height;
-    float m_frame_width;
-    float m_frame_height;
+    float m_planeLeft;
+    float m_planeBottom;
+    float m_planeWidth;
+    float m_planeHeight;
+    float m_frameWidth;
+    float m_frameHeight;
 
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Calculate the size of the viewing plane based on the frame size
