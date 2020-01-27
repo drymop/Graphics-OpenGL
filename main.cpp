@@ -81,6 +81,9 @@ resize(GLint _w, GLint _h) {
 
   // Viewport
   glViewport(0, 0, g_width, g_height);
+  // resize frame buffer
+  g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
