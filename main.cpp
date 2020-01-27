@@ -29,6 +29,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
 
+#include "OrthographicView.h"
 #include "PerspectiveView.h"
 #include "Sphere.h"
 #include "View.h"
@@ -50,9 +51,13 @@ std::chrono::high_resolution_clock::time_point g_frameTime{
 float g_delay{0.f};
 float g_framesPerSecond{0.f};
 
-// Define perspective view
-float g_fov{1.0472}; // radians (about 60 degrees)
+// Define view
 std::unique_ptr<View> g_view{nullptr};
+bool g_isPerspectiveView;
+// Perspective view
+float g_fov{1.0472}; // radians (about 60 degrees)
+// Orthographic view
+float g_orthoViewPlaneHeight{5.f};
 
 // Objects to render
 std::vector<Sphere> g_spheres = {
@@ -70,6 +75,7 @@ initialize() {
   glClearColor(0.f, 0.f, 0.f, 0.f);
 
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
+  g_isPerspectiveView = true;
   g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
 }
 
@@ -176,6 +182,15 @@ keyPressed(GLubyte _key, GLint _x, GLint _y) {
       std::cout << "Destroying window: " << g_window << std::endl;
       glutDestroyWindow(g_window);
       g_window = 0;
+      break;
+    // Space key: switch projection mode
+    case ' ':
+      g_isPerspectiveView = !g_isPerspectiveView;
+      if (g_isPerspectiveView) {
+        g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
+      } else {
+        g_view = std::make_unique<OrthographicView>(g_width, g_height, g_orthoViewPlaneHeight);
+      }
       break;
     // Unhandled
     default:

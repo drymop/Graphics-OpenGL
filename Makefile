@@ -39,6 +39,7 @@ LIBS = $(GL_LIBS)
 
 OBJS = \
        main.o \
+       OrthographicView.o \
        PerspectiveView.o \
        Ray.o \
        Sphere.o \
