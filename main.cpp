@@ -29,7 +29,9 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
 
+#include "PerspectiveView.h"
 #include "Sphere.h"
+#include "View.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
@@ -48,15 +50,15 @@ std::chrono::high_resolution_clock::time_point g_frameTime{
 float g_delay{0.f};
 float g_framesPerSecond{0.f};
 
-// Define perspective viewport (note: 16:9 width:height ratio)
-float g_viewTop    = 4.5;
-float g_viewBottom = -4.5;
-float g_viewLeft   = -8;
-float g_viewRight  = 8;
-float g_viewFocal  = 2;
+// Define perspective view
+float g_fov{1.0472}; // radians (about 60 degrees)
+std::unique_ptr<View> g_view{nullptr};
 
 // Objects to render
-std::vector<Sphere> g_spheres = {Sphere(glm::vec3(-1, 0, -2), 1.5), Sphere(glm::vec3(1, 0, -5), 1.5)};
+std::vector<Sphere> g_spheres = {
+  Sphere(glm::vec3(2, 0, -10), 2), 
+  Sphere(glm::vec3(-2, 0, -5), 2),
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
@@ -68,6 +70,7 @@ initialize() {
   glClearColor(0.f, 0.f, 0.f, 0.f);
 
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
+  g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +86,8 @@ resize(GLint _w, GLint _h) {
   glViewport(0, 0, g_width, g_height);
   // resize frame buffer
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
-
+  // reset view to match new aspect ration
+  g_view->resize(g_width, g_height);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -109,12 +113,8 @@ timer(int _v) {
 /// @param j Pixel index along the Y axis
 glm::vec4
 renderPixel(int i, int j) {
-  // find the X and Y coordinate of the pixel's center
-  float x = g_viewLeft + (g_viewRight - g_viewLeft) * (i + 0.5f) / g_width;
-  float y = g_viewBottom + (g_viewTop - g_viewBottom) * (j + 0.5f) / g_height;
-  // calculate ray direction
-  glm::vec3 d(x, y, -g_viewFocal);
-  Ray ray(glm::vec3(0, 0, 0), glm::vec3(x, y, -g_viewFocal));
+  // cast ray
+  Ray ray = g_view->castRay(i, j);
   float t = 99999999;
   // for now, as long as a sphere intersects this ray, return black
   // otherwise, return white
@@ -160,7 +160,7 @@ draw() {
   g_frameRate = duration_cast<duration<float>>(time - g_frameTime).count();
   g_frameTime = time;
   g_framesPerSecond = 1.f/(g_delay + g_frameRate);
-  printf("FPS: %6.2f\n", g_framesPerSecond);
+  // printf("FPS: %6.2f\n", g_framesPerSecond);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -213,8 +213,6 @@ specialKeyPressed(GLint _key, GLint _x, GLint _y) {
 /// @return Application success status
 int
 main(int _argc, char** _argv) {
-  Sphere sss(glm::vec3(0, 0, 0), 1.0);
-
   //////////////////////////////////////////////////////////////////////////////
   // Initialize GLUT Window
   std::cout << "Initializing GLUTWindow" << std::endl;

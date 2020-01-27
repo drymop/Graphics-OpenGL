@@ -39,10 +39,12 @@ LIBS = $(GL_LIBS)
 
 OBJS = \
        main.o \
+       PerspectiveView.o \
+       Ray.o \
        Sphere.o \
-       Ray.o
 
-EXECUTABLE = spiderling.out
+
+EXECUTABLE = main.out
 
 default: $(EXECUTABLE)
 

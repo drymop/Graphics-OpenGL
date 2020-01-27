@@ -6,7 +6,7 @@
 class View
 {
   public:
-    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     /// @brief Create a ray through the center of the specified pixel
     ///
     /// The pixel coordinate is as follow: (0, 0) is at the bottom left of the 
@@ -15,6 +15,10 @@ class View
     /// @param _pixelX X-coordinate of the pixel
     /// @param _pixelY Y-coordinate of the pixel
     virtual Ray castRay(int _pixelX, int _pixelY) = 0;
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// @brief Resize the view as the physical frame size changes
+    virtual void resize(int _frame_width, int _frame_height) = 0;
 };
 
 #endif // VIEW_H_
