@@ -1,8 +1,11 @@
 #include "Plane.h"
 
 Plane::
-Plane(glm::vec3 _point, glm::vec3 _normal)
-  : m_point(_point), m_normal(glm::normalize(_normal)) {};
+Plane(glm::vec3 _point, glm::vec3 _normal, glm::vec3 _color)
+  : m_point(_point), 
+    m_normal(glm::normalize(_normal)),
+    m_color(_color) 
+{};
 
 float
 Plane::
@@ -15,4 +18,10 @@ intersectRay(Ray _ray) {
     return 0;
   }
   return glm::dot(m_point - p, m_normal) / denom;
+}
+
+glm::vec3
+Plane::
+calculateColor() {
+  return m_color;
 }

@@ -78,9 +78,9 @@ initialize() {
   g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
 
   // initialize objects
-  g_objects.emplace_back(new Sphere(glm::vec3(2, 0, -10), 2));
-  g_objects.emplace_back(new Sphere(glm::vec3(-2, 0, -5), 2));
-  g_objects.emplace_back(new Plane(glm::vec3(0, -1, 0), glm::vec3(0, 1, 0)));
+  g_objects.emplace_back(new Sphere(glm::vec3(1.5, 0, -10), 2, glm::vec3(1, 0, 0)));
+  g_objects.emplace_back(new Sphere(glm::vec3(-1.5, 0, -5), 2, glm::vec3(0, 1, 0)));
+  g_objects.emplace_back(new Plane(glm::vec3(0, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -125,15 +125,18 @@ glm::vec4
 renderPixel(int i, int j) {
   // cast ray
   Ray ray = g_view->castRay(i, j);
-  float t = 99999999;
+  float minT = 99999999;
   // for now, as long as a sphere intersects this ray, return black
   // otherwise, return white
+  glm::vec3 color(1, 1, 1);
   for (auto& obj : g_objects) {
-    if (obj->intersectRay(ray) > 0) {
-      return glm::vec4(0, 0, 0, 0);
+    float t = obj->intersectRay(ray);
+    if (t > 0 && t < minT) {
+      minT = t;
+      color = obj->calculateColor();
     }
   }
-  return glm::vec4(1, 1, 1, 0);
+  return glm::vec4(color, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

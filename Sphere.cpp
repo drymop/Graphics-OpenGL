@@ -8,8 +8,8 @@
 #include "Sphere.h"
 
 Sphere::
-Sphere(glm::vec3 _center, float _radius) 
-  : m_center(_center), m_radius(_radius) {};
+Sphere(glm::vec3 _center, float _radius, glm::vec3 _color) 
+  : m_center(_center), m_radius(_radius), m_color(_color) {};
 
 
 float 
@@ -28,4 +28,10 @@ intersectRay(Ray _ray) {
   }
   // return the smaller t
   return -bHalf - sqrt(discriminant);
+}
+
+glm::vec3
+Sphere::
+calculateColor() {
+  return m_color;
 }
