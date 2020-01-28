@@ -39,7 +39,7 @@ e.g., if you asked a question on stackoverflow. Be sure to cite sources again in
 the assignment body, e.g., copy website link into code. Do not list the
 instructor as a collaborator -- this is assumed.
 
- 1.
+ 1. https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
  2.
  3.
  4.
