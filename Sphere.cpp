@@ -14,7 +14,7 @@ Sphere(glm::vec3 _center, float _radius)
 
 float 
 Sphere::
-intersect(Ray _ray) {
+intersectRay(Ray _ray) {
   glm::vec3 p = _ray.getOrigin();
   glm::vec3 d = _ray.getDirection();
   glm::vec3 pMinusC = p - m_center;

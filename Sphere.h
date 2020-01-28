@@ -2,14 +2,17 @@
 #define SPHERE_H_
 
 #include <glm/glm.hpp>
-#include "Ray.h"
 
-class Sphere
+#include "Material.h"
+#include "Ray.h"
+#include "RenderableObject.h"
+
+class Sphere : public RenderableObject
 {
   public:
     Sphere(glm::vec3 _center, float _radius);
 
-    float intersect(Ray _ray);
+    float intersectRay(Ray _ray);
 
   private:
     /// Center of the sphere
