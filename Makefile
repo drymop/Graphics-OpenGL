@@ -41,6 +41,7 @@ OBJS = \
        main.o \
        OrthographicView.o \
        PerspectiveView.o \
+       Plane.o \
        Ray.o \
        Sphere.o \
 

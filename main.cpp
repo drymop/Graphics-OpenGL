@@ -31,6 +31,7 @@
 
 #include "OrthographicView.h"
 #include "PerspectiveView.h"
+#include "Plane.h"
 #include "Sphere.h"
 #include "RenderableObject.h"
 #include "View.h"
@@ -76,9 +77,10 @@ initialize() {
   g_isPerspectiveView = true;
   g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
 
+  // initialize objects
   g_objects.emplace_back(new Sphere(glm::vec3(2, 0, -10), 2));
   g_objects.emplace_back(new Sphere(glm::vec3(-2, 0, -5), 2));
-
+  g_objects.emplace_back(new Plane(glm::vec3(0, -1, 0), glm::vec3(0, 1, 0)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

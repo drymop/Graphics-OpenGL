@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 
 #include "Material.h"
-#include "Ray.h"
 #include "RenderableObject.h"
 
 class Sphere : public RenderableObject
