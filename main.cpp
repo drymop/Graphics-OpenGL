@@ -32,6 +32,7 @@
 #include "OrthographicView.h"
 #include "PerspectiveView.h"
 #include "Sphere.h"
+#include "RenderableObject.h"
 #include "View.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,10 +61,7 @@ float g_fov{1.0472}; // radians (about 60 degrees)
 float g_orthoViewPlaneHeight{5.f};
 
 // Objects to render
-std::vector<Sphere> g_spheres = {
-  Sphere(glm::vec3(2, 0, -10), 2), 
-  Sphere(glm::vec3(-2, 0, -5), 2),
-};
+std::vector<std::unique_ptr<RenderableObject>> g_objects;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
@@ -77,6 +75,10 @@ initialize() {
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
   g_isPerspectiveView = true;
   g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
+
+  g_objects.emplace_back(new Sphere(glm::vec3(2, 0, -10), 2));
+  g_objects.emplace_back(new Sphere(glm::vec3(-2, 0, -5), 2));
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -124,8 +126,8 @@ renderPixel(int i, int j) {
   float t = 99999999;
   // for now, as long as a sphere intersects this ray, return black
   // otherwise, return white
-  for (auto& sphere : g_spheres) {
-    if (sphere.intersect(ray) > 0) {
+  for (auto& obj : g_objects) {
+    if (obj->intersectRay(ray) > 0) {
       return glm::vec4(0, 0, 0, 0);
     }
   }
