@@ -32,6 +32,7 @@
 #include "OrthographicView.h"
 #include "PerspectiveView.h"
 #include "Plane.h"
+#include "PointLight.h"
 #include "Sphere.h"
 #include "RenderableObject.h"
 #include "View.h"
