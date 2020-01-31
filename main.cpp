@@ -26,9 +26,9 @@
 
 // GLM
 #include <glm/glm.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/ext.hpp>
 
+#include "LightSource.h"
+#include "Material.h"
 #include "OrthographicView.h"
 #include "PerspectiveView.h"
 #include "Plane.h"
@@ -62,6 +62,9 @@ float g_fov{1.0472}; // radians (about 60 degrees)
 // Orthographic view
 float g_orthoViewPlaneHeight{5.f};
 
+// Lights in the scene
+glm::vec3 g_ambient_intensity;
+std::vector<std::unique_ptr<LightSource>> g_lights;
 // Objects to render
 std::vector<std::unique_ptr<RenderableObject>> g_objects;
 
@@ -77,6 +80,12 @@ initialize() {
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
   g_isPerspectiveView = true;
   g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
+
+  // intialize light
+  g_ambient_intensity = glm::vec3(0.1f, 0.1f, 0.1f);
+  g_lights.emplace_back(new PointLight(
+    glm::vec3(-2, 0, 0), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)
+  ));
 
   // initialize objects
   g_objects.emplace_back(new Sphere(glm::vec3(1.5, 0, -10), 2, glm::vec3(1, 0, 0)));
@@ -119,9 +128,34 @@ timer(int _v) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+/// @brief Shader function to compute color on an object using Blinn-Phong
+/// shading algorithm
+/// TODO encapsulate this inside a class
+glm::vec3
+shadeObject(glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& material) {
+  glm::vec3 color(0, 0, 0);
+  // ambient light
+  color += material.ka * g_ambient_intensity;
+  // for each light source, add the diffuse and specular lighting
+  for (auto& lightSource : g_lights) {
+    struct LightRay light = lightSource->getLightRay(pos);
+    // diffuse
+    color += material.kd * light.intensityDiffuse 
+        * std::max(0.f, -glm::dot(normal, light.direction));
+    // specular
+    glm::vec3 halfVec = -glm::normalize(viewDir + light.direction);
+    color += material.ks * light.intensitySpecular
+        * std::pow(std::max(0.f, glm::dot(normal, halfVec)), material.shininess);
+  }
+  return glm::min(color, glm::vec3(1, 1, 1)); // clamp vector between 0 and 1
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 /// @brief Ray trace to find the color of a pixel
 /// @param i Pixel index along the X axis
 /// @param j Pixel index along the Y axis
+/// @return RGBA color encoded in a vec4
 glm::vec4
 renderPixel(int i, int j) {
   // cast ray

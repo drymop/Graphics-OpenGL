@@ -11,7 +11,7 @@ struct Material {
   /// Reflection of specular light
   glm::vec3 ks;
   /// Affect the size of specular spot
-  float m_shininess;
+  float shininess;
 };
 
 #endif // MATERIAL_H_
