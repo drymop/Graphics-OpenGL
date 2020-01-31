@@ -9,7 +9,7 @@ class Sphere : public RenderableObject
   public:
     Sphere(glm::vec3 _center, float _radius, glm::vec3 _color);
 
-    float intersectRay(Ray _ray);
+    RayHit intersectRay(Ray _ray);
 
     glm::vec3 calculateColor();
 

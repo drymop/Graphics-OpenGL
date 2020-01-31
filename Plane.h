@@ -8,7 +8,7 @@ class Plane : public RenderableObject
   public:
     Plane(glm::vec3 _point, glm::vec3 _normal, glm::vec3 _color);
 
-    float intersectRay(Ray _ray);
+    RayHit intersectRay(Ray _ray);
   
     glm::vec3 calculateColor();
   

@@ -12,7 +12,7 @@ Sphere(glm::vec3 _center, float _radius, glm::vec3 _color)
   : m_center(_center), m_radius(_radius), m_color(_color) {};
 
 
-float 
+RayHit 
 Sphere::
 intersectRay(Ray _ray) {
   glm::vec3 p = _ray.getOrigin();
@@ -24,10 +24,13 @@ intersectRay(Ray _ray) {
   float discriminant = bHalf * bHalf - c;
   // no intersection
   if (discriminant <= 0) {
-    return -1;
+    return RayHit();
   }
   // return the smaller t
-  return -bHalf - sqrt(discriminant);
+  float t = -bHalf - sqrt(discriminant);
+  glm::vec3 hitPos = p + d * t;
+  glm::vec3 normal = glm::normalize(hitPos - m_center);
+  return {t, hitPos, normal};
 }
 
 glm::vec3

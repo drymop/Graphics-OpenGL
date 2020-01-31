@@ -47,7 +47,7 @@ int g_window{0};
 std::unique_ptr<glm::vec4[]> g_frame{nullptr}; ///< Framebuffer
 
 // Frame rate
-const unsigned int FPS = 60;
+const unsigned int FPS = 1;
 float g_frameRate{0.f};
 std::chrono::high_resolution_clock::time_point g_frameTime{
   std::chrono::high_resolution_clock::now()};
@@ -84,7 +84,7 @@ initialize() {
   // intialize light
   g_ambient_intensity = glm::vec3(0.1f, 0.1f, 0.1f);
   g_lights.emplace_back(new PointLight(
-    glm::vec3(-2, 0, 0), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)
+    glm::vec3(2, 1, -5), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)
   ));
 
   // initialize objects
@@ -160,17 +160,30 @@ glm::vec4
 renderPixel(int i, int j) {
   // cast ray
   Ray ray = g_view->castRay(i, j);
-  float minT = 99999999;
+  RayHit firstHit;
+  firstHit.t = 99999999;
+  int firstHitIndex = -1;
   // for now, as long as a sphere intersects this ray, return black
   // otherwise, return white
-  glm::vec3 color(1, 1, 1);
-  for (auto& obj : g_objects) {
-    float t = obj->intersectRay(ray);
-    if (t > 0 && t < minT) {
-      minT = t;
-      color = obj->calculateColor();
+  for (int i = 0; i < g_objects.size(); i++) {
+    RayHit hit = g_objects[i]->intersectRay(ray);
+    if (hit.t > 0 && hit.t < firstHit.t) {
+      firstHit = hit;
+      firstHitIndex = i;
     }
   }
+  if (firstHitIndex < 0) {
+    return glm::vec4(1, 1, 1, 0); // white
+  }
+  glm::vec3 objColor = g_objects[firstHitIndex]->calculateColor();
+  struct Material material{
+    glm::vec3(0.5, 0.5, 0.5),
+    objColor,
+    glm::vec3(1, 1, 1),
+    8.f
+  };
+
+  glm::vec3 color = shadeObject(firstHit.position, firstHit.normal, ray.getDirection(), material);
   return glm::vec4(color, 0);
 }
 
@@ -225,8 +238,8 @@ keyPressed(GLubyte _key, GLint _x, GLint _y) {
       glutDestroyWindow(g_window);
       g_window = 0;
       break;
-    // Space key: switch projection mode
-    case ' ':
+    // V key: switch projection mode
+    case 'v':
       g_isPerspectiveView = !g_isPerspectiveView;
       if (g_isPerspectiveView) {
         g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
