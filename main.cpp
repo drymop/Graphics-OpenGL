@@ -8,6 +8,7 @@
 // Includes
 
 // STL
+#include <cfloat>
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
@@ -47,7 +48,7 @@ int g_window{0};
 std::unique_ptr<glm::vec4[]> g_frame{nullptr}; ///< Framebuffer
 
 // Frame rate
-const unsigned int FPS = 1;
+const unsigned int FPS = 60;
 float g_frameRate{0.f};
 std::chrono::high_resolution_clock::time_point g_frameTime{
   std::chrono::high_resolution_clock::now()};
@@ -84,13 +85,16 @@ initialize() {
   // intialize light
   g_ambient_intensity = glm::vec3(0.1f, 0.1f, 0.1f);
   g_lights.emplace_back(new PointLight(
-    glm::vec3(2, 1, -5), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)
+    glm::vec3(2, 1, -10), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)
+  ));
+  g_lights.emplace_back(new PointLight(
+    glm::vec3(-3, 5, -7), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)
   ));
 
   // initialize objects
-  g_objects.emplace_back(new Sphere(glm::vec3(1.5, 0, -10), 2, glm::vec3(1, 0, 0)));
-  g_objects.emplace_back(new Sphere(glm::vec3(-1.5, 0, -5), 2, glm::vec3(0, 1, 0)));
-  g_objects.emplace_back(new Plane(glm::vec3(0, -1, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)));
+  g_objects.emplace_back(new Sphere(glm::vec3(1.5, 0, -15), 2, glm::vec3(1, 0, 0)));
+  g_objects.emplace_back(new Sphere(glm::vec3(-1.5, 0, -10), 2, glm::vec3(0, 1, 0)));
+  g_objects.emplace_back(new Plane(glm::vec3(0, -4, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -139,6 +143,19 @@ shadeObject(glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& 
   // for each light source, add the diffuse and specular lighting
   for (auto& lightSource : g_lights) {
     struct LightRay light = lightSource->getLightRay(pos);
+    // make sure not blocked by other objects
+    Ray towardLight(pos, -light.direction);
+    bool isShaddow = false;
+    for (auto& obj : g_objects) {
+      float t = obj->intersectRay(towardLight).t;
+      if (t > 1e-3 && t < light.distance) {
+        isShaddow = true;
+        break;
+      }
+    }
+    if (isShaddow) {
+      continue;
+    }
     // diffuse
     color += material.kd * light.intensityDiffuse 
         * std::max(0.f, -glm::dot(normal, light.direction));
@@ -147,9 +164,8 @@ shadeObject(glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& 
     color += material.ks * light.intensitySpecular
         * std::pow(std::max(0.f, glm::dot(normal, halfVec)), material.shininess);
   }
-  return glm::min(color, glm::vec3(1, 1, 1)); // clamp vector between 0 and 1
+  return glm::min(color, glm::vec3(1, 1, 1)); // make sure color doesn't exceed 1
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Ray trace to find the color of a pixel
@@ -163,8 +179,6 @@ renderPixel(int i, int j) {
   RayHit firstHit;
   firstHit.t = 99999999;
   int firstHitIndex = -1;
-  // for now, as long as a sphere intersects this ray, return black
-  // otherwise, return white
   for (int i = 0; i < g_objects.size(); i++) {
     RayHit hit = g_objects[i]->intersectRay(ray);
     if (hit.t > 0 && hit.t < firstHit.t) {
@@ -177,10 +191,10 @@ renderPixel(int i, int j) {
   }
   glm::vec3 objColor = g_objects[firstHitIndex]->calculateColor();
   struct Material material{
-    glm::vec3(0.5, 0.5, 0.5),
-    objColor,
     glm::vec3(1, 1, 1),
-    8.f
+    objColor,
+    glm::vec3(0.8, 0.8, 0.8),
+    100.f
   };
 
   glm::vec3 color = shadeObject(firstHit.position, firstHit.normal, ray.getDirection(), material);
@@ -221,7 +235,7 @@ draw() {
   g_frameRate = duration_cast<duration<float>>(time - g_frameTime).count();
   g_frameTime = time;
   g_framesPerSecond = 1.f/(g_delay + g_frameRate);
-  // printf("FPS: %6.2f\n", g_framesPerSecond);
+  printf("FPS: %6.2f\n", g_framesPerSecond);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

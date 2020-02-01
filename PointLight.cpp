@@ -17,6 +17,6 @@ PointLight(glm::vec3 _pos,
 struct LightRay
 PointLight::
 getLightRay(glm::vec3 _destination) {
-  glm::vec3 dir = glm::normalize(_destination - m_pos);
-  return {dir, m_intensity_diffuse, m_intensity_specular};
+  glm::vec3 v = _destination - m_pos;
+  return {glm::normalize(v), glm::length(v), m_intensity_diffuse, m_intensity_specular};
 }
