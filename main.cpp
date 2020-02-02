@@ -167,15 +167,9 @@ shadeObject(glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& 
   return glm::min(color, glm::vec3(1, 1, 1)); // make sure color doesn't exceed 1
 }
 
-////////////////////////////////////////////////////////////////////////////////
-/// @brief Ray trace to find the color of a pixel
-/// @param i Pixel index along the X axis
-/// @param j Pixel index along the Y axis
-/// @return RGBA color encoded in a vec4
-glm::vec4
-renderPixel(int i, int j) {
-  // cast ray
-  Ray ray = g_view->castRay(i, j);
+
+glm::vec3
+shade(Ray ray, int maxRecursion) {
   RayHit firstHit;
   firstHit.t = 99999999;
   int firstHitIndex = -1;
@@ -187,17 +181,38 @@ renderPixel(int i, int j) {
     }
   }
   if (firstHitIndex < 0) {
-    return glm::vec4(1, 1, 1, 0); // white
+    // black if ray doesn't hit anything
+    return glm::vec4();
   }
-  glm::vec3 objColor = g_objects[firstHitIndex]->calculateColor();
+  glm::vec3 diffuseColor = g_objects[firstHitIndex]->calculateColor();
   struct Material material{
     glm::vec3(1, 1, 1),
-    objColor,
+    diffuseColor,
     glm::vec3(0.8, 0.8, 0.8),
-    100.f
+    100.f,
+    glm::vec3(0.8, 0.8, 0.8),
   };
-
+  // shade with Blinn-Phong
   glm::vec3 color = shadeObject(firstHit.position, firstHit.normal, ray.getDirection(), material);
+  // add reflection for mirror-like material
+  if (maxRecursion > 0 && material.kr != glm::vec3(0, 0, 0)) {
+    glm::vec3 reflectDir = ray.getDirection() - 2.f * glm::dot(ray.getDirection(), firstHit.normal) * firstHit.normal;
+    Ray reflectRay(firstHit.position, reflectDir);
+    color += material.kr * shade(reflectRay, maxRecursion - 1);
+  }
+  return color;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Ray trace to find the color of a pixel
+/// @param i Pixel index along the X axis
+/// @param j Pixel index along the Y axis
+/// @return RGBA color encoded in a vec4
+glm::vec4
+renderPixel(int i, int j) {
+  // cast ray
+  Ray ray = g_view->castRay(i, j);
+  glm::vec3 color = shade(ray, 5);
   return glm::vec4(color, 0);
 }
 

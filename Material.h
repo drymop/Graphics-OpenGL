@@ -12,6 +12,8 @@ struct Material {
   glm::vec3 ks;
   /// Affect the size of specular spot
   float shininess;
+  /// Reflection of light from other object, used for mirror like surface
+  glm::vec3 kr;
 };
 
 #endif // MATERIAL_H_
