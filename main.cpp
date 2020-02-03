@@ -34,6 +34,7 @@
 #include "PerspectiveView.h"
 #include "Plane.h"
 #include "PointLight.h"
+#include "Scene.h"
 #include "Sphere.h"
 #include "RenderableObject.h"
 #include "View.h"
@@ -63,6 +64,7 @@ float g_fov{1.0472}; // radians (about 60 degrees)
 // Orthographic view
 float g_orthoViewPlaneHeight{5.f};
 
+Scene g_scene;
 // Lights in the scene
 glm::vec3 g_ambient_intensity;
 std::vector<std::unique_ptr<LightSource>> g_lights;
@@ -92,21 +94,21 @@ initialize() {
   ));
 
   // initialize objects
-  struct Material dullRedMaterial {
+  Material dullRedMaterial {
     glm::vec3(1, 1, 1),
     glm::vec3(1, 0, 0),
     glm::vec3(0.2, 0.2, 0.2),
     50.f,
     glm::vec3(0, 0, 0),
   };
-  struct Material shinyGreenMaterial {
+  Material shinyGreenMaterial {
     glm::vec3(1, 1, 1),
     glm::vec3(0, 1, 0),
     glm::vec3(0.8, 0.8, 0.8),
     100.f,
     glm::vec3(0.1, 0.1, 0.1),
   };
-  struct Material reflectiveBlueMaterial {
+  Material reflectiveBlueMaterial {
     glm::vec3(1, 1, 1),
     glm::vec3(0, 0, 1),
     glm::vec3(0.2, 0.2, 0.2),
@@ -117,6 +119,13 @@ initialize() {
   g_objects.emplace_back(new Sphere(glm::vec3(1.5, 0, -15), 2, dullRedMaterial));
   g_objects.emplace_back(new Sphere(glm::vec3(-1.5, 0, -10), 2, shinyGreenMaterial));
   g_objects.emplace_back(new Plane(glm::vec3(0, -3, 0), glm::vec3(0, 1, 0), reflectiveBlueMaterial));
+
+  g_scene.addObject(std::move(
+    std::make_unique<Sphere>(glm::vec3(1.5, 0, -15), 2, dullRedMaterial)));
+  g_scene.addObject(std::move(
+    std::make_unique<Sphere>(glm::vec3(-1.5, 0, -10), 2, shinyGreenMaterial)));
+  g_scene.addObject(std::move(
+    std::make_unique<Plane>(glm::vec3(0, -3, 0), glm::vec3(0, 1, 0), reflectiveBlueMaterial)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -164,19 +173,14 @@ shadeObject(glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& 
   color += material.ka * g_ambient_intensity;
   // for each light source, add the diffuse and specular lighting
   for (auto& lightSource : g_lights) {
-    struct LightRay light = lightSource->getLightRay(pos);
+    LightRay light = lightSource->getLightRay(pos);
     // make sure not blocked by other objects
     Ray towardLight(pos, -light.direction);
-    bool isShaddow = false;
-    for (auto& obj : g_objects) {
-      float t = obj->intersectRay(towardLight).t;
-      if (t > 1e-3 && t < light.distance) {
-        isShaddow = true;
-        break;
+    RayHit hitInfo;
+    if (g_scene.firstRayHit(towardLight, &hitInfo)) {
+      if (hitInfo.t < light.distance) {
+        continue;
       }
-    }
-    if (isShaddow) {
-      continue;
     }
     // diffuse
     color += material.kd * light.intensityDiffuse 
@@ -193,20 +197,12 @@ shadeObject(glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& 
 glm::vec3
 shade(Ray ray, int maxRecursion) {
   RayHit firstHit;
-  firstHit.t = 99999999;
-  int firstHitIndex = -1;
-  for (int i = 0; i < g_objects.size(); i++) {
-    RayHit hit = g_objects[i]->intersectRay(ray);
-    if (hit.t > 0.001 && hit.t < firstHit.t) {
-      firstHit = hit;
-      firstHitIndex = i;
-    }
-  }
-  if (firstHitIndex < 0) {
-    // black if ray doesn't hit anything
+  RenderableObject* hitObj = g_scene.firstRayHit(ray, &firstHit);
+  if (!hitObj) {
+    // black if nothing is hit by the ray
     return glm::vec4();
   }
-  struct Material material = g_objects[firstHitIndex]->getMaterial();
+  Material material = hitObj->getMaterial();
   // shade with Blinn-Phong
   glm::vec3 color = shadeObject(firstHit.position, firstHit.normal, ray.getDirection(), material);
   // add reflection for mirror-like material
