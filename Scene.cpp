@@ -10,6 +10,25 @@ addObject(std::unique_ptr<RenderableObject> _object) {
   m_objects.push_back(std::move(_object));
 }
 
+void
+Scene::
+setAmbientLight(glm::vec3 _intensity) {
+  ambient_intensity = _intensity;
+}
+
+glm::vec3
+Scene::
+getAmbientLight() {
+  return ambient_intensity;
+}
+
+
+void
+Scene::
+addLightSource(std::unique_ptr<LightSource> _light) {
+  m_lights.push_back(std::move(_light));
+}
+
 RenderableObject*
 Scene::
 firstRayHit(Ray _ray, RayHit* _hitInfo) {
@@ -29,4 +48,14 @@ firstRayHit(Ray _ray, RayHit* _hitInfo) {
   }
   *_hitInfo = firstHit;
   return m_objects[firstHitIndex].get();
+}
+
+std::vector<LightSource*>
+Scene::
+lightSources() {
+  std::vector<LightSource*> lights;
+  for (auto& light : m_lights) {
+    lights.emplace_back(light.get());
+  }
+  return lights;
 }

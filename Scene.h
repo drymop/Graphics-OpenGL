@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 
+#include "LightSource.h"
 #include "Ray.h"
 #include "RenderableObject.h"
 
@@ -17,6 +18,10 @@ class Scene
 
     void addObject(std::unique_ptr<RenderableObject> _object);
 
+    void setAmbientLight(glm::vec3 _intensity);
+
+    void addLightSource(std::unique_ptr<LightSource> _light);
+
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Find the first object hit by the given ray
     /// @param[in]  _ray     The ray to cast
@@ -25,8 +30,18 @@ class Scene
     ///             if no object is hit.
     RenderableObject* firstRayHit(Ray _ray, RayHit* _hitInfo);
 
+    ////////////////////////////////////////////////////////////////////////////
+    /// @return The intensity of ambient light in this scene
+    glm::vec3 getAmbientLight();
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// @brief Provide an iterable of light sources
+    std::vector<LightSource*> lightSources();
+
   private:
     std::vector<std::unique_ptr<RenderableObject>> m_objects;
+    glm::vec3 ambient_intensity;
+    std::vector<std::unique_ptr<LightSource>> m_lights;
 };
 
 #endif // SCENE_H_

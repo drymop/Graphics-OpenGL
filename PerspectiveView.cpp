@@ -31,6 +31,7 @@ void
 PerspectiveView::
 calculateViewingPlaneSize() {
   // assume that the viewing pane is 1 unit away from the camera
+  // (focalLength = 1)
   float top = tan(m_fov / 2);
   m_planeBottom = -top;
   m_planeHeight = top * 2;

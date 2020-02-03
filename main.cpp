@@ -65,11 +65,6 @@ float g_fov{1.0472}; // radians (about 60 degrees)
 float g_orthoViewPlaneHeight{5.f};
 
 Scene g_scene;
-// Lights in the scene
-glm::vec3 g_ambient_intensity;
-std::vector<std::unique_ptr<LightSource>> g_lights;
-// Objects to render
-std::vector<std::unique_ptr<RenderableObject>> g_objects;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
@@ -85,13 +80,13 @@ initialize() {
   g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
 
   // intialize light
-  g_ambient_intensity = glm::vec3(0.1f, 0.1f, 0.1f);
-  g_lights.emplace_back(new PointLight(
+  g_scene.setAmbientLight(glm::vec3(0.1f, 0.1f, 0.1f));
+  g_scene.addLightSource(std::move(std::make_unique<PointLight>(
     glm::vec3(2, 1, -10), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)
-  ));
-  g_lights.emplace_back(new PointLight(
+  )));
+  g_scene.addLightSource(std::move(std::make_unique<PointLight>(
     glm::vec3(-3, 5, -7), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)
-  ));
+  )));
 
   // initialize objects
   Material dullRedMaterial {
@@ -115,10 +110,6 @@ initialize() {
     100.f,
     glm::vec3(0.8, 0.8, 0.8),
   };
-
-  g_objects.emplace_back(new Sphere(glm::vec3(1.5, 0, -15), 2, dullRedMaterial));
-  g_objects.emplace_back(new Sphere(glm::vec3(-1.5, 0, -10), 2, shinyGreenMaterial));
-  g_objects.emplace_back(new Plane(glm::vec3(0, -3, 0), glm::vec3(0, 1, 0), reflectiveBlueMaterial));
 
   g_scene.addObject(std::move(
     std::make_unique<Sphere>(glm::vec3(1.5, 0, -15), 2, dullRedMaterial)));
@@ -170,9 +161,9 @@ glm::vec3
 shadeObject(glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& material) {
   glm::vec3 color(0, 0, 0);
   // ambient light
-  color += material.ka * g_ambient_intensity;
+  color += material.ka * g_scene.getAmbientLight();
   // for each light source, add the diffuse and specular lighting
-  for (auto& lightSource : g_lights) {
+  for (auto& lightSource : g_scene.lightSources()) {
     LightRay light = lightSource->getLightRay(pos);
     // make sure not blocked by other objects
     Ray towardLight(pos, -light.direction);
@@ -192,7 +183,6 @@ shadeObject(glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& 
   }
   return glm::min(color, glm::vec3(1, 1, 1)); // make sure color doesn't exceed 1
 }
-
 
 glm::vec3
 shade(Ray ray, int maxRecursion) {
