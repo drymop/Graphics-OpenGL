@@ -35,6 +35,7 @@
 #include "Plane.h"
 #include "PointLight.h"
 #include "Scene.h"
+#include "Shader.h"
 #include "Sphere.h"
 #include "RenderableObject.h"
 #include "View.h"
@@ -64,7 +65,12 @@ float g_fov{1.0472}; // radians (about 60 degrees)
 // Orthographic view
 float g_orthoViewPlaneHeight{5.f};
 
+// Scene to render
 Scene g_scene;
+
+// Shader
+Shader g_shader;
+int g_maxShaderRecursion{5};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
@@ -154,57 +160,6 @@ timer(int _v) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @brief Shader function to compute color on an object using Blinn-Phong
-/// shading algorithm
-/// TODO encapsulate this inside a class
-glm::vec3
-shadeObject(glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& material) {
-  glm::vec3 color(0, 0, 0);
-  // ambient light
-  color += material.ka * g_scene.getAmbientLight();
-  // for each light source, add the diffuse and specular lighting
-  for (auto& lightSource : g_scene.lightSources()) {
-    LightRay light = lightSource->getLightRay(pos);
-    // make sure not blocked by other objects
-    Ray towardLight(pos, -light.direction);
-    RayHit hitInfo;
-    if (g_scene.firstRayHit(towardLight, &hitInfo)) {
-      if (hitInfo.t < light.distance) {
-        continue;
-      }
-    }
-    // diffuse
-    color += material.kd * light.intensityDiffuse 
-        * std::max(0.f, -glm::dot(normal, light.direction));
-    // specular
-    glm::vec3 halfVec = -glm::normalize(viewDir + light.direction);
-    color += material.ks * light.intensitySpecular
-        * std::pow(std::max(0.f, glm::dot(normal, halfVec)), material.shininess);
-  }
-  return glm::min(color, glm::vec3(1, 1, 1)); // make sure color doesn't exceed 1
-}
-
-glm::vec3
-shade(Ray ray, int maxRecursion) {
-  RayHit firstHit;
-  RenderableObject* hitObj = g_scene.firstRayHit(ray, &firstHit);
-  if (!hitObj) {
-    // black if nothing is hit by the ray
-    return glm::vec4();
-  }
-  Material material = hitObj->getMaterial();
-  // shade with Blinn-Phong
-  glm::vec3 color = shadeObject(firstHit.position, firstHit.normal, ray.getDirection(), material);
-  // add reflection for mirror-like material
-  if (maxRecursion > 0 && material.kr != glm::vec3(0, 0, 0)) {
-    glm::vec3 reflectDir = ray.getDirection() - 2.f * glm::dot(ray.getDirection(), firstHit.normal) * firstHit.normal;
-    Ray reflectRay(firstHit.position, reflectDir);
-    color += material.kr * shade(reflectRay, maxRecursion - 1);
-  }
-  return color;
-}
-
-////////////////////////////////////////////////////////////////////////////////
 /// @brief Ray trace to find the color of a pixel
 /// @param i Pixel index along the X axis
 /// @param j Pixel index along the Y axis
@@ -213,7 +168,7 @@ glm::vec4
 renderPixel(int i, int j) {
   // cast ray
   Ray ray = g_view->castRay(i, j);
-  glm::vec3 color = shade(ray, 5);
+  glm::vec3 color = g_shader.shade(g_scene, ray, g_maxShaderRecursion);
   return glm::vec4(color, 0);
 }
 

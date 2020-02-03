@@ -45,6 +45,7 @@ OBJS = \
        PointLight.o \
        Ray.o \
        Scene.o \
+       Shader.o \
        Sphere.o \
 
 
