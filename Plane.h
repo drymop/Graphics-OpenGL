@@ -6,19 +6,19 @@
 class Plane : public RenderableObject
 {
   public:
-    Plane(glm::vec3 _point, glm::vec3 _normal, glm::vec3 _color);
-
+    Plane(glm::vec3 _point, glm::vec3 _normal, struct Material _material);
+    
     RayHit intersectRay(Ray _ray);
   
-    glm::vec3 calculateColor();
+    struct Material getMaterial();
   
   private:
     /// A point wihin the plane
     glm::vec3 m_point;
     /// Unit vector specifying the normal of the plane
     glm::vec3 m_normal;
-    /// Color of the plane
-    glm::vec3 m_color;
+    /// Material on the surface of this plane
+    struct Material m_material;
 };
 
 #endif // PLANE_H_

@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 
+#include "Material.h"
 #include "Ray.h"
 
 struct RayHit {
@@ -22,10 +23,8 @@ class RenderableObject
     virtual RayHit intersectRay(Ray _ray) = 0;
 
     ////////////////////////////////////////////////////////////////////////////
-    /// @return Return the distance from the first point of this object hit by
-    /// the ray to the origin of the ray. A non-positive return value indicates
-    /// that the object is not hit by the ray.
-    virtual glm::vec3 calculateColor() = 0;
+    /// @return The material of this object.
+    virtual struct Material getMaterial() = 0;
 };
 
 #endif // RENDERABLE_OBJECT_H_

@@ -8,8 +8,11 @@
 #include "Sphere.h"
 
 Sphere::
-Sphere(glm::vec3 _center, float _radius, glm::vec3 _color) 
-  : m_center(_center), m_radius(_radius), m_color(_color) {};
+Sphere(glm::vec3 _center, float _radius, struct Material _material) 
+  : m_center(_center), 
+    m_radius(_radius), 
+    m_material(_material)
+{};
 
 
 RayHit 
@@ -33,8 +36,8 @@ intersectRay(Ray _ray) {
   return {t, hitPos, normal};
 }
 
-glm::vec3
+struct Material
 Sphere::
-calculateColor() {
-  return m_color;
+getMaterial() {
+  return m_material;
 }

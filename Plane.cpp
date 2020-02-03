@@ -1,10 +1,10 @@
 #include "Plane.h"
 
 Plane::
-Plane(glm::vec3 _point, glm::vec3 _normal, glm::vec3 _color)
+Plane(glm::vec3 _point, glm::vec3 _normal, struct Material _material)
   : m_point(_point), 
     m_normal(glm::normalize(_normal)),
-    m_color(_color) 
+    m_material(_material)
 {};
 
 RayHit
@@ -23,8 +23,8 @@ intersectRay(Ray _ray) {
   return {t, hitPos, m_normal};
 }
 
-glm::vec3
+struct Material
 Plane::
-calculateColor() {
-  return m_color;
+getMaterial() {
+  return m_material;
 }

@@ -92,9 +92,31 @@ initialize() {
   ));
 
   // initialize objects
-  g_objects.emplace_back(new Sphere(glm::vec3(1.5, 0, -15), 2, glm::vec3(1, 0, 0)));
-  g_objects.emplace_back(new Sphere(glm::vec3(-1.5, 0, -10), 2, glm::vec3(0, 1, 0)));
-  g_objects.emplace_back(new Plane(glm::vec3(0, -4, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)));
+  struct Material dullRedMaterial {
+    glm::vec3(1, 1, 1),
+    glm::vec3(1, 0, 0),
+    glm::vec3(0.2, 0.2, 0.2),
+    50.f,
+    glm::vec3(0, 0, 0),
+  };
+  struct Material shinyGreenMaterial {
+    glm::vec3(1, 1, 1),
+    glm::vec3(0, 1, 0),
+    glm::vec3(0.8, 0.8, 0.8),
+    100.f,
+    glm::vec3(0.1, 0.1, 0.1),
+  };
+  struct Material reflectiveBlueMaterial {
+    glm::vec3(1, 1, 1),
+    glm::vec3(0, 0, 1),
+    glm::vec3(0.2, 0.2, 0.2),
+    100.f,
+    glm::vec3(0.8, 0.8, 0.8),
+  };
+
+  g_objects.emplace_back(new Sphere(glm::vec3(1.5, 0, -15), 2, dullRedMaterial));
+  g_objects.emplace_back(new Sphere(glm::vec3(-1.5, 0, -10), 2, shinyGreenMaterial));
+  g_objects.emplace_back(new Plane(glm::vec3(0, -3, 0), glm::vec3(0, 1, 0), reflectiveBlueMaterial));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -175,7 +197,7 @@ shade(Ray ray, int maxRecursion) {
   int firstHitIndex = -1;
   for (int i = 0; i < g_objects.size(); i++) {
     RayHit hit = g_objects[i]->intersectRay(ray);
-    if (hit.t > 0 && hit.t < firstHit.t) {
+    if (hit.t > 0.001 && hit.t < firstHit.t) {
       firstHit = hit;
       firstHitIndex = i;
     }
@@ -184,14 +206,7 @@ shade(Ray ray, int maxRecursion) {
     // black if ray doesn't hit anything
     return glm::vec4();
   }
-  glm::vec3 diffuseColor = g_objects[firstHitIndex]->calculateColor();
-  struct Material material{
-    glm::vec3(1, 1, 1),
-    diffuseColor,
-    glm::vec3(0.8, 0.8, 0.8),
-    100.f,
-    glm::vec3(0.8, 0.8, 0.8),
-  };
+  struct Material material = g_objects[firstHitIndex]->getMaterial();
   // shade with Blinn-Phong
   glm::vec3 color = shadeObject(firstHit.position, firstHit.normal, ray.getDirection(), material);
   // add reflection for mirror-like material
