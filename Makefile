@@ -43,7 +43,6 @@ OBJS = \
        PerspectiveView.o \
        Plane.o \
        PointLight.o \
-       Ray.o \
        Scene.o \
        Shader.o \
        Sphere.o \

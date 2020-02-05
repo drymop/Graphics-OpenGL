@@ -169,7 +169,7 @@ renderPixel(int i, int j) {
   // cast ray
   Ray ray = g_view->castRay(i, j);
   glm::vec3 color = g_shader.shade(g_scene, ray, g_maxShaderRecursion);
-  return glm::vec4(color, 0);
+  return glm::vec4(color, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

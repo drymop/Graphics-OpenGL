@@ -21,7 +21,7 @@ class LightSource
   public:
     ////////////////////////////////////////////////////////////////////////////
     /// @return LightRay from this light source to the destination
-    virtual struct LightRay getLightRay(glm::vec3 _destination) = 0;
+    virtual struct LightRay getLightRay(glm::vec3 _destination) const = 0;
 };
 
 #endif // LIGHT_SOURCE_H_

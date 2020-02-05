@@ -10,11 +10,15 @@ class PointLight : public LightSource
   public:
     PointLight(glm::vec3 _pos, 
         glm::vec3 _intensity_diffuse, 
-        glm::vec3 _intensity_specular);
+        glm::vec3 _intensity_specular) 
+    : m_pos(_pos),
+      m_intensity_diffuse(_intensity_diffuse),
+      m_intensity_specular(_intensity_specular)
+      {};
     
     ////////////////////////////////////////////////////////////////////////////
     /// @return LightRay from this light source to the destination
-    struct LightRay getLightRay(glm::vec3 _destination);
+    struct LightRay getLightRay(glm::vec3 _destination) const;
 
   private:
     glm::vec3 m_pos;

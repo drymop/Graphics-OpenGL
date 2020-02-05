@@ -4,19 +4,9 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
 
-PointLight::
-PointLight(glm::vec3 _pos, 
-    glm::vec3 _intensity_diffuse, 
-    glm::vec3 _intensity_specular)
-    : m_pos(_pos),
-      m_intensity_diffuse(_intensity_diffuse),
-      m_intensity_specular(_intensity_specular)
-{}
-
-
 struct LightRay
 PointLight::
-getLightRay(glm::vec3 _destination) {
+getLightRay(glm::vec3 _destination) const {
   glm::vec3 v = _destination - m_pos;
   return {glm::normalize(v), glm::length(v), m_intensity_diffuse, m_intensity_specular};
 }
