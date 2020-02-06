@@ -20,11 +20,11 @@ class RenderableObject
     /// @return Return the distance from the first point of this object hit by
     /// the ray to the origin of the ray. A non-positive return value indicates
     /// that the object is not hit by the ray.
-    virtual RayHit intersectRay(Ray _ray) = 0;
+    virtual RayHit intersectRay(Ray _ray) const = 0;
 
     ////////////////////////////////////////////////////////////////////////////
     /// @return The material of this object.
-    virtual struct Material getMaterial() = 0;
+    virtual struct Material getMaterial() const = 0;
 };
 
 #endif // RENDERABLE_OBJECT_H_

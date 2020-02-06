@@ -6,11 +6,17 @@
 class Sphere : public RenderableObject
 {
   public:
-    Sphere(glm::vec3 _center, float _radius, Material _material);
+    Sphere(glm::vec3 _center, float _radius, struct Material _material) 
+      : m_center(_center), 
+        m_radius(_radius), 
+        m_material(_material)
+    {};
 
-    RayHit intersectRay(Ray _ray);
+    struct Material getMaterial() const {
+        return m_material;
+    }
 
-    struct Material getMaterial();
+    RayHit intersectRay(Ray _ray) const;
 
   private:
     /// Center of the sphere

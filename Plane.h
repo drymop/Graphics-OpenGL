@@ -6,11 +6,17 @@
 class Plane : public RenderableObject
 {
   public:
-    Plane(glm::vec3 _point, glm::vec3 _normal, struct Material _material);
+    Plane(glm::vec3 _point, glm::vec3 _normal, struct Material _material)
+      : m_point(_point), 
+        m_normal(glm::normalize(_normal)),
+        m_material(_material)
+    {};
+
+    struct Material getMaterial() const {
+        return m_material;
+    }
     
-    RayHit intersectRay(Ray _ray);
-  
-    struct Material getMaterial();
+    RayHit intersectRay(Ray _ray) const;
   
   private:
     /// A point wihin the plane
