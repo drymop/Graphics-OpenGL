@@ -16,7 +16,8 @@ class PerspectiveView : public View
 
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Create a ray from the camera through the center of the virtual 
-    /// pixel on the viewing pane corresponding to the specified pixel
+    /// pixel (with some jitter) on the viewing pane corresponding to the 
+    /// specified pixel.
     ///
     /// The camera is assumed to be at (0, 0, 0).
     /// The pixel coordinate is as follow: (0, 0) is at the bottom left of the 
@@ -24,7 +25,9 @@ class PerspectiveView : public View
     /// along the height of the frame.
     /// @param _pixelX X-coordinate of the pixel
     /// @param _pixelY Y-coordinate of the pixel
-    Ray castRay(int _pixelX, int _pixelY);
+    /// @param _xJitter Deviation in X-coordinate from the center of the pixel
+    /// @param _yJitter Deviation in Y-coordinate from the center of the pixel
+    Ray castRay(int _pixelX, int _pixelY, float _xJitter, float _yJitter);
 
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Resize the view as the physical frame size changes, keeping the

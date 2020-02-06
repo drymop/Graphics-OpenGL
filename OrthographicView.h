@@ -14,16 +14,18 @@ class OrthographicView : public View
     OrthographicView(int _frameWidth, int _frameHeight, float _viewPlaneHeight);
 
     ////////////////////////////////////////////////////////////////////////////
-    /// @brief Create a ray from the center of the virtual pixel on the viewing 
-    /// pane, with direction parallel to the camera facing direction (aka the
-    /// -z axis)
+    /// @brief Create a ray from the center of the virtual pixel (with jitter 
+    /// applied) on the viewing pane, with direction parallel to the camera 
+    /// facing direction (aka the -z axis)
     ///
     /// The pixel coordinate is as follow: (0, 0) is at the bottom left of the 
     /// frame, with the x axis along the width of the frame, and the y axis 
     /// along the height of the frame.
     /// @param _pixelX X-coordinate of the pixel
     /// @param _pixelY Y-coordinate of the pixel
-    Ray castRay(int _pixelX, int _pixelY);
+    /// @param _xJitter Deviation in X-coordinate from the center of the pixel
+    /// @param _yJitter Deviation in Y-coordinate from the center of the pixel
+    Ray castRay(int _pixelX, int _pixelY, float _xJitter, float _yJitter);
 
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Resize the view as the physical frame size changes, keeping the

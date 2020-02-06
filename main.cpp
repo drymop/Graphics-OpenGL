@@ -65,12 +65,26 @@ float g_fov{1.0472}; // radians (about 60 degrees)
 // Orthographic view
 float g_orthoViewPlaneHeight{5.f};
 
+// Anti-aliasing
+int g_antiAliasMode{0};
+std::vector<std::vector<glm::vec2>> g_antiAliasJitters {
+  {
+    {0.f, 0.f}
+  },
+  {
+    { 0.25f,  0.25f},
+    { 0.25f, -0.25f},
+    {-0.25f,  0.25f},
+    {-0.25f, -0.25f}
+  }
+};
+
 // Scene to render
 Scene g_scene;
 
 // Shader
 Shader g_shader;
-int g_maxShaderRecursion{5};
+int g_maxShaderRecursion{0};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
@@ -166,9 +180,13 @@ timer(int _v) {
 /// @return RGBA color encoded in a vec4
 glm::vec4
 renderPixel(int i, int j) {
-  // cast ray
-  Ray ray = g_view->castRay(i, j);
-  glm::vec3 color = g_shader.shade(g_scene, ray, g_maxShaderRecursion);
+  glm::vec3 color(0.f, 0.f, 0.f);
+  for (auto& jitter : g_antiAliasJitters[g_antiAliasMode]) {
+    // cast ray
+    Ray ray = g_view->castRay(i, j, jitter.x, jitter.y);
+    color += g_shader.shade(g_scene, ray, g_maxShaderRecursion);
+  }
+  color /= g_antiAliasJitters[g_antiAliasMode].size();
   return glm::vec4(color, 1);
 }
 
@@ -223,13 +241,20 @@ keyPressed(GLubyte _key, GLint _x, GLint _y) {
       glutDestroyWindow(g_window);
       g_window = 0;
       break;
+    // A key: switch anti-aliasing mode
+    case 'a':
+      g_antiAliasMode = (g_antiAliasMode + 1) % g_antiAliasJitters.size();
+      std::cout << "Anti-alias mode: " << g_antiAliasMode << std::endl;
+      break;
     // V key: switch projection mode
     case 'v':
       g_isPerspectiveView = !g_isPerspectiveView;
       if (g_isPerspectiveView) {
         g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
+        std::cout << "View mode: Perspective" << std::endl;
       } else {
         g_view = std::make_unique<OrthographicView>(g_width, g_height, g_orthoViewPlaneHeight);
+        std::cout << "View mode: Orthographic" << std::endl;
       }
       break;
     // Unhandled

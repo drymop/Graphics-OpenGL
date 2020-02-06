@@ -13,9 +13,9 @@ PerspectiveView(int _frameWidth, int _frameHeight, float _fovY)
 
 Ray
 PerspectiveView::
-castRay(int _pixelX, int _pixelY) {
-  float x = m_planeLeft + m_planeWidth * (_pixelX + 0.5f) / m_frameWidth;
-  float y = m_planeBottom + m_planeHeight * (_pixelY + 0.5f) / m_frameHeight;
+castRay(int _pixelX, int _pixelY, float _xJitter, float _yJitter) {
+  float x = m_planeLeft + m_planeWidth * (_pixelX + 0.5f + _xJitter) / m_frameWidth;
+  float y = m_planeBottom + m_planeHeight * (_pixelY + 0.5f + _yJitter) / m_frameHeight;
   return Ray(glm::vec3(0, 0, 0), glm::vec3(x, y, -1));
 }
 
