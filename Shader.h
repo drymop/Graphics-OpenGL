@@ -16,7 +16,7 @@ class Shader
     ////////////////////////////////////////////////////////////////////////////////
     /// @brief Shader function to compute color on an object using Blinn-Phong
     /// shading algorithm
-    glm::vec3 shadeSurface(Scene& scene, glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& material);
+    glm::vec3 shadeSurface(const Scene& scene, glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& material);
 };
 
 

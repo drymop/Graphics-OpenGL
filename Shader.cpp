@@ -23,7 +23,7 @@ shade(Scene& scene, Ray ray, int maxRecursion) {
 
 glm::vec3
 Shader::
-shadeSurface(Scene& scene, glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& material) {
+shadeSurface(const Scene& scene, glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& material) {
   glm::vec3 color(0, 0, 0);
   // ambient light
   color += material.ka * scene.getAmbientLight();

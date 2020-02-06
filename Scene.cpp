@@ -2,7 +2,7 @@
 
 #include <limits>
 
-const float Scene::k_selfIntersectionBias = 1e-3f;
+const float Scene::SELF_INTERSECTION_BIAS = 1e-3f;
 
 void
 Scene::
@@ -18,7 +18,7 @@ setAmbientLight(glm::vec3 _intensity) {
 
 glm::vec3
 Scene::
-getAmbientLight() {
+getAmbientLight() const {
   return ambient_intensity;
 }
 
@@ -31,13 +31,13 @@ addLightSource(std::unique_ptr<LightSource> _light) {
 
 RenderableObject*
 Scene::
-firstRayHit(Ray _ray, RayHit* _hitInfo) {
+firstRayHit(Ray _ray, RayHit* _hitInfo) const {
   RayHit firstHit;
   firstHit.t = std::numeric_limits<float>::infinity();
   int firstHitIndex = -1;
   for (int i = 0; i < m_objects.size(); i++) {
     RayHit hit = m_objects[i]->intersectRay(_ray);
-    if (hit.t > k_selfIntersectionBias && hit.t < firstHit.t) {
+    if (hit.t > SELF_INTERSECTION_BIAS && hit.t < firstHit.t) {
       firstHit = hit;
       firstHitIndex = i;
     }
@@ -52,7 +52,7 @@ firstRayHit(Ray _ray, RayHit* _hitInfo) {
 
 std::vector<LightSource*>
 Scene::
-lightSources() {
+lightSources() const {
   std::vector<LightSource*> lights;
   for (auto& light : m_lights) {
     lights.emplace_back(light.get());

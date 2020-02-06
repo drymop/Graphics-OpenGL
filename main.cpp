@@ -61,13 +61,13 @@ float g_framesPerSecond{0.f};
 std::unique_ptr<View> g_view{nullptr};
 bool g_isPerspectiveView;
 // Perspective view
-float g_fov{1.0472}; // radians (about 60 degrees)
+const float FOV{1.0472}; // radians (about 60 degrees)
 // Orthographic view
-float g_orthoViewPlaneHeight{5.f};
+const float ORTHO_VIEW_PLANE_HEIGHT{5.f};
 
 // Anti-aliasing
 int g_antiAliasMode{0};
-std::vector<std::vector<glm::vec2>> g_antiAliasJitters {
+const std::vector<std::vector<glm::vec2>> g_antiAliasJitters {
   {
     {0.f, 0.f}
   },
@@ -97,7 +97,7 @@ initialize() {
 
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
   g_isPerspectiveView = true;
-  g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
+  g_view = std::make_unique<PerspectiveView>(g_width, g_height, FOV);
 
   // intialize light
   g_scene.setAmbientLight(glm::vec3(0.1f, 0.1f, 0.1f));
@@ -250,10 +250,10 @@ keyPressed(GLubyte _key, GLint _x, GLint _y) {
     case 'v':
       g_isPerspectiveView = !g_isPerspectiveView;
       if (g_isPerspectiveView) {
-        g_view = std::make_unique<PerspectiveView>(g_width, g_height, g_fov);
+        g_view = std::make_unique<PerspectiveView>(g_width, g_height, FOV);
         std::cout << "View mode: Perspective" << std::endl;
       } else {
-        g_view = std::make_unique<OrthographicView>(g_width, g_height, g_orthoViewPlaneHeight);
+        g_view = std::make_unique<OrthographicView>(g_width, g_height, ORTHO_VIEW_PLANE_HEIGHT);
         std::cout << "View mode: Orthographic" << std::endl;
       }
       break;
