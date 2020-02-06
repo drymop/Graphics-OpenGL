@@ -44,6 +44,7 @@ OBJS = \
        Plane.o \
        PointLight.o \
        Scene.o \
+       SceneBuilder.o \
        Shader.o \
        Sphere.o \
 

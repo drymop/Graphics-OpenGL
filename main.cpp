@@ -36,6 +36,7 @@
 #include "Plane.h"
 #include "PointLight.h"
 #include "Scene.h"
+#include "SceneBuilder.h"
 #include "Shader.h"
 #include "Sphere.h"
 #include "RenderableObject.h"
@@ -96,53 +97,19 @@ int g_maxShaderRecursion{0};
 // Functions
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @brief Initialize GL settings
+/// @brief Initialize settings
 void
-initialize() {
+initialize(const std::string& sceneFile) {
   glClearColor(0.f, 0.f, 0.f, 0.f);
 
+  // initialize view
   g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
   g_isPerspectiveView = true;
   g_view = std::make_unique<PerspectiveView>(g_width, g_height, FOV);
 
-  // intialize light
-  g_scene.setAmbientLight(glm::vec3(0.1f, 0.1f, 0.1f));
-  g_scene.addLightSource(std::move(std::make_unique<PointLight>(
-    glm::vec3(2, 1, -10), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)
-  )));
-  g_scene.addLightSource(std::move(std::make_unique<PointLight>(
-    glm::vec3(-3, 5, -7), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1)
-  )));
-
-  // initialize objects
-  Material dullRedMaterial {
-    glm::vec3(1, 1, 1),
-    glm::vec3(1, 0, 0),
-    glm::vec3(0.2, 0.2, 0.2),
-    50.f,
-    glm::vec3(0, 0, 0),
-  };
-  Material shinyGreenMaterial {
-    glm::vec3(1, 1, 1),
-    glm::vec3(0, 1, 0),
-    glm::vec3(0.8, 0.8, 0.8),
-    100.f,
-    glm::vec3(0.1, 0.1, 0.1),
-  };
-  Material reflectiveBlueMaterial {
-    glm::vec3(1, 1, 1),
-    glm::vec3(0, 0, 1),
-    glm::vec3(0.2, 0.2, 0.2),
-    100.f,
-    glm::vec3(0.8, 0.8, 0.8),
-  };
-
-  g_scene.addObject(std::move(
-    std::make_unique<Sphere>(glm::vec3(1.5, 0, -15), 2, dullRedMaterial)));
-  g_scene.addObject(std::move(
-    std::make_unique<Sphere>(glm::vec3(-1.5, 0, -10), 2, shinyGreenMaterial)));
-  g_scene.addObject(std::move(
-    std::make_unique<Plane>(glm::vec3(0, -3, 0), glm::vec3(0, 1, 0), reflectiveBlueMaterial)));
+  // initialize scene
+  SceneBuilder sceneBuilder;
+  g_scene = sceneBuilder.buildSceneFromJsonFile(sceneFile);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -338,6 +305,12 @@ specialKeyPressed(GLint _key, GLint _x, GLint _y) {
 /// @return Application success status
 int
 main(int _argc, char** _argv) {
+  // Parse argument
+  if (_argc <= 1) {
+    std::cerr << "Missing required argument: scene file name" << std::endl;
+    return 1;
+  }
+
   //////////////////////////////////////////////////////////////////////////////
   // Initialize GLUT Window
   std::cout << "Initializing GLUTWindow" << std::endl;
@@ -348,8 +321,7 @@ main(int _argc, char** _argv) {
   glutInitWindowSize(g_width, g_height); // HD size
   g_window = glutCreateWindow("Spiderling: A Rudamentary Game Engine");
 
-  // GL
-  initialize();
+  initialize(std::string(_argv[1]));
 
   //////////////////////////////////////////////////////////////////////////////
   // Assign callback functions
