@@ -89,6 +89,7 @@ Scene g_scene;
 
 // Shader
 Shader g_shader;
+const int N_SHADER_RECURSIONS = 5;
 int g_maxShaderRecursion{0};
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -284,6 +285,11 @@ keyPressed(GLubyte _key, GLint _x, GLint _y) {
     case 'p':
       g_parallelize = !g_parallelize;
       std::cout << "Parallelization: " << g_parallelize << std::endl;
+      break;
+    // R key: toggle recursive ray-tracing
+    case 'r':
+      g_maxShaderRecursion = N_SHADER_RECURSIONS - g_maxShaderRecursion;
+      std::cout << "Recursive raytracing: " << g_maxShaderRecursion << std::endl;
       break;
     // V key: switch projection mode
     case 'v':
