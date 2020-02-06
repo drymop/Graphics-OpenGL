@@ -10,7 +10,7 @@ class Shader
     ////////////////////////////////////////////////////////////////////////////////
     /// @brief Shader function to compute color on an object using Blinn-Phong
     /// shading algorithm and ideal specular reflection 
-    glm::vec3 shade(Scene& scene, Ray ray, int maxRecursion);
+    glm::vec3 shade(const Scene& scene, Ray ray, int maxRecursion);
 
   private:
     ////////////////////////////////////////////////////////////////////////////////

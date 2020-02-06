@@ -35,7 +35,7 @@ endif
 ## Rules
 ################################################################################
 INCL = $(GL_INCL)
-LIBS = $(GL_LIBS)
+LIBS = $(GL_LIBS) -lpthread
 
 OBJS = \
        main.o \

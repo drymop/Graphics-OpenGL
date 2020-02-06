@@ -2,7 +2,7 @@
 
 glm::vec3
 Shader::
-shade(Scene& scene, Ray ray, int maxRecursion) {
+shade(const Scene& scene, Ray ray, int maxRecursion) {
   RayHit firstHit;
   RenderableObject* hitObj = scene.firstRayHit(ray, &firstHit);
   if (!hitObj) {

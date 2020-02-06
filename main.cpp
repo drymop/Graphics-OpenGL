@@ -11,6 +11,7 @@
 #include <cfloat>
 #include <chrono>
 #include <cstdlib>
+#include <future>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -56,6 +57,10 @@ std::chrono::high_resolution_clock::time_point g_frameTime{
   std::chrono::high_resolution_clock::now()};
 float g_delay{0.f};
 float g_framesPerSecond{0.f};
+
+// Parallelization
+bool g_parallelize{false};
+const unsigned int N_ROWS_PER_TASK = 16;
 
 // Define view
 std::unique_ptr<View> g_view{nullptr};
@@ -190,6 +195,22 @@ renderPixel(int i, int j) {
   return glm::vec4(color, 1);
 }
 
+void
+renderRow(int j) {
+  int pixel = j * g_width;
+  for (int i = 0; i < g_width; i++) {
+    g_frame[pixel++] = renderPixel(i, j);
+  } 
+}
+
+void
+renderTask(int startRow) {
+  int endRow = std::min<int>(startRow + N_ROWS_PER_TASK, g_height);
+  for (int j = startRow; j < endRow; j++) {
+    renderRow(j);
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Draw function for single frame
 void
@@ -206,11 +227,24 @@ draw() {
   //////////////////////////////////////////////////////////////////////////////
   // Draw
 
-  for(int i = 0; i < g_width; i++) {
+  if(g_parallelize) {
+    // parallel version
+    std::vector<std::future<void>> futures;
+    futures.reserve(g_height);
+    for (int j = 0; j < g_height; j += N_ROWS_PER_TASK) {
+      auto fut = std::async(renderTask, j);
+      futures.push_back(std::move(fut));
+    }
+    for(auto& fut : futures) {
+      fut.wait();
+    }
+  } else {
+    // serial version
     for (int j = 0; j < g_height; j++) {
-      g_frame[j * g_width + i] = renderPixel(i, j);
+      renderRow(j);
     }
   }
+  
 
   glDrawPixels(g_width, g_height, GL_RGBA, GL_FLOAT, g_frame.get());
 
@@ -245,6 +279,11 @@ keyPressed(GLubyte _key, GLint _x, GLint _y) {
     case 'a':
       g_antiAliasMode = (g_antiAliasMode + 1) % g_antiAliasJitters.size();
       std::cout << "Anti-alias mode: " << g_antiAliasMode << std::endl;
+      break;
+    // P key: toggle parallelization
+    case 'p':
+      g_parallelize = !g_parallelize;
+      std::cout << "Parallelization: " << g_parallelize << std::endl;
       break;
     // V key: switch projection mode
     case 'v':
