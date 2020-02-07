@@ -44,6 +44,7 @@ OBJS = \
        PerspectiveView.o \
        Plane.o \
        PointLight.o \
+       Portal.o \
        Scene.o \
        SceneBuilder.o \
        Shader.o \

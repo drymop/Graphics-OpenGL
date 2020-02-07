@@ -6,6 +6,8 @@
 class Circle : public Plane
 {
   public:
+    Circle() = default;
+
     Circle(glm::vec3 _center, float _radius, glm::vec3 _normal, Material _m)
       : Plane(_center, _normal, _m),
         m_center(_center),

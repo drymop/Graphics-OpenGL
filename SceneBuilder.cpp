@@ -10,6 +10,7 @@
 #include "Material.h"
 #include "Plane.h"
 #include "PointLight.h"
+#include "Portal.h"
 #include "Sphere.h"
 
 
@@ -78,6 +79,17 @@ buildSceneFromJson(const Json& _sceneJson) {
         j.at("radius").get<float>(), 
         getVec3(j.at("normal")), 
         j.at("material").get<Material>()
+      )));
+    } else if (type == "portal") {
+      scene.addObject(std::move(std::make_unique<Portal>(
+        getVec3(j.at("center1")),
+        j.at("radius1").get<float>(), 
+        getVec3(j.at("normal1")),
+        getVec3(j.at("up1")),
+        getVec3(j.at("center2")),
+        j.at("radius2").get<float>(), 
+        getVec3(j.at("normal2")),
+        getVec3(j.at("up2"))
       )));
     }
   }
