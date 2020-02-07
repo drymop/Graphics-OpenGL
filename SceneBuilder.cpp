@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 
+#include "Circle.h"
 #include "Material.h"
 #include "Plane.h"
 #include "PointLight.h"
@@ -68,6 +69,13 @@ buildSceneFromJson(const Json& _sceneJson) {
     } else if (type == "plane") {
       scene.addObject(std::move(std::make_unique<Plane>(
         getVec3(j.at("point")), 
+        getVec3(j.at("normal")), 
+        j.at("material").get<Material>()
+      )));
+    } else if (type == "circle") {
+      scene.addObject(std::move(std::make_unique<Circle>(
+        getVec3(j.at("center")),
+        j.at("radius").get<float>(), 
         getVec3(j.at("normal")), 
         j.at("material").get<Material>()
       )));
