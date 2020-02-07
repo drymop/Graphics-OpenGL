@@ -12,19 +12,6 @@ addObject(std::unique_ptr<RenderableObject> _object) {
 
 void
 Scene::
-setAmbientLight(glm::vec3 _intensity) {
-  ambient_intensity = _intensity;
-}
-
-glm::vec3
-Scene::
-getAmbientLight() const {
-  return ambient_intensity;
-}
-
-
-void
-Scene::
 addLightSource(std::unique_ptr<LightSource> _light) {
   m_lights.push_back(std::move(_light));
 }

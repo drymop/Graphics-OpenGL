@@ -25,12 +25,13 @@ glm::vec3
 Shader::
 shadeSurface(const Scene& scene, glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& material) {
   glm::vec3 color(0, 0, 0);
-  // ambient light
-  color += material.ka * scene.getAmbientLight();
-  // for each light source, add the diffuse and specular lighting
+
+  // for each light source, add the ambient, diffuse and specular lighting
   for (auto& lightSource : scene.lightSources()) {
     LightRay light = lightSource->getLightRay(pos);
-    // make sure not blocked by other objects
+    // ambient light
+    color += material.ka * light.intensityAmbient;
+    // make sure not blocked by other objects before adding diffuse and specular
     Ray towardLight(pos, -light.direction);
     RayHit hitInfo;
     if (scene.firstRayHit(towardLight, &hitInfo)) {
