@@ -12,8 +12,12 @@ class Plane : public RenderableObject
         m_material(_material)
     {};
 
+    glm::vec3 getNormal() const {
+      return m_normal;
+    }
+
     Material getMaterial() const {
-        return m_material;
+      return m_material;
     }
     
     RayHit intersectRay(Ray _ray) const;
