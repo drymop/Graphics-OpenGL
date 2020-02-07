@@ -1,5 +1,13 @@
 #include "Portal.h"
 
+// test
+#include <iostream>
+
+void print(glm::vec3 v) {
+  using namespace std;
+  cout << "(" << v.x << ", " << v.y << ", " << v.z << ")";
+}
+
 Portal::
 Portal(glm::vec3 _center1, float _radius1, glm::vec3 _normal1, glm::vec3 _up1,
       glm::vec3 _center2, float _radius2, glm::vec3 _normal2, glm::vec3 _up2) 
@@ -13,7 +21,21 @@ Portal(glm::vec3 _center1, float _radius1, glm::vec3 _normal1, glm::vec3 _up1,
     s.right = glm::normalize(glm::cross(s.up, s.circle.getNormal()));
     s.up = glm::normalize(glm::cross(s.circle.getNormal(), s.right));
   }
+
+  using namespace std;
+  for(auto& s : sides) {
+    cout << "Center: ";
+    print(s.circle.getCenter());
+    cout << endl << "Normal: ";
+    print(s.circle.getNormal());
+    cout << endl << "Up: ";
+    print(s.up);
+    cout << endl << "Right: ";
+    print(s.right);
+    cout << endl;
+  }
 }
+
 
 RayHit 
 Portal::
@@ -37,16 +59,17 @@ transformHit(const PortalSide& inSide,
   RayHit transformedHit;
   transformedHit.t = hit.t;
   // transform the position from the hit side to the other side
-  glm::vec3 p = hit.position;
-  transformedHit.position = 
-      outSide.circle.getRadius() / inSide.circle.getRadius() *
-      (glm::dot(p, inSide.up) * outSide.up
-      + glm::dot(p, inSide.right) * outSide.right);
+  glm::vec3 p = hit.position - inSide.circle.getCenter();
+  transformedHit.position = outSide.circle.getCenter()
+      + outSide.circle.getRadius() / inSide.circle.getRadius()
+      * (glm::dot(p, inSide.up) * outSide.up
+      - glm::dot(p, inSide.right) * outSide.right);
 
+  // transform the view direction from the hit side to the other side
   glm::vec3 view2 = glm::normalize(
       glm::dot(viewDir, inSide.up) * outSide.up
       - glm::dot(viewDir, inSide.right) * outSide.right
-      - glm::dot(viewDir, inSide.circle.getNormal()) * outSide.circle.getNormal()
+      + glm::dot(viewDir, inSide.circle.getNormal()) * outSide.circle.getNormal()
   );
   transformedHit.normal = glm::normalize(view2 - viewDir);
   return transformedHit;

@@ -60,7 +60,7 @@ float g_delay{0.f};
 float g_framesPerSecond{0.f};
 
 // Parallelization
-bool g_parallelize{false};
+bool g_parallelize{true};
 const unsigned int N_ROWS_PER_TASK = 16;
 
 // Define view
@@ -91,7 +91,7 @@ Scene g_scene;
 // Shader
 Shader g_shader;
 const int N_SHADER_RECURSIONS = 5;
-int g_maxShaderRecursion{0};
+int g_maxShaderRecursion{5};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
