@@ -9,9 +9,11 @@ class PointLight : public LightSource
 {
   public:
     PointLight(glm::vec3 _pos, 
+        glm::vec3 _intensity_ambient,
         glm::vec3 _intensity_diffuse, 
         glm::vec3 _intensity_specular) 
     : m_pos(_pos),
+      m_intensity_ambient(_intensity_ambient),
       m_intensity_diffuse(_intensity_diffuse),
       m_intensity_specular(_intensity_specular)
       {};
@@ -22,6 +24,7 @@ class PointLight : public LightSource
 
   private:
     glm::vec3 m_pos;
+    glm::vec3 m_intensity_ambient;
     glm::vec3 m_intensity_diffuse;
     glm::vec3 m_intensity_specular;
 };

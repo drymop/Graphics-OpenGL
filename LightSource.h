@@ -9,6 +9,7 @@
 struct LightRay {
   glm::vec3 direction;
   float distance;
+  glm::vec3 intensityAmbient;
   glm::vec3 intensityDiffuse;
   glm::vec3 intensitySpecular;
 };

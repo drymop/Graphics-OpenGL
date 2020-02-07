@@ -46,11 +46,10 @@ buildSceneFromJson(const Json& _sceneJson) {
   Json lightsJson = _sceneJson.at("lights");
   for (auto& j : lightsJson) {
     std::string type = j.at("type");
-    if (type == "ambient") {
-      scene.setAmbientLight(getVec3(j.at("i_a")));
-    } else if (type == "point") {
+    if (type == "point") {
       scene.addLightSource(std::move(std::make_unique<PointLight>(
         getVec3(j.at("pos")), 
+        getVec3(j.at("i_a")), 
         getVec3(j.at("i_d")), 
         getVec3(j.at("i_s"))
       )));
