@@ -40,6 +40,7 @@ LIBS = $(GL_LIBS) -lpthread
 OBJS = \
        main.o \
        Circle.o \
+       CompileShaders.o \
        OrthographicView.o \
        PerspectiveView.o \
        Plane.o \
