@@ -11,7 +11,6 @@ Mesh parseObjFile(const std::string& _filename) {
   }
 
   std::vector<glm::vec3> positions;
-  std::vector<glm::vec2> textures;
   std::vector<glm::vec3> normals;
   std::vector<Vertex> vertices;
 
@@ -28,11 +27,6 @@ Mesh parseObjFile(const std::string& _filename) {
       iss >> p.x >> p.y >> p.z;
       positions.emplace_back(p);
     }
-    else if(tag == "vt") {
-      glm::vec2 t;
-      iss >> t.x >> t.y;
-      textures.emplace_back(t);
-    }
     else if(tag == "vn") {
       glm::vec3 n;
       iss >> n.x >> n.y >> n.z;
@@ -44,7 +38,7 @@ Mesh parseObjFile(const std::string& _filename) {
         iss >> vert;
         size_t p, t, n;
         sscanf(vert.c_str(), "%zu/%zu/%zu", &p, &t, &n);
-        vertices.emplace_back(positions[p-1], normals[n-1], textures[t-1]);
+        vertices.emplace_back(positions[p-1], normals[n-1]);
       }
     }
   }

@@ -14,10 +14,9 @@ struct Vertex {
 
   glm::vec3 m_p; ///< Position
   glm::vec3 m_n; ///< Normal
-  glm::vec2 m_t; ///< Texture
 
-  Vertex(const glm::vec3& _p, const glm::vec3& _n, const glm::vec2& _t) :
-    m_p(_p), m_n(_n), m_t(_t) {}
+  Vertex(const glm::vec3& _p, const glm::vec3& _n) :
+    m_p(_p), m_n(_n) {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,10 +27,10 @@ struct Vertex {
 /// 3, 4, 5 form a triangle, etc.
 ////////////////////////////////////////////////////////////////////////////////
 struct Mesh {
-  std::vector<Vertex> m_vertices;
+  std::vector<Vertex> vertices;
 
   Mesh(const std::vector<Vertex>& _vertices = std::vector<Vertex>()) : 
-    m_vertices(_vertices) {}
+    vertices(_vertices) {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////

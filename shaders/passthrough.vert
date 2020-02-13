@@ -6,11 +6,12 @@
 
 #version 330
 
- in vec4   vpos; // Input vertex position from data
- in vec4 vcolor; // Input vertex color from data
-out vec4  color; // Assigned vertex color to send to rasterizer
+ in vec4    vpos; // Input vertex position from data
+ in vec4 vnormal; // Input vertex normal from data
+flat out vec4   color; // Assigned vertex color to send to rasterizer
 
 void main() {
-  gl_Position = vpos;
-  color = vcolor;
+  // manually scale the object down, so it fits within the clipping space
+  gl_Position = vpos * vec4(0.04, 0.04, 0.04, 1.0);
+  color = abs(vnormal);
 }

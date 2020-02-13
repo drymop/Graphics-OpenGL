@@ -5,7 +5,7 @@
 
 #version 330
 
-in  vec4  color; // Interpolated color from rasterization step
+flat in  vec4  color; // Interpolated color from rasterization step
 out vec4 fcolor; // Output fragment color
 
 void main() {

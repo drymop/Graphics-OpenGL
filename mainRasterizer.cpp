@@ -30,23 +30,15 @@
 #include <glm/ext.hpp>
 
 #include "CompileShaders.h"
+#include "ObjFileParser.h"
 
-////////////////////////////////////////////////////////////////////////////////
-/// @brief Simple vertex class.
-struct Vertex {
-  glm::vec4 pos; ///< Position
-  glm::vec4 col; ///< Color
-
-  Vertex(const glm::vec4& _pos, const glm::vec4& _col) :
-    pos{_pos}, col{_col}{}
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
 
 // Window
-int g_width{1360};
-int g_height{768};
+int g_width{1280};
+int g_height{720};
 int g_window{0};
 GLuint g_program{0};
 GLuint g_vao{0}; ///< Vertex Array Object
@@ -60,6 +52,8 @@ std::chrono::high_resolution_clock::time_point g_frameTime{
 float g_delay{0.f};
 float g_framesPerSecond{0.f};
 
+int g_size_of_mesh;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
 
@@ -67,23 +61,22 @@ float g_framesPerSecond{0.f};
 /// @brief Initialize GL settings
 void
 initialize() {
-  std::cout << "Here0" << std::endl;
   glClearColor(0.f, 0.f, 0.0f, 0.f);
   glEnable(GL_COLOR_MATERIAL);
   glEnable(GL_DEPTH_TEST);
 
-  std::cout << "Here0" << std::endl;
-  g_program = compileProgram("Shaders/passthrough.vert",
-                             "Shaders/passthrough.frag");
+  g_program = compileProgram("shaders/passthrough.vert",
+                             "shaders/passthrough.frag");
 
-  // Simple static data
-  static Vertex vertices[] = {
-    Vertex{glm::vec4{-1.f, -1.f, 0, 1}, glm::vec4{1.f, 0.f, 0.f, 1.f}},
-    Vertex{glm::vec4{ 1.f,  0.f, 0, 1}, glm::vec4{0.f, 1.f, 0.f, 1.f}},
-    Vertex{glm::vec4{ 0.f,  1.f, 0, 1}, glm::vec4{0.f, 0.f, 1.f, 1.f}}
-  };
+  // // Simple static data
+  // static Vertex vertices[] = {
+  //   Vertex{glm::vec4{-1.f, -1.f, 0, 1}, glm::vec4{1.f, 0.f, 0.f, 1.f}},
+  //   Vertex{glm::vec4{ 1.f,  0.f, 0, 1}, glm::vec4{0.f, 1.f, 0.f, 1.f}},
+  //   Vertex{glm::vec4{ 0.f,  1.f, 0, 1}, glm::vec4{0.f, 0.f, 1.f, 1.f}}
+  // };
 
-  std::cout << "Here" << std::endl;
+  static Mesh mesh = parseObjFile("models/sphere.obj");
+
   // Generate vertex array
   glGenVertexArrays(1, &g_vao);
   glBindVertexArray(g_vao);
@@ -91,15 +84,16 @@ initialize() {
   // Generate/specify vertex buffer
   glGenBuffers(1, &g_vbo);
   glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*3, vertices, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*mesh.vertices.size(), &mesh.vertices[0], GL_STATIC_DRAW);
 
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,
-                        sizeof(Vertex), (char*)NULL + 0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+                        sizeof(Vertex), 0);
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE,
-                        sizeof(Vertex), (char*)NULL + sizeof(glm::vec4));
-  std::cout << "Here2" << std::endl;
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
+                        sizeof(Vertex), (void*)sizeof(glm::vec3));
+
+  g_size_of_mesh = mesh.vertices.size();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,7 +138,7 @@ draw() {
 
   //////////////////////////////////////////////////////////////////////////////
   // Draw
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawArrays(GL_TRIANGLES, 0, g_size_of_mesh);
 
   //////////////////////////////////////////////////////////////////////////////
   // Show
