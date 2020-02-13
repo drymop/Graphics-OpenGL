@@ -38,7 +38,7 @@ INCL = $(GL_INCL)
 LIBS = $(GL_LIBS) -lpthread
 
 OBJS = \
-       main.o \
+       mainRayTracer.o \
        Circle.o \
        CompileShaders.o \
        ObjFileParser.o \
