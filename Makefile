@@ -37,21 +37,25 @@ endif
 INCL = $(GL_INCL)
 LIBS = $(GL_LIBS) -lpthread
 
-OBJS = \
-       mainRayTracer.o \
-       Circle.o \
-       CompileShaders.o \
-       ObjFileParser.o \
-       OrthographicView.o \
-       PerspectiveView.o \
-       Plane.o \
-       PointLight.o \
-       Portal.o \
-       Scene.o \
-       SceneBuilder.o \
-       Shader.o \
-       Sphere.o \
+# OBJS for ray tracer
+# OBJS = \
+#        mainRayTracer.o \
+#        Circle.o \
+#        OrthographicView.o \
+#        PerspectiveView.o \
+#        Plane.o \
+#        PointLight.o \
+#        Portal.o \
+#        Scene.o \
+#        SceneBuilder.o \
+#        Shader.o \
+#        Sphere.o \
 
+# OBJS for rasterizer
+OBJS = \
+       mainRasterizer.o \
+       ObjFileParser.o \
+       CompileShaders.o
 
 EXECUTABLE = main.out
 
