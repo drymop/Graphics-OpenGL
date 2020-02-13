@@ -41,6 +41,7 @@ OBJS = \
        main.o \
        Circle.o \
        CompileShaders.o \
+       ObjFileParser.o \
        OrthographicView.o \
        PerspectiveView.o \
        Plane.o \
