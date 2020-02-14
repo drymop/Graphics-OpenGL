@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 
       Name: Tuan Le
-Assignment: Programming 1 (Ray tracing)
+Assignment: Programming 2 (Rasterization)
 
 --------------------------------------------------------------------------------
 -- Known Bugs/Issues
@@ -23,11 +23,7 @@ Please list all issues/bugs/missing features for this assignment.
 
 Please list all extra work completed for this assignment.
 
-1. Orthographic view
-2. Anti-aliasing
-3. Parallelization
-4. Ideal specular reflection
-5. Extra object types (circle, portal)
+1. 
 
 --------------------------------------------------------------------------------
 -- Collaborators and Sources
@@ -39,16 +35,8 @@ e.g., if you asked a question on stackoverflow. Be sure to cite sources again in
 the assignment body, e.g., copy website link into code. Do not list the
 instructor as a collaborator -- this is assumed.
 
- 1. https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/reflection-refraction-fresnel
- 2. David Qin
- 3. Sreya Aluri
- 4.
- 5.
- 6.
- 7.
- 8.
- 9.
-10.
+ 1. https://computergraphics.stackexchange.com/questions/5323/dynamic-array-in-glsl/5326
+ 2.
 
 All students are expected to be in accordance with the student honor code.
 http://studentdevelopment.richmond.edu/student-handbook/honor/
@@ -65,6 +53,6 @@ this assignment, and that I have not received or given any assistance that is
 contrary to the letter or the spirit of the collaboration guidelines for this
 assignment.
 
-Signature (Type full name): Tuan Le
-                      Date: 2/6/2020
+Signature (Type full name):
+                      Date:
 

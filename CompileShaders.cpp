@@ -79,9 +79,6 @@ compileProgram(const string& _vertexShader,
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
 
-  // Normally return, and specify this when needed
-  glUseProgram(shaderProgram);
-
   return shaderProgram;
 }
 

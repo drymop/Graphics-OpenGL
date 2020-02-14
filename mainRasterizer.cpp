@@ -65,8 +65,14 @@ initialize() {
   glEnable(GL_COLOR_MATERIAL);
   glEnable(GL_DEPTH_TEST);
 
+  // Test compiling the new shader (flat)
+  // TODO Remove this test
+  compileProgram("shaders/flat.vert",
+                 "shaders/flat.frag");
+
   g_program = compileProgram("shaders/passthrough.vert",
                              "shaders/passthrough.frag");
+  glUseProgram(g_program);
 
   Mesh mesh = parseObjFile("models/sphere.obj");
 
