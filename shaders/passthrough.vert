@@ -14,14 +14,16 @@ struct Material
   float shininess;
 };
 
-uniform  Material material;
-     in  vec4         vpos; // Input vertex position from data
-     in  vec4      vnormal; // Input vertex normal from data
-flat out vec4        color; // Assigned vertex color to send to rasterizer
+uniform  Material            material; // Material of the vertex
+uniform  mat4     modelToCameraMatrix; // Transform from model to camera coordinate
+
+     in  vec4 vpos; // Input vertex position from data
+     in  vec4 vnormal; // Input vertex normal from data
+flat out vec4 color; // Assigned vertex color to send to rasterizer
 
 void main() {
   // manually scale the object down, so it fits within the clipping space
-  gl_Position = vpos * vec4(0.04, 0.04, 0.04, 1.0);
+  gl_Position = modelToCameraMatrix * vpos;
   // // use normal as color
   // color = abs(vnormal);
   color = vec4(material.kd, 1);

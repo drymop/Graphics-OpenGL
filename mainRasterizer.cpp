@@ -52,6 +52,7 @@ float g_delay{0.f};
 float g_framesPerSecond{0.f};
 
 std::unique_ptr<RasterizableObject> g_obj;
+std::unique_ptr<RasterizableObject> g_obj2;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
@@ -69,18 +70,32 @@ initialize() {
 
   Mesh mesh = parseObjFile("models/sphere.obj");
 
-  MaterialUniformLocation loc {
+  MaterialUniformLocation materialLoc {
     glGetUniformLocation(g_program, "material.ka"),
     glGetUniformLocation(g_program, "material.kd"),
     glGetUniformLocation(g_program, "material.ks"),
     glGetUniformLocation(g_program, "material.shininess")
   };
 
+  GLint modelToCamLoc = glGetUniformLocation(g_program, "modelToCameraMatrix");
+
   Material mat {
     {}, {1, 0, 0}, {}, 0
   };
+  Material mat2 {
+    {}, {0, 1, 0}, {}, 0
+  };
 
-  g_obj = std::make_unique<RasterizableObject>(mesh, mat, glm::mat4(), loc);
+  glm::mat4 model2World = glm::scale(glm::translate(glm::mat4(1.0f), {0.5f, 0.1f, -0.5f}), {0.02f, 0.02f, 0.02f});
+  glm::mat4 model2World2 = glm::scale(glm::translate(glm::mat4(1.0f), {-0.3f, -0.1f, 0.f}), {0.01f, 0.03f, 0.025f});
+
+  g_obj = std::make_unique<RasterizableObject>(mesh, mat, model2World);
+  g_obj->setMaterialUniformLocation(materialLoc);
+  g_obj->setModelToCameraMatrixUniformLocation(modelToCamLoc);
+
+  g_obj2 = std::make_unique<RasterizableObject>(mesh, mat2, model2World2);
+  g_obj2->setMaterialUniformLocation(materialLoc);
+  g_obj2->setModelToCameraMatrixUniformLocation(modelToCamLoc);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,6 +141,7 @@ draw() {
   //////////////////////////////////////////////////////////////////////////////
   // Draw
   g_obj->draw();
+  g_obj2->draw();
 
   //////////////////////////////////////////////////////////////////////////////
   // Show

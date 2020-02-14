@@ -4,11 +4,10 @@
 RasterizableObject::
 RasterizableObject(const Mesh& _mesh, 
                    const Material& _material, 
-                   const glm::mat4& _modelToWorldMatrix,
-                   const MaterialUniformLocation& _materialUniformLoc) 
+                   const glm::mat4& _modelToWorldMatrix)
   : m_nVertices(_mesh.vertices.size()),
-    m_material(_material),
-    m_materialUniformLocation(_materialUniformLoc)
+    m_modelToWorldMatrix(_modelToWorldMatrix),
+    m_material(_material)
 {
   // Create vertex array object
   glGenVertexArrays(1, &m_vao);
@@ -41,10 +40,13 @@ RasterizableObject(const Mesh& _mesh,
 void
 RasterizableObject::
 draw() {
+  // set tranformation uniform
+  glUniformMatrix4fv(m_modelToCameraMatrixUniformLocation, 
+                     1, GL_FALSE, glm::value_ptr(m_modelToWorldMatrix));
   // set material uniform
-  glUniform3fv(m_materialUniformLocation.kaLoc, 1, (GLfloat*)&m_material.ka);
-  glUniform3fv(m_materialUniformLocation.kdLoc, 1, (GLfloat*)&m_material.kd);
-  glUniform3fv(m_materialUniformLocation.ksLoc, 1, (GLfloat*)&m_material.ks);
+  glUniform3fv(m_materialUniformLocation.kaLoc, 1, glm::value_ptr(m_material.ka));
+  glUniform3fv(m_materialUniformLocation.kdLoc, 1, glm::value_ptr(m_material.kd));
+  glUniform3fv(m_materialUniformLocation.ksLoc, 1, glm::value_ptr(m_material.ks));
   glUniform1f (m_materialUniformLocation.shininessLoc, m_material.shininess);
   // draw
   glBindVertexArray(m_vao);
