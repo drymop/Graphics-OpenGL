@@ -6,6 +6,8 @@
 
 #include <glm/glm.hpp>
 
+#include "Material.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief One possible storage of vertex information.
@@ -30,14 +32,20 @@ struct Mesh {
   std::vector<Vertex> vertices;
 
   Mesh(const std::vector<Vertex>& _vertices = std::vector<Vertex>()) : 
-    vertices(_vertices) {}
+    vertices(_vertices) {};
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Parse an obj file into a mesh
 /// @param _filename Filename
-/// @return Loaded mesh. If error, an empty mesh will be returned
+/// @return Loaded mesh.
 Mesh parseObjFile(const std::string& _filename);
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Parse an mtl file to a material
+/// @param _filename Filename
+/// @return Loaded material
+Material parseMaterialFile(const std::string& _filename);
 
 
 #endif // OBJ_FILE_PARSER_H_

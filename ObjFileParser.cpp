@@ -2,12 +2,13 @@
 
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 
 
 Mesh parseObjFile(const std::string& _filename) {
   std::ifstream ifs(_filename);
   if(!ifs) {
-    return Mesh();
+    throw std::invalid_argument("Cannot open file");
   }
 
   std::vector<glm::vec3> positions;
@@ -44,4 +45,37 @@ Mesh parseObjFile(const std::string& _filename) {
   }
 
   return Mesh(vertices);
+}
+
+Material parseMaterialFile(const std::string& _filename) {
+  std::ifstream ifs(_filename);
+  if(!ifs) {
+    throw std::invalid_argument("Cannot open file");
+  }
+
+  Material m{};
+  std::string line;
+  
+  while(ifs) {
+    getline(ifs, line);
+    std::istringstream iss(line);
+    std::string tag;
+    iss >> tag;
+    if(tag == "Ka") {
+      iss >> m.ka.x >> m.ka.y >> m.ka.z;
+    }
+    else if (tag == "Kd") {
+      iss >> m.kd.x >> m.kd.y >> m.kd.z;
+    } 
+    else if (tag == "Ks") {
+      iss >> m.ks.x >> m.ks.y >> m.ks.z;
+    }
+    else if (tag == "Kr") {
+      iss >> m.ks.x >> m.ks.y >> m.ks.z;
+    }
+    else if (tag == "Ns") {
+      iss >> m.shininess;
+    }
+  }
+  return m;
 }
