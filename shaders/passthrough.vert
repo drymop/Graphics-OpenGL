@@ -6,13 +6,23 @@
 
 #version 330
 
-     in  vec4    vpos; // Input vertex position from data
-     in  vec4 vnormal; // Input vertex normal from data
-flat out vec4   color; // Assigned vertex color to send to rasterizer
+struct Material
+{
+  vec3 ka;
+  vec3 kd;
+  vec3 ks;
+  float shininess;
+};
+
+uniform  Material material;
+     in  vec4         vpos; // Input vertex position from data
+     in  vec4      vnormal; // Input vertex normal from data
+flat out vec4        color; // Assigned vertex color to send to rasterizer
 
 void main() {
   // manually scale the object down, so it fits within the clipping space
   gl_Position = vpos * vec4(0.04, 0.04, 0.04, 1.0);
-  // use normal as color
-  color = abs(vnormal);
+  // // use normal as color
+  // color = abs(vnormal);
+  color = vec4(material.kd, 1);
 }

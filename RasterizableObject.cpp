@@ -4,8 +4,11 @@
 RasterizableObject::
 RasterizableObject(const Mesh& _mesh, 
                    const Material& _material, 
-                   const glm::mat4& _modelMatrix) 
-  : m_nVertices(_mesh.vertices.size())
+                   const glm::mat4& _modelToWorldMatrix,
+                   const MaterialUniformLocation& _materialUniformLoc) 
+  : m_nVertices(_mesh.vertices.size()),
+    m_material(_material),
+    m_materialUniformLocation(_materialUniformLoc)
 {
   // Create vertex array object
   glGenVertexArrays(1, &m_vao);
@@ -38,6 +41,12 @@ RasterizableObject(const Mesh& _mesh,
 void
 RasterizableObject::
 draw() {
+  // set material uniform
+  glUniform3fv(m_materialUniformLocation.kaLoc, 1, (GLfloat*)&m_material.ka);
+  glUniform3fv(m_materialUniformLocation.kdLoc, 1, (GLfloat*)&m_material.kd);
+  glUniform3fv(m_materialUniformLocation.ksLoc, 1, (GLfloat*)&m_material.ks);
+  glUniform1f (m_materialUniformLocation.shininessLoc, m_material.shininess);
+  // draw
   glBindVertexArray(m_vao);
   glDrawArrays(GL_TRIANGLES, 0, m_nVertices);
   glBindVertexArray(0);

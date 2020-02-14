@@ -23,20 +23,33 @@
 #include "ObjFileParser.h"
 
 
+/// The locations of uniforms related to material in shader
+struct MaterialUniformLocation {
+  GLint kaLoc;
+  GLint kdLoc;
+  GLint ksLoc;
+  GLint shininessLoc;
+};
+
 class RasterizableObject
 {
   public:
     RasterizableObject(const Mesh& _mesh, 
                        const Material& _material, 
-                       const glm::mat4& _modelMatrix);
+                       const glm::mat4& _modelToWorldMatrix,
+                       const MaterialUniformLocation& _materialUniformLoc);
 
     void draw();
 
   private:
     /// Name of vertex array object for this object
     GLuint m_vao;
+    /// Location of uniform to store object material
+    MaterialUniformLocation m_materialUniformLocation;
     /// Number of vertices in the mesh
     size_t m_nVertices;
+    /// Material of the object
+    Material m_material;
 };
 
 #if   defined(OSX)

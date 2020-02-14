@@ -68,7 +68,19 @@ initialize() {
                              "shaders/passthrough.frag");
 
   Mesh mesh = parseObjFile("models/sphere.obj");
-  g_obj = std::make_unique<RasterizableObject>(mesh, Material(), glm::mat4());
+
+  MaterialUniformLocation loc {
+    glGetUniformLocation(g_program, "material.ka"),
+    glGetUniformLocation(g_program, "material.kd"),
+    glGetUniformLocation(g_program, "material.ks"),
+    glGetUniformLocation(g_program, "material.shininess")
+  };
+
+  Material mat {
+    {}, {1, 0, 0}, {}, 0
+  };
+
+  g_obj = std::make_unique<RasterizableObject>(mesh, mat, glm::mat4(), loc);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
