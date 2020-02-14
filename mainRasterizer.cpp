@@ -68,13 +68,6 @@ initialize() {
   g_program = compileProgram("shaders/passthrough.vert",
                              "shaders/passthrough.frag");
 
-  // // Simple static data
-  // static Vertex vertices[] = {
-  //   Vertex{glm::vec4{-1.f, -1.f, 0, 1}, glm::vec4{1.f, 0.f, 0.f, 1.f}},
-  //   Vertex{glm::vec4{ 1.f,  0.f, 0, 1}, glm::vec4{0.f, 1.f, 0.f, 1.f}},
-  //   Vertex{glm::vec4{ 0.f,  1.f, 0, 1}, glm::vec4{0.f, 0.f, 1.f, 1.f}}
-  // };
-
   static Mesh mesh = parseObjFile("models/sphere.obj");
 
   // Generate vertex array
