@@ -54,8 +54,9 @@ LIBS = $(GL_LIBS) -lpthread
 # OBJS for rasterizer
 OBJS = \
        mainRasterizer.o \
+       CompileShaders.o \
        ObjFileParser.o \
-       CompileShaders.o
+       RasterizableObject.o \
 
 EXECUTABLE = main.out
 

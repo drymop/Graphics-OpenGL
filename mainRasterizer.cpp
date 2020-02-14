@@ -30,6 +30,7 @@
 #include <glm/ext.hpp>
 
 #include "CompileShaders.h"
+#include "RasterizableObject.h"
 #include "ObjFileParser.h"
 
 
@@ -41,8 +42,6 @@ int g_width{1280};
 int g_height{720};
 int g_window{0};
 GLuint g_program{0};
-GLuint g_vao{0}; ///< Vertex Array Object
-GLuint g_vbo{0}; ///< Vertex Buffer Object
 
 // Frame rate
 const unsigned int FPS = 60;
@@ -52,7 +51,7 @@ std::chrono::high_resolution_clock::time_point g_frameTime{
 float g_delay{0.f};
 float g_framesPerSecond{0.f};
 
-int g_size_of_mesh;
+std::unique_ptr<RasterizableObject> g_obj;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
@@ -68,25 +67,8 @@ initialize() {
   g_program = compileProgram("shaders/passthrough.vert",
                              "shaders/passthrough.frag");
 
-  static Mesh mesh = parseObjFile("models/sphere.obj");
-
-  // Generate vertex array
-  glGenVertexArrays(1, &g_vao);
-  glBindVertexArray(g_vao);
-
-  // Generate/specify vertex buffer
-  glGenBuffers(1, &g_vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*mesh.vertices.size(), &mesh.vertices[0], GL_STATIC_DRAW);
-
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                        sizeof(Vertex), 0);
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                        sizeof(Vertex), (void*)sizeof(glm::vec3));
-
-  g_size_of_mesh = mesh.vertices.size();
+  Mesh mesh = parseObjFile("models/sphere.obj");
+  g_obj = std::make_unique<RasterizableObject>(mesh, Material(), glm::mat4());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,7 +113,7 @@ draw() {
 
   //////////////////////////////////////////////////////////////////////////////
   // Draw
-  glDrawArrays(GL_TRIANGLES, 0, g_size_of_mesh);
+  g_obj->draw();
 
   //////////////////////////////////////////////////////////////////////////////
   // Show

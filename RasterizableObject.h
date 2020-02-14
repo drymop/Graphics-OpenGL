@@ -3,8 +3,21 @@
 
 #include <string>
 
+// GL
+#define GL_GLEXT_PROTOTYPES
+#if   defined(OSX)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#include <GLUT/glut.h>
+#elif defined(LINUX)
+#include <GL/glut.h>
+#endif
+#include <GL/freeglut.h>
+
 // GLM
 #include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/ext.hpp>
 
 #include "Material.h"
 #include "ObjFileParser.h"
@@ -13,17 +26,21 @@
 class RasterizableObject
 {
   public:
-    RasterizableObject(const std::string& _meshFile, 
-                       const std::string& _materialFile, 
-                       glm::mat4 _modelMatrix)
-      : m_mesh(parseObjFile(_meshFile)), 
-        m_material(parseMaterialFile(_materialFile)),
-        m_modelMatrix(_modelMatrix) {};
+    RasterizableObject(const Mesh& _mesh, 
+                       const Material& _material, 
+                       const glm::mat4& _modelMatrix);
+
+    void draw();
 
   private:
-    Mesh m_mesh;
-    Material m_material;
-    glm::mat4 m_modelMatrix;
+    /// Name of vertex array object for this object
+    GLuint m_vao;
+    /// Number of vertices in the mesh
+    size_t m_nVertices;
 };
+
+#if   defined(OSX)
+#pragma clang diagnostic pop
+#endif
 
 #endif // RASTERIZABLE_OBJECT_H_
