@@ -20,6 +20,7 @@ struct Light {
 uniform int   numLights;          // number of lights in the scene
 uniform Light lights[MAX_LIGHTS]; // lights in the scene
 uniform vec3  cameraPos;          // Position of camera in the world
+uniform mat4  projectionMatrix;   // Transform from world to homogeneous coordinate
 
 // Properties of the object
 struct Material {
@@ -28,10 +29,9 @@ struct Material {
   vec3 ks;
   float shininess;
 };
-uniform  Material material;            // Material of the vertex
-uniform  mat4     projectionMatrix;    // Transform from model to homogeneous coordinate
-uniform  mat4     vModelToWorldMatrix; // Transform vertex from model to world coordinate
-uniform  mat4     nModelToWorldMatrix; // Transform normal from model to world coordinate
+uniform Material material;            // Material of the vertex
+uniform mat4     vModelToWorldMatrix; // Transform vertex from model to world coordinate
+uniform mat4     nModelToWorldMatrix; // Transform normal from model to world coordinate
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex input/output
@@ -41,7 +41,9 @@ flat out vec4 color;   // Assigned vertex color to send to rasterizer
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Determine the vertex's color using Blinn-Phong illumination model
+/// Determine the vertex's color using Blinn-Phong illumination model
+/// @param pos    Position of vertex in world space
+/// @param normal Normal of vertex in world space
 vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
   vec3 color = vec3(0.0, 0.0, 0.0);
   vec3 viewDir = normalize(cameraPos - pos); // direction toward camera
@@ -65,12 +67,16 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
 
 
 void main() {
-  // Calculate homogeneous coordinate for clipping
-  gl_Position = projectionMatrix * vpos;
-
   // Calculate lighting on vertex
   // First, calculate position and normal of vector in world coordinate
   vec4 pos = vModelToWorldMatrix * vpos;
-  vec4 normal = nModelToWorldMatrix * vnormal;
-  shadeBlinnPhong(pos.xyz, normal.xyz);
+  vec4 normal = normalize(nModelToWorldMatrix * vnormal);
+  color = shadeBlinnPhong(pos.xyz, normal.xyz);
+
+  // TODO REmove this
+  // color = abs(normal);
+  // color = vec4(material.kd, 1);
+
+  // Calculate homogeneous coordinate of vertex for clipping
+  gl_Position = projectionMatrix * pos;
 }

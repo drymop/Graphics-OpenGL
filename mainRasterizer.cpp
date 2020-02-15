@@ -61,19 +61,48 @@ std::unique_ptr<RasterizableObject> g_obj2;
 /// @brief Initialize GL settings
 void
 initialize() {
+  using glm::vec3, glm::vec4, glm::mat4;
+  using glm::translate, glm::scale, glm::transpose, glm::inverse;
+
   glClearColor(0.f, 0.f, 0.0f, 0.f);
   glEnable(GL_COLOR_MATERIAL);
   glEnable(GL_DEPTH_TEST);
 
-  // Test compiling the new shader (flat)
-  // TODO Remove this test
-  compileProgram("shaders/flat.vert",
-                 "shaders/flat.frag");
-
-  g_program = compileProgram("shaders/passthrough.vert",
-                             "shaders/passthrough.frag");
+  g_program = compileProgram("shaders/flat.vert",
+                             "shaders/flat.frag");
   glUseProgram(g_program);
 
+  //////////////////////////
+  // Scene
+
+  // Set up camera
+  glUniform3f(glGetUniformLocation(g_program, "cameraPos"), 0, 0, 0);
+  vec3 eye(0.f, 0.f, 0.f);
+  vec3 center(0.f, 0.f, -1.f);
+  vec3 up(0.f, 1.f, 0.f);
+  mat4 viewMatrix = glm::lookAt(eye, center, up);
+  std::cout << "view matrix " << glm::to_string(viewMatrix) << std::endl;
+  std::cout << "eye at 0    " << glm::to_string(viewMatrix * vec4(eye, 1.0f)) << std::endl;
+  mat4 projMatrix = glm::perspective(glm::radians(60.f), g_width/((float)g_height), 0.1f, 100.f);
+  std::cout << "proj matrix " << glm::to_string(projMatrix) << std::endl;
+  projMatrix *= viewMatrix;
+  std::cout << "pv   matrix " << glm::to_string(projMatrix) << std::endl;
+  glUniformMatrix4fv(
+      glGetUniformLocation(g_program, "projectionMatrix"), 
+      1, GL_FALSE, glm::value_ptr(projMatrix));
+
+  // Set up light
+  glUniform1i(glGetUniformLocation(g_program, "numLights"), 2);
+  glUniform3f(glGetUniformLocation(g_program, "lights[0].pos"), 2, 1, -10);
+  glUniform3f(glGetUniformLocation(g_program, "lights[0].ia"), 0.1, 0.1, 0.1);
+  glUniform3f(glGetUniformLocation(g_program, "lights[0].id"), 1.0, 1.0, 1.0);
+  glUniform3f(glGetUniformLocation(g_program, "lights[0].is"), 1.0, 1.0, 1.0);
+  glUniform3f(glGetUniformLocation(g_program, "lights[1].pos"), -3, 5, -7);
+  glUniform3f(glGetUniformLocation(g_program, "lights[1].ia"), 0.1, 0.1, 0.1);
+  glUniform3f(glGetUniformLocation(g_program, "lights[1].id"), 1.0, 1.0, 1.0);
+  glUniform3f(glGetUniformLocation(g_program, "lights[1].is"), 1.0, 1.0, 1.0);
+
+  // Objects
   Mesh mesh = parseObjFile("models/sphere.obj");
 
   MaterialUniformLocation materialLoc {
@@ -83,25 +112,33 @@ initialize() {
     glGetUniformLocation(g_program, "material.shininess")
   };
 
-  GLint modelToCamLoc = glGetUniformLocation(g_program, "modelToCameraMatrix");
+  GLint vModelToWorldLoc = glGetUniformLocation(g_program, "vModelToWorldMatrix");
+  GLint nModelToWorldLoc = glGetUniformLocation(g_program, "nModelToWorldMatrix");
 
   Material mat {
-    {}, {1, 0, 0}, {}, 0
+    {0.5, 0.5, 0.5}, {1, 0, 0}, {0.8, 0.8, 0.8}, 100
   };
   Material mat2 {
-    {}, {0, 1, 0}, {}, 0
+    {0.5, 0.5, 0.5}, {0, 1, 0}, {0.5, 0.5, 0.5}, 50
   };
 
-  glm::mat4 model2World = glm::scale(glm::translate(glm::mat4(1.0f), {0.5f, 0.1f, -0.5f}), {0.02f, 0.02f, 0.02f});
-  glm::mat4 model2World2 = glm::scale(glm::translate(glm::mat4(1.0f), {-0.3f, -0.1f, 0.f}), {0.01f, 0.03f, 0.025f});
+  mat4 vModel2World = scale(translate(mat4(1.f), {1.5f, 0.f, -15.f}), {0.1f, 0.1f, 0.1f});
+  mat4 nModel2World = transpose(inverse(vModel2World));
+  // std::cout << "vmodel->world " << glm::to_string(vModel2World) << std::endl;
+  // std::cout << "nmodel->world " << glm::to_string(transpose(nModel2World)) << std::endl;
 
-  g_obj = std::make_unique<RasterizableObject>(mesh, mat, model2World);
+  mat4 vModel2World2 = scale(translate(mat4(1.f), {-1.5f, 0.f, -10.f}), {0.1f, 0.1f, 0.1f});
+  mat4 nModel2World2 = transpose(inverse(vModel2World));
+  
+  g_obj = std::make_unique<RasterizableObject>(mesh, mat, vModel2World, nModel2World);
   g_obj->setMaterialUniformLocation(materialLoc);
-  g_obj->setModelToCameraMatrixUniformLocation(modelToCamLoc);
+  g_obj->setVertexWorldMatrixUniformLocation(vModelToWorldLoc);
+  g_obj->setNormalWorldMatrixUniformLocation(nModelToWorldLoc);
 
-  g_obj2 = std::make_unique<RasterizableObject>(mesh, mat2, model2World2);
+  g_obj2 = std::make_unique<RasterizableObject>(mesh, mat2, vModel2World2, nModel2World2);
   g_obj2->setMaterialUniformLocation(materialLoc);
-  g_obj2->setModelToCameraMatrixUniformLocation(modelToCamLoc);
+  g_obj2->setVertexWorldMatrixUniformLocation(vModelToWorldLoc);
+  g_obj2->setNormalWorldMatrixUniformLocation(nModelToWorldLoc);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -159,7 +196,7 @@ draw() {
   g_frameRate = duration_cast<duration<float>>(time - g_frameTime).count();
   g_frameTime = time;
   g_framesPerSecond = 1.f/(g_delay + g_frameRate);
-  printf("FPS: %6.2f\n", g_framesPerSecond);
+  // printf("FPS: %6.2f\n", g_framesPerSecond);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -223,7 +260,6 @@ main(int _argc, char** _argv) {
   glutInitWindowPosition(50, 100);
   glutInitWindowSize(g_width, g_height); // HD size
   g_window = glutCreateWindow("Spiderling: A Rudamentary Game Engine");
-  std::cout << "Initializing GLUTWindow1" << std::endl;
 
   // GL
   initialize();
