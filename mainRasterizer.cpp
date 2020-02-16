@@ -70,6 +70,8 @@ initialize() {
 
   g_program = compileProgram("shaders/phong.vert",
                              "shaders/phong.frag");
+  // g_program = compileProgram("shaders/gouraud.vert",
+                             // "shaders/gouraud.frag");
   glUseProgram(g_program);
 
   //////////////////////////
@@ -119,9 +121,6 @@ initialize() {
 
   mat4 vModel2World = scale(translate(mat4(1.f), {1.5f, 0.f, -15.f}), {0.1f, 0.1f, 0.1f});
   mat4 nModel2World = transpose(inverse(vModel2World));
-  // std::cout << "vmodel->world " << glm::to_string(vModel2World) << std::endl;
-  // std::cout << "nmodel->world " << glm::to_string(transpose(nModel2World)) << std::endl;
-
   mat4 vModel2World2 = scale(translate(mat4(1.f), {-1.5f, 0.f, -10.f}), {0.1f, 0.1f, 0.1f});
   mat4 nModel2World2 = transpose(inverse(vModel2World));
   

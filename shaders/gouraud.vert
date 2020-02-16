@@ -35,8 +35,8 @@ uniform mat4     normalModelMatrix;   // Transform normal from model to world co
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex input/output
-in  vec4 vpos;    // Input vertex position from data
-in  vec4 vnormal; // Input vertex normal from data
+in  vec3 vpos;    // Input vertex position from data
+in  vec3 vnormal; // Input vertex normal from data
 out vec4 color;   // Assigned vertex color to send to rasterizer
 
 
@@ -69,9 +69,9 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
 void main() {
   // Calculate lighting on vertex
   // First, calculate position and normal of vector in world coordinate
-  vec4 pos = vertexModelMatrix * vpos;
-  vec4 normal = normalize(normalModelMatrix * vnormal);
-  color = shadeBlinnPhong(pos.xyz, normal.xyz);
+  vec4 pos = vertexModelMatrix * vec4(vpos, 1);
+  vec4 normal = normalModelMatrix * vec4(vnormal, 0);
+  color = shadeBlinnPhong(pos.xyz, normalize(normal.xyz));
 
   // Calculate homogeneous coordinate of vertex for clipping
   gl_Position = viewProjectionMatrix * pos;
