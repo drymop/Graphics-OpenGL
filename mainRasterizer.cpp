@@ -68,8 +68,8 @@ initialize() {
   glEnable(GL_COLOR_MATERIAL);
   glEnable(GL_DEPTH_TEST);
 
-  g_program = compileProgram("shaders/flat.vert",
-                             "shaders/flat.frag");
+  g_program = compileProgram("shaders/gouraud.vert",
+                             "shaders/gouraud.frag");
   glUseProgram(g_program);
 
   //////////////////////////
