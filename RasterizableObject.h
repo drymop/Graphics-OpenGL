@@ -36,19 +36,19 @@ class RasterizableObject
   public:
     RasterizableObject(const Mesh& _mesh, 
                        const Material& _material, 
-                       const glm::mat4& _vModelToWorldMatrix,
-                       const glm::mat4& _nModelToWorldMatrix);
+                       const glm::mat4& _vModelMatrix,
+                       const glm::mat4& _nModelMatrix);
 
     void setMaterialUniformLocation(const MaterialUniformLocation& _loc) {
       m_materialUniformLocation = _loc;
     }
 
-    void setVertexWorldMatrixUniformLocation(GLint _loc) {
-      m_vModelToWorldMatrixLocation = _loc;
+    void setVertexModelMatrixUniformLocation(GLint _loc) {
+      m_vModelMatrixLocation = _loc;
     }
 
-    void setNormalWorldMatrixUniformLocation(GLint _loc) {
-      m_nModelToWorldMatrixLocation = _loc;
+    void setNormalModelMatrixUniformLocation(GLint _loc) {
+      m_nModelMatrixLocation = _loc;
     }
 
     void draw();
@@ -59,16 +59,16 @@ class RasterizableObject
     /// Material of the object
     Material m_material;
     /// Transformation of vertex from model to world
-    glm::mat4 m_vModelToWorldMatrix;
+    glm::mat4 m_vModelMatrix;
     /// Transformation of normal from model to world
-    glm::mat4 m_nModelToWorldMatrix;
+    glm::mat4 m_nModelMatrix;
     /// Name of vertex array object for this object
     GLuint m_vao;
     /// Location of uniform to store object material
     MaterialUniformLocation m_materialUniformLocation;
     /// Location of uniform to store object transform
-    GLint m_vModelToWorldMatrixLocation;
-    GLint m_nModelToWorldMatrixLocation;
+    GLint m_vModelMatrixLocation;
+    GLint m_nModelMatrixLocation;
 };
 
 #if   defined(OSX)

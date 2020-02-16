@@ -20,7 +20,7 @@ struct Light {
 uniform int   numLights;          // number of lights in the scene
 uniform Light lights[MAX_LIGHTS]; // lights in the scene
 uniform vec3  cameraPos;          // Position of camera in the world
-uniform mat4  projectionMatrix;   // Transform from world to homogeneous coordinate
+uniform mat4  viewProjectionMatrix;   // Transform from world to homogeneous coordinate
 
 // Properties of the object
 struct Material {
@@ -30,8 +30,8 @@ struct Material {
   float shininess;
 };
 uniform Material material;            // Material of the vertex
-uniform mat4     vModelToWorldMatrix; // Transform vertex from model to world coordinate
-uniform mat4     nModelToWorldMatrix; // Transform normal from model to world coordinate
+uniform mat4     vertexModelMatrix;   // Transform vertex from model to world coordinate
+uniform mat4     normalModelMatrix;   // Transform normal from model to world coordinate
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex input/output
@@ -69,14 +69,10 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
 void main() {
   // Calculate lighting on vertex
   // First, calculate position and normal of vector in world coordinate
-  vec4 pos = vModelToWorldMatrix * vpos;
-  vec4 normal = normalize(nModelToWorldMatrix * vnormal);
+  vec4 pos = vertexModelMatrix * vpos;
+  vec4 normal = normalize(normalModelMatrix * vnormal);
   color = shadeBlinnPhong(pos.xyz, normal.xyz);
 
-  // TODO REmove this
-  // color = abs(normal);
-  // color = vec4(material.kd, 1);
-
   // Calculate homogeneous coordinate of vertex for clipping
-  gl_Position = projectionMatrix * pos;
+  gl_Position = viewProjectionMatrix * pos;
 }

@@ -81,15 +81,10 @@ initialize() {
   vec3 center(0.f, 0.f, -1.f);
   vec3 up(0.f, 1.f, 0.f);
   mat4 viewMatrix = glm::lookAt(eye, center, up);
-  std::cout << "view matrix " << glm::to_string(viewMatrix) << std::endl;
-  std::cout << "eye at 0    " << glm::to_string(viewMatrix * vec4(eye, 1.0f)) << std::endl;
   mat4 projMatrix = glm::perspective(glm::radians(60.f), g_width/((float)g_height), 0.1f, 100.f);
-  std::cout << "proj matrix " << glm::to_string(projMatrix) << std::endl;
-  projMatrix *= viewMatrix;
-  std::cout << "pv   matrix " << glm::to_string(projMatrix) << std::endl;
   glUniformMatrix4fv(
-      glGetUniformLocation(g_program, "projectionMatrix"), 
-      1, GL_FALSE, glm::value_ptr(projMatrix));
+      glGetUniformLocation(g_program, "viewProjectionMatrix"), 
+      1, GL_FALSE, glm::value_ptr(projMatrix * viewMatrix));
 
   // Set up light
   glUniform1i(glGetUniformLocation(g_program, "numLights"), 2);
@@ -112,8 +107,8 @@ initialize() {
     glGetUniformLocation(g_program, "material.shininess")
   };
 
-  GLint vModelToWorldLoc = glGetUniformLocation(g_program, "vModelToWorldMatrix");
-  GLint nModelToWorldLoc = glGetUniformLocation(g_program, "nModelToWorldMatrix");
+  GLint vModelToWorldLoc = glGetUniformLocation(g_program, "vertexModelMatrix");
+  GLint nModelToWorldLoc = glGetUniformLocation(g_program, "normalModelMatrix");
 
   Material mat {
     {0.5, 0.5, 0.5}, {1, 0, 0}, {0.8, 0.8, 0.8}, 100
@@ -132,13 +127,13 @@ initialize() {
   
   g_obj = std::make_unique<RasterizableObject>(mesh, mat, vModel2World, nModel2World);
   g_obj->setMaterialUniformLocation(materialLoc);
-  g_obj->setVertexWorldMatrixUniformLocation(vModelToWorldLoc);
-  g_obj->setNormalWorldMatrixUniformLocation(nModelToWorldLoc);
+  g_obj->setVertexModelMatrixUniformLocation(vModelToWorldLoc);
+  g_obj->setNormalModelMatrixUniformLocation(nModelToWorldLoc);
 
   g_obj2 = std::make_unique<RasterizableObject>(mesh, mat2, vModel2World2, nModel2World2);
   g_obj2->setMaterialUniformLocation(materialLoc);
-  g_obj2->setVertexWorldMatrixUniformLocation(vModelToWorldLoc);
-  g_obj2->setNormalWorldMatrixUniformLocation(nModelToWorldLoc);
+  g_obj2->setVertexModelMatrixUniformLocation(vModelToWorldLoc);
+  g_obj2->setNormalModelMatrixUniformLocation(nModelToWorldLoc);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

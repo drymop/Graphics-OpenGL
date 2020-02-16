@@ -4,11 +4,11 @@
 RasterizableObject::
 RasterizableObject(const Mesh& _mesh, 
                    const Material& _material, 
-                   const glm::mat4& _vModelToWorldMatrix,
-                   const glm::mat4& _nModelToWorldMatrix)
+                   const glm::mat4& _vModelMatrix,
+                   const glm::mat4& _nModelMatrix)
   : m_nVertices(_mesh.vertices.size()),
-    m_vModelToWorldMatrix(_vModelToWorldMatrix),
-    m_nModelToWorldMatrix(_nModelToWorldMatrix),
+    m_vModelMatrix(_vModelMatrix),
+    m_nModelMatrix(_nModelMatrix),
     m_material(_material)
 {
   // Create vertex array object
@@ -43,10 +43,10 @@ void
 RasterizableObject::
 draw() {
   // set tranformation uniform
-  glUniformMatrix4fv(m_vModelToWorldMatrixLocation, 
-                     1, GL_FALSE, glm::value_ptr(m_vModelToWorldMatrix));
-  glUniformMatrix4fv(m_nModelToWorldMatrixLocation, 
-                     1, GL_FALSE, glm::value_ptr(m_nModelToWorldMatrix));
+  glUniformMatrix4fv(m_vModelMatrixLocation, 
+                     1, GL_FALSE, glm::value_ptr(m_vModelMatrix));
+  glUniformMatrix4fv(m_nModelMatrixLocation, 
+                     1, GL_FALSE, glm::value_ptr(m_nModelMatrix));
   // set material uniform
   glUniform3fv(m_materialUniformLocation.kaLoc, 1, glm::value_ptr(m_material.ka));
   glUniform3fv(m_materialUniformLocation.kdLoc, 1, glm::value_ptr(m_material.kd));
