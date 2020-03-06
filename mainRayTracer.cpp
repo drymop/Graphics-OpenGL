@@ -33,6 +33,7 @@
 #include <glm/ext.hpp>
 
 #include "Camera.h"
+#include "ConfigParser.h"
 #include "LightSource.h"
 #include "Material.h"
 #include "OrthographicView.h"
@@ -342,24 +343,31 @@ mouseDragged(int x, int y) {
 int
 main(int _argc, char** _argv) {
   // Parse argument
+  glutInit(&_argc, _argv);
   if (_argc <= 1) {
-    std::cerr << "Missing required argument: scene file name" << std::endl;
+    std::cerr << "Missing required argument: config file name" << std::endl;
     return 1;
   }
+  ConfigParser configParser;
+  Config config = configParser.parse(_argv[1]);
+  g_width = config.screenWidth;
+  g_height = config.screenHeight;
 
   //////////////////////////////////////////////////////////////////////////////
   // Initialize GLUT Window
   std::cout << "Initializing GLUTWindow" << std::endl;
   // GLUT
-  glutInit(&_argc, _argv);
-  // glutInitContextVersion(3, 3);
-  // glutInitContextProfile(GLUT_CORE_PROFILE);
+  if (!config.rayTracing) {
+    // rasterizing
+    glutInitContextVersion(3, 3);
+    glutInitContextProfile(GLUT_CORE_PROFILE);
+  }
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowPosition(50, 100);
   glutInitWindowSize(g_width, g_height); // HD size
   g_window = glutCreateWindow("Spiderling: A Rudamentary Game Engine");
 
-  initialize(std::string(_argv[1]));
+  initialize(config.sceneFile);
 
   //////////////////////////////////////////////////////////////////////////////
   // Assign callback functions

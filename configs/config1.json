@@ -1,0 +1,5 @@
+{
+  "ray_tracing": true,
+  "screen_size": [1280, 720],
+  "scene": "scene_data/spheres.json"
+}

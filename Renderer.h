@@ -52,7 +52,7 @@ class Renderer
     // View
     std::unique_ptr<View> m_view{nullptr};
     bool m_isPerspectiveView;
-    const float FOV{1.0472}; // radians (about 60 degrees)
+    const float FOV{glm::radians(60.f)};
     const float ORTHO_VIEW_PLANE_HEIGHT{5.f};
 
     bool m_hasAntiAlias;

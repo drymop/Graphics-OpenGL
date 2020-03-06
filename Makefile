@@ -40,6 +40,7 @@ LIBS = $(GL_LIBS) -lpthread
 # OBJS for ray tracer
 OBJS = \
        mainRayTracer.o \
+       ConfigParser.o \
        Circle.o \
        OrthographicView.o \
        PerspectiveView.o \
