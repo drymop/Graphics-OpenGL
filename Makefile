@@ -39,7 +39,7 @@ LIBS = $(GL_LIBS) -lpthread
 
 # OBJS for ray tracer
 OBJS = \
-       mainRayTracer.o \
+       main.o \
        Circle.o \
        CompileShaders.o \
        ConfigParser.o \
@@ -55,13 +55,6 @@ OBJS = \
        Scene.o \
        SceneBuilder.o \
        Sphere.o \
-
-# # OBJS for rasterizer
-# OBJS = \
-#        mainRasterizer.o \
-#        CompileShaders.o \
-#        ObjFileParser.o \
-#        RasterizableObject.o \
 
 EXECUTABLE = main.out
 

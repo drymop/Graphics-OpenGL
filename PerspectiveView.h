@@ -14,7 +14,7 @@ class PerspectiveView : public View
     /// @param _fovY        Field of view angle, in radians
     /// @param _near        Near clipping plane
     /// @param _far         Far clipping plane
-    PerspectiveView(int _frameWidth, int _frameHeight, float _fovY, float _near=0.001f, float _far=9999.f);
+    PerspectiveView(int _frameWidth, int _frameHeight, float _fovY, float _near=0.1f, float _far=100.f);
 
     int getFrameWidth()  const { return m_frameWidth;  }
     int getFrameHeight() const { return m_frameHeight; }

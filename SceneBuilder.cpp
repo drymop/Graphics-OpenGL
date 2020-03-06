@@ -12,10 +12,11 @@
 #include "Plane.h"
 #include "PointLight.h"
 #include "Portal.h"
+#include "RasterizableObject.h"
 #include "Sphere.h"
 
 using Json = nlohmann::json;
-using glm::vec3;
+using glm::vec3, glm::mat4;
 
 vec3
 getVec3(const Json& j) {
@@ -31,7 +32,9 @@ from_json(const Json& j, Material& m) {
     m.ka = getVec3(j.at("k_a"));
     m.kd = getVec3(j.at("k_d"));
     m.ks = getVec3(j.at("k_s"));
-    m.kr = getVec3(j.at("k_r"));
+    if (j.find("k_r") != j.end()) {
+      m.kr = getVec3(j.at("k_r"));
+    }
     j.at("shininess").get_to(m.shininess);
   }
 }
@@ -69,7 +72,26 @@ buildSceneFromJson(const Json& _sceneJson) {
   for (auto& j : objectsJson) {
     std::string type = j.at("type");
     if (type == "mesh") {
-
+      Mesh mesh = parseObjFile(j.at("obj").get<std::string>());
+      mat4 transform = mat4(1.f);
+      if (j.find("translate") != j.end()) {
+        vec3 translate = getVec3(j.at("translate"));
+        transform = glm::translate(transform, translate);
+      }
+      if (j.find("rotate") != j.end()) {
+        vec3 axis = getVec3(j.at("rotate").at("axis"));
+        float angle = j.at("rotate").at("angle").get<float>();
+        transform = glm::rotate(transform, angle, axis);
+      }
+      if (j.find("scale") != j.end()) {
+        vec3 scale = getVec3(j.at("scale"));
+        transform = glm::scale(transform, scale);
+      }
+      scene.addObject(std::move(std::make_unique<RasterizableObject>(
+        mesh,
+        j.at("material").get<Material>(),
+        transform
+      )));
     } else if (type == "sphere") {
       scene.addObject(std::move(std::make_unique<Sphere>(
         getVec3(j.at("center")), 

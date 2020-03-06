@@ -8,10 +8,13 @@
 // Includes
 
 // STL
+#include <cfloat>
 #include <chrono>
 #include <cstdlib>
+#include <future>
 #include <iostream>
 #include <memory>
+#include <vector>
 
 // GL
 #define GL_GLEXT_PROTOTYPES
@@ -29,9 +32,13 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
 
-#include "CompileShaders.h"
-#include "RasterizableObject.h"
-#include "ObjFileParser.h"
+#include "Camera.h"
+#include "ConfigParser.h"
+#include "Scene.h"
+#include "SceneBuilder.h"
+#include "RayTracer.h"
+#include "Rasterizer.h"
+#include "Renderer.h"
 
 using glm::vec2, glm::vec3, glm::vec4, glm::mat4;
 
@@ -42,7 +49,6 @@ using glm::vec2, glm::vec3, glm::vec4, glm::mat4;
 int g_width{1280};
 int g_height{720};
 int g_window{0};
-GLuint g_program{0};
 
 // Frame rate
 const unsigned int FPS = 60;
@@ -52,99 +58,29 @@ std::chrono::high_resolution_clock::time_point g_frameTime{
 float g_delay{0.f};
 float g_framesPerSecond{0.f};
 
-// Antialiasing
-bool g_antiAliasing = false;
+// Define view
+bool g_isPerspectiveView{true};
+// Anti-aliasing
+bool g_hasAntiAliasing{false};
 
-// Scene
-vec3 eye, at, up, right;
-mat4 projMatrix;
+// Scene to render
+Scene g_scene;
 
-std::unique_ptr<RasterizableObject> g_obj;
-std::unique_ptr<RasterizableObject> g_obj2;
+// Ray tracer
+// RayTracer g_renderer->g_width, g_height};
+std::unique_ptr<Renderer> g_renderer{nullptr};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @brief Initialize GL settings
+/// @brief Initialize settings
 void
-initialize() {
-  using glm::translate, glm::scale, glm::transpose, glm::inverse, glm::cross;
-  glClearColor(0.f, 0.f, 0.0f, 0.f);
-  glEnable(GL_COLOR_MATERIAL);
-  glEnable(GL_DEPTH_TEST);
-  if (g_antiAliasing) {
-    glEnable(GL_MULTISAMPLE_ARB);
-  } else {
-    glDisable(GL_MULTISAMPLE_ARB);
-  }
-
-  g_program = compileProgram("shaders/phong.vert",
-                             "shaders/phong.frag");
-  // g_program = compileProgram("shaders/gouraud.vert",
-                             // "shaders/gouraud.frag");
-  glUseProgram(g_program);
-
-  //////////////////////////
-  // Scene
-
-  // Set up camera
-  eye = {0.f, 0.f, 0.f};
-  at = {0.f, 0.f, -1.f};
-  up = {0.f, 1.f, 0.f};
-  right = cross(at, up);
-  glUniform3f(glGetUniformLocation(g_program, "cameraPos"), eye.x, eye.y, eye.z);
-  mat4 viewMatrix = glm::lookAt(eye, eye + at, up);
-  projMatrix = glm::perspective(glm::radians(60.f), g_width/((float)g_height), 0.1f, 100.f);
-  glUniformMatrix4fv(
-      glGetUniformLocation(g_program, "viewProjectionMatrix"), 
-      1, GL_FALSE, glm::value_ptr(projMatrix * viewMatrix));
-
-  // Set up light
-  glUniform1i(glGetUniformLocation(g_program, "numLights"), 2);
-  glUniform3f(glGetUniformLocation(g_program, "lights[0].pos"), 2, 1, -10);
-  glUniform3f(glGetUniformLocation(g_program, "lights[0].ia"), 0.1, 0.1, 0.1);
-  glUniform3f(glGetUniformLocation(g_program, "lights[0].id"), 1.0, 1.0, 1.0);
-  glUniform3f(glGetUniformLocation(g_program, "lights[0].is"), 1.0, 1.0, 1.0);
-  glUniform3f(glGetUniformLocation(g_program, "lights[1].pos"), -3, 5, -7);
-  glUniform3f(glGetUniformLocation(g_program, "lights[1].ia"), 0.1, 0.1, 0.1);
-  glUniform3f(glGetUniformLocation(g_program, "lights[1].id"), 1.0, 1.0, 1.0);
-  glUniform3f(glGetUniformLocation(g_program, "lights[1].is"), 1.0, 1.0, 1.0);
-
-  // Objects
-  Mesh mesh = parseObjFile("models/sphere.obj");
-
-  MaterialUniformLocation materialLoc {
-    glGetUniformLocation(g_program, "material.ka"),
-    glGetUniformLocation(g_program, "material.kd"),
-    glGetUniformLocation(g_program, "material.ks"),
-    glGetUniformLocation(g_program, "material.shininess")
-  };
-
-  GLint vModelToWorldLoc = glGetUniformLocation(g_program, "vertexModelMatrix");
-  GLint nModelToWorldLoc = glGetUniformLocation(g_program, "normalModelMatrix");
-
-  Material mat {
-    {0.5, 0.5, 0.5}, {1, 0, 0}, {0.8, 0.8, 0.8}, 100
-  };
-  Material mat2 {
-    {0.5, 0.5, 0.5}, {0, 1, 0}, {0.5, 0.5, 0.5}, 50
-  };
-
-  mat4 vModel2World = scale(translate(mat4(1.f), {1.5f, 0.f, -15.f}), {0.1f, 0.1f, 0.1f});
-  mat4 nModel2World = transpose(inverse(vModel2World));
-  mat4 vModel2World2 = scale(translate(mat4(1.f), {-1.5f, 0.f, -10.f}), {0.1f, 0.1f, 0.1f});
-  mat4 nModel2World2 = transpose(inverse(vModel2World));
-  
-  g_obj = std::make_unique<RasterizableObject>(mesh, mat, vModel2World, nModel2World);
-  g_obj->setMaterialUniformLocation(materialLoc);
-  g_obj->setVertexModelMatrixUniformLocation(vModelToWorldLoc);
-  g_obj->setNormalModelMatrixUniformLocation(nModelToWorldLoc);
-
-  g_obj2 = std::make_unique<RasterizableObject>(mesh, mat2, vModel2World2, nModel2World2);
-  g_obj2->setMaterialUniformLocation(materialLoc);
-  g_obj2->setVertexModelMatrixUniformLocation(vModelToWorldLoc);
-  g_obj2->setNormalModelMatrixUniformLocation(nModelToWorldLoc);
+initialize(const std::string& sceneFile) {
+  // initialize scene
+  SceneBuilder sceneBuilder;
+  g_scene = sceneBuilder.buildSceneFromJsonFile(sceneFile);
+  g_renderer->initScene(g_scene);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -158,6 +94,8 @@ resize(GLint _w, GLint _h) {
 
   // Viewport
   glViewport(0, 0, g_width, g_height);
+  // renderer
+  g_renderer->setFrameSize(g_width, g_height);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -184,20 +122,8 @@ draw() {
   using namespace std::chrono;
 
   //////////////////////////////////////////////////////////////////////////////
-  // Clear
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  // Set up camera
-  glUniform3f(glGetUniformLocation(g_program, "cameraPos"), eye.x, eye.y, eye.z);
-  mat4 viewMatrix = glm::lookAt(eye, eye + at, up);
-  glUniformMatrix4fv(
-      glGetUniformLocation(g_program, "viewProjectionMatrix"), 
-      1, GL_FALSE, glm::value_ptr(projMatrix * viewMatrix));
-
-  //////////////////////////////////////////////////////////////////////////////
   // Draw
-  g_obj->draw();
-  g_obj2->draw();
+  g_renderer->render(g_scene);
 
   //////////////////////////////////////////////////////////////////////////////
   // Show
@@ -209,7 +135,7 @@ draw() {
   g_frameRate = duration_cast<duration<float>>(time - g_frameTime).count();
   g_frameTime = time;
   g_framesPerSecond = 1.f/(g_delay + g_frameRate);
-  // printf("FPS: %6.2f\n", g_framesPerSecond);
+  printf("FPS: %6.2f\n", g_framesPerSecond);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -226,16 +152,21 @@ keyPressed(GLubyte _key, GLint _x, GLint _y) {
       glutDestroyWindow(g_window);
       g_window = 0;
       break;
+    // A key: switch anti-aliasing mode
     case 'a':
-      g_antiAliasing = !g_antiAliasing;
-      std::cout << "Anti-aliasing: " << g_antiAliasing << std::endl;
-      if (g_antiAliasing) {
-        glEnable(GL_MULTISAMPLE_ARB);
-        glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_NICEST);
+      g_hasAntiAliasing = !g_renderer->hasAntiAlias();
+      g_renderer->setAntiAlias(g_hasAntiAliasing);
+      std::cout << "Anti-alias: " << g_hasAntiAliasing << std::endl;
+      break;
+    // V key: switch projection mode
+    case 'v':
+      g_isPerspectiveView = !g_renderer->isPerspectiveView();
+      g_renderer->setPerspectiveView(g_isPerspectiveView);
+      if (g_isPerspectiveView) {
+        std::cout << "View mode: Perspective" << std::endl;
       } else {
-        glDisable(GL_MULTISAMPLE_ARB);
+        std::cout << "View mode: Orthographic" << std::endl;
       }
-      glutPostRedisplay();
       break;
     // Unhandled
     default:
@@ -263,6 +194,9 @@ specialKeyPressed(GLint _key, GLint _x, GLint _y) {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Handle camera movement from mouse input
+////////////////////////////////////////////////////////////////////////////////
 const int GLUT_NO_BUTTON = -1;
 const int GLUT_WHEEL_UP = 3;
 const int GLUT_WHEEL_DOWN = 4;
@@ -271,13 +205,13 @@ const int GLUT_WHEEL_DOWN = 4;
 int g_activeDragButton = GLUT_NO_BUTTON;
 int g_mouseStartX;
 int g_mouseStartY;
-vec3 g_eyeStart;
 float g_scale = 0.02f;
 float g_zScale = 0.2f;
-
-vec3 g_atStart, g_upStart, g_rightStart;
+vec3 g_eyeStart, g_atStart, g_upStart, g_rightStart;
 float g_angleDelta = 0.005f;
 
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Callback function for mouse presses
 void 
 mousePressed(int button, int state, int x, int y) {
   std::cout << "Button " << button << " active " << g_activeDragButton << std::endl;
@@ -289,26 +223,27 @@ mousePressed(int button, int state, int x, int y) {
     // ignore other button if there's already an active button
     return;
   }
+  Camera& camera = g_scene.getCamera();
   switch(button) {
     case GLUT_LEFT_BUTTON:
       g_activeDragButton = GLUT_LEFT_BUTTON;
       g_mouseStartX = x;
       g_mouseStartY = y;
-      g_eyeStart = eye;
+      g_eyeStart = camera.getEye();
       break;
     case GLUT_RIGHT_BUTTON:
       g_activeDragButton = GLUT_RIGHT_BUTTON;
       g_mouseStartX = x;
       g_mouseStartY = y;
-      g_atStart = at;
-      g_upStart = up;
-      g_rightStart = right;
+      g_atStart = camera.getAt();
+      g_upStart = camera.getUp();
+      g_rightStart = camera.getRight();
       break;
     case GLUT_WHEEL_UP:
-      eye += at * g_zScale;
+      camera.setPosition(camera.getEye() + camera.getAt() * g_zScale);
       break;
     case GLUT_WHEEL_DOWN:
-      eye -= at * g_zScale;
+      camera.setPosition(camera.getEye() - camera.getAt() * g_zScale);
       break;
   }
 }
@@ -317,11 +252,13 @@ mousePressed(int button, int state, int x, int y) {
 /// @brief Callback function for mouse actions
 void
 mouseDragged(int x, int y) {
+  Camera& camera = g_scene.getCamera();
   if(g_activeDragButton == GLUT_LEFT_BUTTON) {
     float dx = x - g_mouseStartX;
     float dy = y - g_mouseStartY;
     // change camera position
-    eye = g_eyeStart + (right * -dx + up * dy) * g_scale;
+    vec3 eye = g_eyeStart + (camera.getRight() * -dx + camera.getUp() * dy) * g_scale;
+    camera.setPosition(eye);
   } else if(g_activeDragButton == GLUT_RIGHT_BUTTON) {
     float dx = x - g_mouseStartX;
     float dy = g_mouseStartY - y;
@@ -329,15 +266,12 @@ mouseDragged(int x, int y) {
     float d = glm::length(delta);
     delta = glm::normalize(delta);
     
-    std::cout << dx << " " << dy << " "<< d << std::endl;
-
-
     vec3 rotationAxis = g_rightStart * delta.x + g_upStart * delta.y;
     float rotationAngle = d * g_angleDelta;
     mat4 rotationMatrix = glm::rotate(mat4(1.f), rotationAngle, rotationAxis);
-    at = rotationMatrix * vec4(g_atStart, 1.f);
-    up = rotationMatrix * vec4(g_upStart, 1.f);
-    right = glm::cross(at, up);
+    vec3 at = rotationMatrix * vec4(g_atStart, 1.f);
+    vec3 up = rotationMatrix * vec4(g_upStart, 1.f);
+    camera.setOrientation(at, up);
   }
 }
 
@@ -351,21 +285,39 @@ mouseDragged(int x, int y) {
 /// @return Application success status
 int
 main(int _argc, char** _argv) {
+  // Parse argument
+  glutInit(&_argc, _argv);
+  if (_argc <= 1) {
+    std::cerr << "Missing required argument: config file name" << std::endl;
+    return 1;
+  }
+  ConfigParser configParser;
+  Config config = configParser.parse(_argv[1]);
+  g_width = config.screenWidth;
+  g_height = config.screenHeight;
+
   //////////////////////////////////////////////////////////////////////////////
   // Initialize GLUT Window
   std::cout << "Initializing GLUTWindow" << std::endl;
   // GLUT
-  glutInit(&_argc, _argv);
-  glutInitContextVersion(3, 3);
-  glutInitContextProfile(GLUT_CORE_PROFILE);
-  glutSetOption(GLUT_MULTISAMPLE, 8);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
+  if (!config.rayTracing) {
+    // rasterizing
+    glutInitContextVersion(3, 3);
+    glutInitContextProfile(GLUT_CORE_PROFILE);
+  }
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowPosition(50, 100);
   glutInitWindowSize(g_width, g_height); // HD size
   g_window = glutCreateWindow("Spiderling: A Rudamentary Game Engine");
 
-  // GL
-  initialize();
+  //////////////////////////////////////////////////////////////////////////////
+  // Initialize scene
+  if (config.rayTracing) {
+    g_renderer = std::make_unique<RayTracer>(g_width, g_height);
+  } else {
+    g_renderer = std::make_unique<Rasterizer>(g_width, g_height);
+  }
+  initialize(config.sceneFile);
 
   //////////////////////////////////////////////////////////////////////////////
   // Assign callback functions

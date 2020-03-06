@@ -67,6 +67,7 @@ initScene(Scene& scene) {
 void
 Rasterizer::
 render(const Scene& scene) {
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // Set up camera
   const Camera& camera = scene.getCamera();
   vec3 eye = camera.getEye();
@@ -76,7 +77,6 @@ render(const Scene& scene) {
   glUniformMatrix4fv(
       glGetUniformLocation(m_program, "viewProjectionMatrix"), 
       1, GL_FALSE, glm::value_ptr(projMatrix * viewMatrix));
-
   // Draw
   for(auto& obj : scene.rasterizableObjects()) {
     obj->draw();
