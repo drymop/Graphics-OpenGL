@@ -34,18 +34,10 @@
 
 #include "Camera.h"
 #include "ConfigParser.h"
-#include "LightSource.h"
-#include "Material.h"
-#include "OrthographicView.h"
-#include "PerspectiveView.h"
-#include "Plane.h"
-#include "PointLight.h"
 #include "Scene.h"
 #include "SceneBuilder.h"
 #include "RayTracer.h"
-#include "Sphere.h"
-#include "RayTracableObject.h"
-#include "View.h"
+#include "Renderer.h"
 
 using glm::vec2, glm::vec3, glm::vec4, glm::mat4;
 
@@ -74,9 +66,8 @@ bool g_hasAntiAliasing{false};
 Scene g_scene;
 
 // Ray tracer
-RayTracer g_rayTracer{g_width, g_height};
-const int N_RAY_TRACE_RECURSIONS = 5;
-int g_maxRayTracerRecursion{0};
+// RayTracer g_renderer->g_width, g_height};
+std::unique_ptr<Renderer> g_renderer{nullptr};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
@@ -104,7 +95,7 @@ resize(GLint _w, GLint _h) {
   // Viewport
   glViewport(0, 0, g_width, g_height);
   // renderer
-  g_rayTracer.setFrameSize(g_width, g_height);
+  g_renderer->setFrameSize(g_width, g_height);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +123,7 @@ draw() {
 
   //////////////////////////////////////////////////////////////////////////////
   // Draw
-  g_rayTracer.render(g_scene);
+  g_renderer->render(g_scene);
 
   //////////////////////////////////////////////////////////////////////////////
   // Show
@@ -163,14 +154,14 @@ keyPressed(GLubyte _key, GLint _x, GLint _y) {
       break;
     // A key: switch anti-aliasing mode
     case 'a':
-      g_hasAntiAliasing = !g_rayTracer.hasAntiAlias();
-      g_rayTracer.setAntiAlias(g_hasAntiAliasing);
+      g_hasAntiAliasing = !g_renderer->hasAntiAlias();
+      g_renderer->setAntiAlias(g_hasAntiAliasing);
       std::cout << "Anti-alias: " << g_hasAntiAliasing << std::endl;
       break;
     // V key: switch projection mode
     case 'v':
-      g_isPerspectiveView = !g_rayTracer.isPerspectiveView();
-      g_rayTracer.setPerspectiveView(g_isPerspectiveView);
+      g_isPerspectiveView = !g_renderer->isPerspectiveView();
+      g_renderer->setPerspectiveView(g_isPerspectiveView);
       if (g_isPerspectiveView) {
         std::cout << "View mode: Perspective" << std::endl;
       } else {
@@ -203,6 +194,9 @@ specialKeyPressed(GLint _key, GLint _x, GLint _y) {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Handle camera movement from mouse input
+////////////////////////////////////////////////////////////////////////////////
 const int GLUT_NO_BUTTON = -1;
 const int GLUT_WHEEL_UP = 3;
 const int GLUT_WHEEL_DOWN = 4;
@@ -211,11 +205,9 @@ const int GLUT_WHEEL_DOWN = 4;
 int g_activeDragButton = GLUT_NO_BUTTON;
 int g_mouseStartX;
 int g_mouseStartY;
-vec3 g_eyeStart;
 float g_scale = 0.02f;
 float g_zScale = 0.2f;
-
-vec3 g_atStart, g_upStart, g_rightStart;
+vec3 g_eyeStart, g_atStart, g_upStart, g_rightStart;
 float g_angleDelta = 0.005f;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -274,8 +266,6 @@ mouseDragged(int x, int y) {
     float d = glm::length(delta);
     delta = glm::normalize(delta);
     
-    std::cout << dx << " " << dy << " "<< d << std::endl;
-
     vec3 rotationAxis = g_rightStart * delta.x + g_upStart * delta.y;
     float rotationAngle = d * g_angleDelta;
     mat4 rotationMatrix = glm::rotate(mat4(1.f), rotationAngle, rotationAxis);
@@ -320,6 +310,9 @@ main(int _argc, char** _argv) {
   glutInitWindowSize(g_width, g_height); // HD size
   g_window = glutCreateWindow("Spiderling: A Rudamentary Game Engine");
 
+  //////////////////////////////////////////////////////////////////////////////
+  // Initialize scene
+  g_renderer = std::make_unique<RayTracer>(g_width, g_height);
   initialize(config.sceneFile);
 
   //////////////////////////////////////////////////////////////////////////////

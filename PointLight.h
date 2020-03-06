@@ -17,6 +17,11 @@ class PointLight : public LightSource
       m_intensity_diffuse(_intensity_diffuse),
       m_intensity_specular(_intensity_specular)
       {};
+
+    glm::vec3 getPosition() const { return m_pos; }
+    glm::vec3 getIa() const { return m_intensity_ambient; }
+    glm::vec3 getId() const { return m_intensity_diffuse; }
+    glm::vec3 getIs() const { return m_intensity_specular; }
     
     ////////////////////////////////////////////////////////////////////////////
     /// @return LightRay from this light source to the destination

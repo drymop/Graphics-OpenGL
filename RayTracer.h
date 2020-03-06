@@ -21,6 +21,8 @@ class RayTracer : public Renderer
 
     void setFrameSize(int width, int height) override;
 
+    void initScene(Scene& scene) override {};
+
     ////////////////////////////////////////////////////////////////////////////////
     /// @brief Render the scene under the given view (ortho/perspective) into the
     /// buffer.

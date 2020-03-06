@@ -45,6 +45,8 @@ class Renderer
     bool isPerspectiveView() const { return m_isPerspectiveView; }
     bool hasAntiAlias() const { return m_hasAntiAlias; }
 
+    virtual void initScene(Scene& scene) = 0;
+
     ////////////////////////////////////////////////////////////////////////////////
     /// @brief Render the scene under the given view (ortho/perspective) into the
     /// buffer.
