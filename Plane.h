@@ -1,9 +1,9 @@
 #ifndef PLANE_H_
 #define PLANE_H_
 
-#include "RenderableObject.h"
+#include "RayTracableObject.h"
 
-class Plane : public RenderableObject
+class Plane : public RayTracableObject
 {
   public:
     Plane(glm::vec3 _point, glm::vec3 _normal, Material _material)

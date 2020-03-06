@@ -1,9 +1,9 @@
 #ifndef SPHERE_H_
 #define SPHERE_H_
 
-#include "RenderableObject.h"
+#include "RayTracableObject.h"
 
-class Sphere : public RenderableObject
+class Sphere : public RayTracableObject
 {
   public:
     Sphere(glm::vec3 _center, float _radius, struct Material _material) 

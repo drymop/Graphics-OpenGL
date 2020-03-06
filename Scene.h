@@ -6,7 +6,7 @@
 
 #include "LightSource.h"
 #include "Ray.h"
-#include "RenderableObject.h"
+#include "RayTracableObject.h"
 
 class Scene
 {
@@ -16,7 +16,7 @@ class Scene
     /// another object
     static const float SELF_INTERSECTION_BIAS;
 
-    void addObject(std::unique_ptr<RenderableObject> _object);
+    void addObject(std::unique_ptr<RayTracableObject> _object);
 
     void addLightSource(std::unique_ptr<LightSource> _light);
 
@@ -26,14 +26,14 @@ class Scene
     /// @param[out] _hitInfo Address of a struct to store the hit info
     /// @return     The pointer to the first object hit by the ray, or nullptr
     ///             if no object is hit.
-    RenderableObject* firstRayHit(Ray _ray, RayHit* _hitInfo) const;
+    RayTracableObject* firstRayHit(Ray _ray, RayHit* _hitInfo) const;
 
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Provide an iterable of light sources
     std::vector<LightSource*> lightSources() const;
 
   private:
-    std::vector<std::unique_ptr<RenderableObject>> m_objects;
+    std::vector<std::unique_ptr<RayTracableObject>> m_objects;
     std::vector<std::unique_ptr<LightSource>> m_lights;
 };
 

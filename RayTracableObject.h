@@ -1,5 +1,5 @@
-#ifndef RENDERABLE_OBJECT_H_
-#define RENDERABLE_OBJECT_H_
+#ifndef RAYTRACABLE_OBJECT_H_
+#define RAYTRACABLE_OBJECT_H_
 
 #include <glm/glm.hpp>
 
@@ -13,7 +13,7 @@ struct RayHit {
   glm::vec3 normal;
 };
 
-class RenderableObject
+class RayTracableObject
 {
   public:
     ////////////////////////////////////////////////////////////////////////////
@@ -27,4 +27,4 @@ class RenderableObject
     virtual struct Material getMaterial() const = 0;
 };
 
-#endif // RENDERABLE_OBJECT_H_
+#endif // RAYTRACABLE_OBJECT_H_

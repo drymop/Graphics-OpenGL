@@ -39,7 +39,7 @@
 #include "SceneBuilder.h"
 #include "Shader.h"
 #include "Sphere.h"
-#include "RenderableObject.h"
+#include "RayTracableObject.h"
 #include "View.h"
 
 ////////////////////////////////////////////////////////////////////////////////

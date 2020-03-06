@@ -38,25 +38,25 @@ INCL = $(GL_INCL)
 LIBS = $(GL_LIBS) -lpthread
 
 # OBJS for ray tracer
-# OBJS = \
-#        mainRayTracer.o \
-#        Circle.o \
-#        OrthographicView.o \
-#        PerspectiveView.o \
-#        Plane.o \
-#        PointLight.o \
-#        Portal.o \
-#        Scene.o \
-#        SceneBuilder.o \
-#        Shader.o \
-#        Sphere.o \
-
-# OBJS for rasterizer
 OBJS = \
-       mainRasterizer.o \
-       CompileShaders.o \
-       ObjFileParser.o \
-       RasterizableObject.o \
+       mainRayTracer.o \
+       Circle.o \
+       OrthographicView.o \
+       PerspectiveView.o \
+       Plane.o \
+       PointLight.o \
+       Portal.o \
+       Scene.o \
+       SceneBuilder.o \
+       Shader.o \
+       Sphere.o \
+
+# # OBJS for rasterizer
+# OBJS = \
+#        mainRasterizer.o \
+#        CompileShaders.o \
+#        ObjFileParser.o \
+#        RasterizableObject.o \
 
 EXECUTABLE = main.out
 

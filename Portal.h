@@ -5,7 +5,7 @@
 
 #include "Circle.h"
 
-class Portal : public RenderableObject
+class Portal : public RayTracableObject
 {
   public:
     ////////////////////////////////////////////////////////////////////////////

@@ -6,7 +6,7 @@ const float Scene::SELF_INTERSECTION_BIAS = 1e-3f;
 
 void
 Scene::
-addObject(std::unique_ptr<RenderableObject> _object) {
+addObject(std::unique_ptr<RayTracableObject> _object) {
   m_objects.push_back(std::move(_object));
 }
 
@@ -16,7 +16,7 @@ addLightSource(std::unique_ptr<LightSource> _light) {
   m_lights.push_back(std::move(_light));
 }
 
-RenderableObject*
+RayTracableObject*
 Scene::
 firstRayHit(Ray _ray, RayHit* _hitInfo) const {
   RayHit firstHit;

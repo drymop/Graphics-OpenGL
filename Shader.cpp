@@ -4,7 +4,7 @@ glm::vec3
 Shader::
 shade(const Scene& scene, Ray ray, int maxRecursion) {
   RayHit firstHit;
-  RenderableObject* hitObj = scene.firstRayHit(ray, &firstHit);
+  RayTracableObject* hitObj = scene.firstRayHit(ray, &firstHit);
   if (!hitObj) {
     // black if nothing is hit by the ray
     return glm::vec4();
