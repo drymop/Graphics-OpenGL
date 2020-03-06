@@ -1,10 +1,10 @@
-#ifndef SHADER_H_
-#define SHADER_H_
+#ifndef RAY_TRACER_H_
+#define RAY_TRACER_H_
 
 #include "Ray.h"
 #include "Scene.h"
 
-class Shader
+class RayTracer
 {
   public:
     ////////////////////////////////////////////////////////////////////////////////
@@ -20,4 +20,4 @@ class Shader
 };
 
 
-#endif // SHADER_H_
+#endif // RAY_TRACER_H_

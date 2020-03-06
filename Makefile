@@ -47,9 +47,9 @@ OBJS = \
        PointLight.o \
        Portal.o \
        RasterizableObject.o \
+       RayTracer.o \
        Scene.o \
        SceneBuilder.o \
-       Shader.o \
        Sphere.o \
 
 # # OBJS for rasterizer

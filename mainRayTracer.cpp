@@ -37,7 +37,7 @@
 #include "PointLight.h"
 #include "Scene.h"
 #include "SceneBuilder.h"
-#include "Shader.h"
+#include "RayTracer.h"
 #include "Sphere.h"
 #include "RayTracableObject.h"
 #include "View.h"
@@ -88,10 +88,10 @@ const std::vector<std::vector<glm::vec2>> g_antiAliasJitters {
 // Scene to render
 Scene g_scene;
 
-// Shader
-Shader g_shader;
-const int N_SHADER_RECURSIONS = 5;
-int g_maxShaderRecursion{0};
+// Ray tracer
+RayTracer g_rayTracer;
+const int N_RAY_TRACE_RECURSIONS = 5;
+int g_maxRayTracerRecursion{0};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
@@ -157,7 +157,7 @@ renderPixel(int i, int j) {
   for (auto& jitter : g_antiAliasJitters[g_antiAliasMode]) {
     // cast ray
     Ray ray = g_view->castRay(i, j, jitter.x, jitter.y);
-    color += g_shader.shade(g_scene, ray, g_maxShaderRecursion);
+    color += g_rayTracer.shade(g_scene, ray, g_maxRayTracerRecursion);
   }
   color /= g_antiAliasJitters[g_antiAliasMode].size();
   return glm::vec4(color, 1);
@@ -255,8 +255,8 @@ keyPressed(GLubyte _key, GLint _x, GLint _y) {
       break;
     // R key: toggle recursive ray-tracing
     case 'r':
-      g_maxShaderRecursion = N_SHADER_RECURSIONS - g_maxShaderRecursion;
-      std::cout << "Recursive raytracing: " << g_maxShaderRecursion << std::endl;
+      g_maxRayTracerRecursion = N_RAY_TRACE_RECURSIONS - g_maxRayTracerRecursion;
+      std::cout << "Recursive raytracing: " << g_maxRayTracerRecursion << std::endl;
       break;
     // V key: switch projection mode
     case 'v':
