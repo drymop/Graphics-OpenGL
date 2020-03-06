@@ -36,7 +36,8 @@ the assignment body, e.g., copy website link into code. Do not list the
 instructor as a collaborator -- this is assumed.
 
  1. https://computergraphics.stackexchange.com/questions/5323/dynamic-array-in-glsl/5326
- 2.
+ 2. David Qin
+ 3. Sreya Aluri
 
 All students are expected to be in accordance with the student honor code.
 http://studentdevelopment.richmond.edu/student-handbook/honor/
@@ -53,6 +54,6 @@ this assignment, and that I have not received or given any assistance that is
 contrary to the letter or the spirit of the collaboration guidelines for this
 assignment.
 
-Signature (Type full name):
-                      Date:
+Signature (Type full name): Tuan Le
+                      Date: 3/5/2020
 
