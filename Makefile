@@ -46,6 +46,7 @@ OBJS = \
        Plane.o \
        PointLight.o \
        Portal.o \
+       RasterizableObject.o \
        Scene.o \
        SceneBuilder.o \
        Shader.o \

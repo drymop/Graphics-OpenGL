@@ -6,10 +6,10 @@ RasterizableObject(const Mesh& _mesh,
                    const Material& _material, 
                    const glm::mat4& _vModelMatrix,
                    const glm::mat4& _nModelMatrix)
-  : m_nVertices(_mesh.vertices.size()),
+  : RenderableObject(_material),
+    m_nVertices(_mesh.vertices.size()),
     m_vModelMatrix(_vModelMatrix),
-    m_nModelMatrix(_nModelMatrix),
-    m_material(_material)
+    m_nModelMatrix(_nModelMatrix)
 {
   // Create vertex array object
   glGenVertexArrays(1, &m_vao);

@@ -9,7 +9,7 @@ class RenderableObject
   public:
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Create an object with a material
-    RenderableObject(Material _material) 
+    RenderableObject(const Material& _material) 
       : m_material(_material) {};
     
     ////////////////////////////////////////////////////////////////////////////

@@ -19,8 +19,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
 
-#include "Material.h"
 #include "ObjFileParser.h"
+#include "RenderableObject.h"
 
 
 /// The locations of uniforms related to material in shader
@@ -31,7 +31,7 @@ struct MaterialUniformLocation {
   GLint shininessLoc;
 };
 
-class RasterizableObject
+class RasterizableObject : public RenderableObject
 {
   public:
     RasterizableObject(const Mesh& _mesh, 
@@ -56,8 +56,6 @@ class RasterizableObject
   private:
     /// Number of vertices in the mesh
     size_t m_nVertices;
-    /// Material of the object
-    Material m_material;
     /// Transformation of vertex from model to world
     glm::mat4 m_vModelMatrix;
     /// Transformation of normal from model to world
