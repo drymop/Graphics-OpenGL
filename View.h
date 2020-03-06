@@ -7,6 +7,9 @@
 class View
 {
   public:
+    virtual int getFrameWidth() const = 0;
+    virtual int getFrameHeight() const = 0;
+
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Create a ray through the specified pixel
     ///

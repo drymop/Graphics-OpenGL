@@ -13,6 +13,9 @@ class OrthographicView : public View
     /// @param _viewPlaneHeight Height of the viewing plane, in virtual unit
     OrthographicView(int _frameWidth, int _frameHeight, float _viewPlaneHeight);
 
+    int getFrameWidth()  const { return m_frameWidth;  }
+    int getFrameHeight() const { return m_frameHeight; }
+
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Create a ray from the center of the virtual pixel (with jitter 
     /// applied) on the viewing pane, with direction parallel to the camera 

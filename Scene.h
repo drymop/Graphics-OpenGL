@@ -4,7 +4,9 @@
 #include <vector>
 #include <memory>
 
+#include "Camera.h"
 #include "LightSource.h"
+#include "RasterizableObject.h"
 #include "Ray.h"
 #include "RayTracableObject.h"
 #include "RenderableObject.h"
@@ -16,6 +18,9 @@ class Scene
     /// an object hitting itself, and thus doesn't count as hitting
     /// another object
     static const float SELF_INTERSECTION_BIAS;
+
+    Camera& getCamera() { return m_cam; }
+    const Camera& getCamera() const { return m_cam; }
 
     void addObject(std::unique_ptr<RenderableObject> _object);
 
@@ -33,9 +38,14 @@ class Scene
     /// @brief Provide an iterable of light sources
     std::vector<LightSource*> lightSources() const;
 
+    ////////////////////////////////////////////////////////////////////////////
+    /// @brief Provide an iterable of rasterizable objects
+    std::vector<RasterizableObject*> rasterizableObjects() const;
+
   private:
     std::vector<std::unique_ptr<RenderableObject>> m_objects;
     std::vector<std::unique_ptr<LightSource>> m_lights;
+    Camera m_cam;
 };
 
 #endif // SCENE_H_

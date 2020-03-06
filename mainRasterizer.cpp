@@ -70,7 +70,6 @@ std::unique_ptr<RasterizableObject> g_obj2;
 void
 initialize() {
   using glm::translate, glm::scale, glm::transpose, glm::inverse, glm::cross;
-
   glClearColor(0.f, 0.f, 0.0f, 0.f);
   glEnable(GL_COLOR_MATERIAL);
   glEnable(GL_DEPTH_TEST);

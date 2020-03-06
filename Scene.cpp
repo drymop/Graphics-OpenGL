@@ -47,3 +47,16 @@ lightSources() const {
   }
   return lights;
 }
+
+std::vector<RasterizableObject*>
+Scene::
+rasterizableObjects() const {
+  std::vector<RasterizableObject*> objs;
+  for (auto& obj : m_objects) {
+    RasterizableObject* rasterizable = dynamic_cast<RasterizableObject*>(obj.get());
+    if (rasterizable != nullptr) {
+      objs.emplace_back(rasterizable);
+    }
+  }
+  return objs;
+}

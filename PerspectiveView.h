@@ -16,6 +16,9 @@ class PerspectiveView : public View
     /// @param _far         Far clipping plane
     PerspectiveView(int _frameWidth, int _frameHeight, float _fovY, float _near=0.001f, float _far=9999.f);
 
+    int getFrameWidth()  const { return m_frameWidth;  }
+    int getFrameHeight() const { return m_frameHeight; }
+
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Create a ray from the camera through the center of the virtual 
     /// pixel (with some jitter) on the viewing pane corresponding to the 

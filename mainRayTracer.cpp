@@ -25,9 +25,12 @@
 #elif defined(LINUX)
 #include <GL/glut.h>
 #endif
+#include <GL/freeglut.h>
 
 // GLM
 #include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/ext.hpp>
 
 #include "Camera.h"
 #include "LightSource.h"
@@ -42,6 +45,8 @@
 #include "Sphere.h"
 #include "RayTracableObject.h"
 #include "View.h"
+
+using glm::vec2, glm::vec3, glm::vec4, glm::mat4;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
@@ -65,7 +70,6 @@ bool g_parallelize{true};
 const unsigned int N_ROWS_PER_TASK = 16;
 
 // Define view
-Camera g_cam{};
 std::unique_ptr<View> g_view{nullptr};
 bool g_isPerspectiveView;
 // Perspective view
@@ -91,7 +95,7 @@ const std::vector<std::vector<glm::vec2>> g_antiAliasJitters {
 Scene g_scene;
 
 // Ray tracer
-RayTracer g_rayTracer;
+RayTracer g_rayTracer{g_width, g_height};
 const int N_RAY_TRACE_RECURSIONS = 5;
 int g_maxRayTracerRecursion{0};
 
@@ -149,39 +153,6 @@ timer(int _v) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @brief Ray trace to find the color of a pixel
-/// @param i Pixel index along the X axis
-/// @param j Pixel index along the Y axis
-/// @return RGBA color encoded in a vec4
-glm::vec4
-renderPixel(int i, int j) {
-  glm::vec3 color(0.f, 0.f, 0.f);
-  for (auto& jitter : g_antiAliasJitters[g_antiAliasMode]) {
-    // cast ray
-    Ray ray = g_view->castRay(g_cam, i, j, jitter.x, jitter.y);
-    color += g_rayTracer.shade(g_scene, ray, g_maxRayTracerRecursion);
-  }
-  color /= g_antiAliasJitters[g_antiAliasMode].size();
-  return glm::vec4(color, 1);
-}
-
-void
-renderRow(int j) {
-  int pixel = j * g_width;
-  for (int i = 0; i < g_width; i++) {
-    g_frame[pixel++] = renderPixel(i, j);
-  } 
-}
-
-void
-renderTask(int startRow) {
-  int endRow = std::min<int>(startRow + N_ROWS_PER_TASK, g_height);
-  for (int j = startRow; j < endRow; j++) {
-    renderRow(j);
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
 /// @brief Draw function for single frame
 void
 draw() {
@@ -197,26 +168,7 @@ draw() {
   //////////////////////////////////////////////////////////////////////////////
   // Draw
 
-  if(g_parallelize) {
-    // parallel version
-    std::vector<std::future<void>> futures;
-    futures.reserve(g_height);
-    for (int j = 0; j < g_height; j += N_ROWS_PER_TASK) {
-      auto fut = std::async(renderTask, j);
-      futures.push_back(std::move(fut));
-    }
-    for(auto& fut : futures) {
-      fut.wait();
-    }
-  } else {
-    // serial version
-    for (int j = 0; j < g_height; j++) {
-      renderRow(j);
-    }
-  }
-  
-
-  glDrawPixels(g_width, g_height, GL_RGBA, GL_FLOAT, g_frame.get());
+  g_rayTracer.render(g_scene);
 
   //////////////////////////////////////////////////////////////////////////////
   // Show
@@ -297,6 +249,88 @@ specialKeyPressed(GLint _key, GLint _x, GLint _y) {
   }
 }
 
+const int GLUT_NO_BUTTON = -1;
+const int GLUT_WHEEL_UP = 3;
+const int GLUT_WHEEL_DOWN = 4;
+
+// only 1 mouse button can be active, other will be ignored
+int g_activeDragButton = GLUT_NO_BUTTON;
+int g_mouseStartX;
+int g_mouseStartY;
+vec3 g_eyeStart;
+float g_scale = 0.02f;
+float g_zScale = 0.2f;
+
+vec3 g_atStart, g_upStart, g_rightStart;
+float g_angleDelta = 0.005f;
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Callback function for mouse presses
+void 
+mousePressed(int button, int state, int x, int y) {
+  std::cout << "Button " << button << " active " << g_activeDragButton << std::endl;
+  if (button == g_activeDragButton) {
+    // release the active button
+    g_activeDragButton = GLUT_NO_BUTTON;
+    return;
+  } else if (g_activeDragButton != GLUT_NO_BUTTON) {
+    // ignore other button if there's already an active button
+    return;
+  }
+  Camera& camera = g_scene.getCamera();
+  switch(button) {
+    case GLUT_LEFT_BUTTON:
+      g_activeDragButton = GLUT_LEFT_BUTTON;
+      g_mouseStartX = x;
+      g_mouseStartY = y;
+      g_eyeStart = camera.getEye();
+      break;
+    case GLUT_RIGHT_BUTTON:
+      g_activeDragButton = GLUT_RIGHT_BUTTON;
+      g_mouseStartX = x;
+      g_mouseStartY = y;
+      g_atStart = camera.getAt();
+      g_upStart = camera.getUp();
+      g_rightStart = camera.getRight();
+      break;
+    case GLUT_WHEEL_UP:
+      camera.setPosition(camera.getEye() + camera.getAt() * g_zScale);
+      break;
+    case GLUT_WHEEL_DOWN:
+      camera.setPosition(camera.getEye() - camera.getAt() * g_zScale);
+      break;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief Callback function for mouse actions
+void
+mouseDragged(int x, int y) {
+  Camera& camera = g_scene.getCamera();
+  if(g_activeDragButton == GLUT_LEFT_BUTTON) {
+    float dx = x - g_mouseStartX;
+    float dy = y - g_mouseStartY;
+    // change camera position
+    vec3 eye = g_eyeStart + (camera.getRight() * -dx + camera.getUp() * dy) * g_scale;
+    camera.setPosition(eye);
+  } else if(g_activeDragButton == GLUT_RIGHT_BUTTON) {
+    float dx = x - g_mouseStartX;
+    float dy = g_mouseStartY - y;
+    vec2 delta(-dy, dx);
+    float d = glm::length(delta);
+    delta = glm::normalize(delta);
+    
+    std::cout << dx << " " << dy << " "<< d << std::endl;
+
+    vec3 rotationAxis = g_rightStart * delta.x + g_upStart * delta.y;
+    float rotationAngle = d * g_angleDelta;
+    mat4 rotationMatrix = glm::rotate(mat4(1.f), rotationAngle, rotationAxis);
+    vec3 at = rotationMatrix * vec4(g_atStart, 1.f);
+    vec3 up = rotationMatrix * vec4(g_upStart, 1.f);
+    camera.setOrientation(at, up);
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 
@@ -318,6 +352,8 @@ main(int _argc, char** _argv) {
   std::cout << "Initializing GLUTWindow" << std::endl;
   // GLUT
   glutInit(&_argc, _argv);
+  // glutInitContextVersion(3, 3);
+  // glutInitContextProfile(GLUT_CORE_PROFILE);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowPosition(50, 100);
   glutInitWindowSize(g_width, g_height); // HD size
@@ -332,6 +368,9 @@ main(int _argc, char** _argv) {
   glutDisplayFunc(draw);
   glutKeyboardFunc(keyPressed);
   glutSpecialFunc(specialKeyPressed);
+  glutMouseFunc(mousePressed);
+  glutMotionFunc(mouseDragged);
+  glutPassiveMotionFunc(NULL);
   glutTimerFunc(1000/FPS, timer, 0);
 
   // Start application

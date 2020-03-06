@@ -1,5 +1,56 @@
 #include "RayTracer.h"
 
+// GL
+#define GL_GLEXT_PROTOTYPES
+#if   defined(OSX)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#include <GLUT/glut.h>
+#elif defined(LINUX)
+#include <GL/glut.h>
+#endif
+
+RayTracer::
+RayTracer(int width, int height) 
+  : Renderer(width, height)
+{
+  m_frame = std::make_unique<glm::vec4[]>(m_width * m_height);
+}
+
+void 
+RayTracer::
+setFrameSize(int width, int height) {
+  Renderer::setFrameSize(width, height);
+  m_frame = std::make_unique<glm::vec4[]>(m_width * m_height);
+}
+
+
+void 
+RayTracer::
+render(const Scene& scene) {
+  int pixel = 0;
+  for (int j = 0; j < m_height; j++) {
+    for (int i = 0; i < m_width; i++) {
+      m_frame[pixel++] = renderPixel(scene, i, j);      
+    }
+  }
+  glDrawPixels(m_width, m_height, GL_RGBA, GL_FLOAT, m_frame.get());
+}
+
+glm::vec4
+RayTracer::
+renderPixel(const Scene& scene, int i, int j) {
+  glm::vec3 color(0.f, 0.f, 0.f);
+  for (auto& jitter : ANTI_ALIAS_JITTERS[m_hasAntiAlias]) {
+    // cast ray
+    Ray ray = m_view->castRay(scene.getCamera(), i, j, jitter.x, jitter.y);
+    color += shade(scene, ray, MAX_RAY_RECURSION);
+  }
+  color /= ANTI_ALIAS_JITTERS[m_hasAntiAlias].size();
+  return glm::vec4(color, 1);
+}
+
+
 glm::vec3
 RayTracer::
 shade(const Scene& scene, Ray ray, int maxRecursion) {
@@ -49,3 +100,8 @@ shadeSurface(const Scene& scene, glm::vec3 pos, glm::vec3 normal, glm::vec3 view
   }
   return glm::min(color, glm::vec3(1, 1, 1)); // make sure color doesn't exceed 1
 }
+
+
+#if   defined(OSX)
+#pragma clang diagnostic pop
+#endif
