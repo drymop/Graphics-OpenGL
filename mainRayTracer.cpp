@@ -56,7 +56,6 @@ using glm::vec2, glm::vec3, glm::vec4, glm::mat4;
 int g_width{1280};
 int g_height{720};
 int g_window{0};
-std::unique_ptr<glm::vec4[]> g_frame{nullptr}; ///< Framebuffer
 
 // Frame rate
 const unsigned int FPS = 60;
@@ -66,31 +65,10 @@ std::chrono::high_resolution_clock::time_point g_frameTime{
 float g_delay{0.f};
 float g_framesPerSecond{0.f};
 
-// Parallelization
-bool g_parallelize{true};
-const unsigned int N_ROWS_PER_TASK = 16;
-
 // Define view
-std::unique_ptr<View> g_view{nullptr};
-bool g_isPerspectiveView;
-// Perspective view
-const float FOV{1.0472}; // radians (about 60 degrees)
-// Orthographic view
-const float ORTHO_VIEW_PLANE_HEIGHT{5.f};
-
+bool g_isPerspectiveView{true};
 // Anti-aliasing
-int g_antiAliasMode{0};
-const std::vector<std::vector<glm::vec2>> g_antiAliasJitters {
-  {
-    {0.f, 0.f}
-  },
-  {
-    { 0.25f,  0.25f},
-    { 0.25f, -0.25f},
-    {-0.25f,  0.25f},
-    {-0.25f, -0.25f}
-  }
-};
+bool g_hasAntiAliasing{false};
 
 // Scene to render
 Scene g_scene;
@@ -109,11 +87,6 @@ void
 initialize(const std::string& sceneFile) {
   glClearColor(0.f, 0.f, 0.f, 0.f);
 
-  // initialize view
-  g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
-  g_isPerspectiveView = true;
-  g_view = std::make_unique<PerspectiveView>(g_width, g_height, FOV);
-
   // initialize scene
   SceneBuilder sceneBuilder;
   g_scene = sceneBuilder.buildSceneFromJsonFile(sceneFile);
@@ -130,10 +103,8 @@ resize(GLint _w, GLint _h) {
 
   // Viewport
   glViewport(0, 0, g_width, g_height);
-  // resize frame buffer
-  g_frame = std::make_unique<glm::vec4[]>(g_width*g_height);
-  // reset view to match new aspect ration
-  g_view->resize(g_width, g_height);
+  // renderer
+  g_rayTracer.setFrameSize(g_width, g_height);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -160,15 +131,7 @@ draw() {
   using namespace std::chrono;
 
   //////////////////////////////////////////////////////////////////////////////
-  // Clear
-
-  glm::vec4 bg_color(0.f, 0.4f, 0.f, 0.f);
-  for(int i = 0; i < g_width*g_height; ++i)
-    g_frame[i] = bg_color;
-
-  //////////////////////////////////////////////////////////////////////////////
   // Draw
-
   g_rayTracer.render(g_scene);
 
   //////////////////////////////////////////////////////////////////////////////
@@ -200,27 +163,17 @@ keyPressed(GLubyte _key, GLint _x, GLint _y) {
       break;
     // A key: switch anti-aliasing mode
     case 'a':
-      g_antiAliasMode = (g_antiAliasMode + 1) % g_antiAliasJitters.size();
-      std::cout << "Anti-alias mode: " << g_antiAliasMode << std::endl;
-      break;
-    // P key: toggle parallelization
-    case 'p':
-      g_parallelize = !g_parallelize;
-      std::cout << "Parallelization: " << g_parallelize << std::endl;
-      break;
-    // R key: toggle recursive ray-tracing
-    case 'r':
-      g_maxRayTracerRecursion = N_RAY_TRACE_RECURSIONS - g_maxRayTracerRecursion;
-      std::cout << "Recursive raytracing: " << g_maxRayTracerRecursion << std::endl;
+      g_hasAntiAliasing = !g_rayTracer.hasAntiAlias();
+      g_rayTracer.setAntiAlias(g_hasAntiAliasing);
+      std::cout << "Anti-alias: " << g_hasAntiAliasing << std::endl;
       break;
     // V key: switch projection mode
     case 'v':
-      g_isPerspectiveView = !g_isPerspectiveView;
+      g_isPerspectiveView = !g_rayTracer.isPerspectiveView();
+      g_rayTracer.setPerspectiveView(g_isPerspectiveView);
       if (g_isPerspectiveView) {
-        g_view = std::make_unique<PerspectiveView>(g_width, g_height, FOV);
         std::cout << "View mode: Perspective" << std::endl;
       } else {
-        g_view = std::make_unique<OrthographicView>(g_width, g_height, ORTHO_VIEW_PLANE_HEIGHT);
         std::cout << "View mode: Orthographic" << std::endl;
       }
       break;
