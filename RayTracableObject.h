@@ -1,10 +1,8 @@
 #ifndef RAYTRACABLE_OBJECT_H_
 #define RAYTRACABLE_OBJECT_H_
 
-#include <glm/glm.hpp>
-
-#include "Material.h"
 #include "Ray.h"
+#include "RenderableObject.h"
 
 struct RayHit {
   /// How far along the ray is the hit
@@ -13,18 +11,16 @@ struct RayHit {
   glm::vec3 normal;
 };
 
-class RayTracableObject
+class RayTracableObject : public RenderableObject
 {
   public:
+    RayTracableObject(Material _m) : RenderableObject(_m) {};
+
     ////////////////////////////////////////////////////////////////////////////
     /// @return Return the distance from the first point of this object hit by
     /// the ray to the origin of the ray. A non-positive return value indicates
     /// that the object is not hit by the ray.
     virtual RayHit intersectRay(Ray _ray) const = 0;
-
-    ////////////////////////////////////////////////////////////////////////////
-    /// @return The material of this object.
-    virtual struct Material getMaterial() const = 0;
 };
 
 #endif // RAYTRACABLE_OBJECT_H_

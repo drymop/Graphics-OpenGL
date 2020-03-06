@@ -11,7 +11,8 @@ void print(glm::vec3 v) {
 Portal::
 Portal(glm::vec3 _center1, float _radius1, glm::vec3 _normal1, glm::vec3 _up1,
       glm::vec3 _center2, float _radius2, glm::vec3 _normal2, glm::vec3 _up2) 
-  : sides{{
+  : RayTracableObject({{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, 0, {1, 1, 1}}),
+    sides{{
       {{_center1, _radius1, _normal1, {}}, _up1, glm::vec3()}, 
       {{_center2, _radius2, _normal2, {}}, _up2, glm::vec3()}
     }}

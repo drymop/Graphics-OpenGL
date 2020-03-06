@@ -15,11 +15,6 @@ class Portal : public RayTracableObject
 
     RayHit intersectRay(Ray _ray) const override;
 
-    Material getMaterial() const override {
-      // pure reflection (aka get color from the other side's view)
-      return {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, 0, {1, 1, 1}};
-    }
-
   private:
     struct PortalSide {
       Circle circle;

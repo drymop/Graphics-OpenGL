@@ -7,6 +7,7 @@
 #include "LightSource.h"
 #include "Ray.h"
 #include "RayTracableObject.h"
+#include "RenderableObject.h"
 
 class Scene
 {
@@ -16,7 +17,7 @@ class Scene
     /// another object
     static const float SELF_INTERSECTION_BIAS;
 
-    void addObject(std::unique_ptr<RayTracableObject> _object);
+    void addObject(std::unique_ptr<RenderableObject> _object);
 
     void addLightSource(std::unique_ptr<LightSource> _light);
 
@@ -33,7 +34,7 @@ class Scene
     std::vector<LightSource*> lightSources() const;
 
   private:
-    std::vector<std::unique_ptr<RayTracableObject>> m_objects;
+    std::vector<std::unique_ptr<RenderableObject>> m_objects;
     std::vector<std::unique_ptr<LightSource>> m_lights;
 };
 
