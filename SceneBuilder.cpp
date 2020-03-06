@@ -8,24 +8,32 @@
 
 #include "Circle.h"
 #include "Material.h"
+#include "ObjFileParser.h"
 #include "Plane.h"
 #include "PointLight.h"
 #include "Portal.h"
 #include "Sphere.h"
 
+using Json = nlohmann::json;
+using glm::vec3;
 
-glm::vec3
+vec3
 getVec3(const Json& j) {
-  return glm::vec3(j.at(0).get<float>(), j.at(1).get<float>(), j.at(2).get<float>());
+  return vec3(j.at(0).get<float>(), j.at(1).get<float>(), j.at(2).get<float>());
 }
 
 void
 from_json(const Json& j, Material& m) {
-  m.ka = getVec3(j.at("k_a"));
-  m.kd = getVec3(j.at("k_d"));
-  m.ks = getVec3(j.at("k_s"));
-  m.kr = getVec3(j.at("k_r"));
-  j.at("shininess").get_to(m.shininess);
+  if (j.is_string()) {
+    // name of material file
+    m = parseMaterialFile(j.get<std::string>());
+  } else {
+    m.ka = getVec3(j.at("k_a"));
+    m.kd = getVec3(j.at("k_d"));
+    m.ks = getVec3(j.at("k_s"));
+    m.kr = getVec3(j.at("k_r"));
+    j.at("shininess").get_to(m.shininess);
+  }
 }
 
 Scene
@@ -60,7 +68,9 @@ buildSceneFromJson(const Json& _sceneJson) {
   Json objectsJson = _sceneJson.at("objects");
   for (auto& j : objectsJson) {
     std::string type = j.at("type");
-    if (type == "sphere") {
+    if (type == "mesh") {
+
+    } else if (type == "sphere") {
       scene.addObject(std::move(std::make_unique<Sphere>(
         getVec3(j.at("center")), 
         j.at("radius").get<float>(), 

@@ -8,14 +8,13 @@
 
 #include "Scene.h"
 
-using Json = nlohmann::json;
 
 class SceneBuilder
 {
   public:
     Scene buildSceneFromJsonFile(const std::string& _jsonFileName);
 
-    Scene buildSceneFromJson(const Json& _sceneJson);
+    Scene buildSceneFromJson(const nlohmann::json& _sceneJson);
 };
 
 #endif // SCENE_BUILDER_H_

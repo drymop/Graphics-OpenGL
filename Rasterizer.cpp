@@ -57,7 +57,6 @@ initScene(Scene& scene) {
   };
   GLint vModelToWorldLoc = glGetUniformLocation(m_program, "vertexModelMatrix");
   GLint nModelToWorldLoc = glGetUniformLocation(m_program, "normalModelMatrix");
-
   for(auto& obj : scene.rasterizableObjects()) {
     obj->setMaterialUniformLocation(materialLoc);
     obj->setVertexModelMatrixUniformLocation(vModelToWorldLoc);

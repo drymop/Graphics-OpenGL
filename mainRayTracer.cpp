@@ -76,11 +76,10 @@ std::unique_ptr<Renderer> g_renderer{nullptr};
 /// @brief Initialize settings
 void
 initialize(const std::string& sceneFile) {
-  glClearColor(0.f, 0.f, 0.f, 0.f);
-
   // initialize scene
   SceneBuilder sceneBuilder;
   g_scene = sceneBuilder.buildSceneFromJsonFile(sceneFile);
+  g_renderer->initScene(g_scene);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

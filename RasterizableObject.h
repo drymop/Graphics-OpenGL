@@ -36,8 +36,7 @@ class RasterizableObject : public RenderableObject
   public:
     RasterizableObject(const Mesh& _mesh, 
                        const Material& _material, 
-                       const glm::mat4& _vModelMatrix,
-                       const glm::mat4& _nModelMatrix);
+                       const glm::mat4& _modelMatrix);
 
     void setMaterialUniformLocation(const MaterialUniformLocation& _loc) {
       m_materialUniformLocation = _loc;
