@@ -13,10 +13,11 @@ OrthographicView(int _frameWidth, int _frameHeight, float _viewPlaneHeight)
 
 Ray
 OrthographicView::
-castRay(int _pixelX, int _pixelY, float _xJitter, float _yJitter) {
+castRay(const Camera& _cam, int _pixelX, int _pixelY, float _xJitter, float _yJitter) const {
   float x = m_planeLeft + m_planeWidth * (_pixelX + 0.5f + _xJitter) / m_frameWidth;
   float y = m_planeBottom + m_planeHeight * (_pixelY + 0.5f + _yJitter) / m_frameHeight;
-  return Ray(glm::vec3(x, y, 0), glm::vec3(0, 0, -1));
+  glm::vec3 origin = x * _cam.getRight() + y * _cam.getUp() + _cam.getEye();
+  return Ray(origin, _cam.getAt());
 }
 
 void 
@@ -33,4 +34,5 @@ calculateViewingPlaneSize() {
   m_planeWidth = m_planeHeight * m_frameWidth / m_frameHeight;
   m_planeLeft = -m_planeWidth / 2;
   m_planeBottom = -m_planeHeight / 2;
+  m_projMatrix = glm::ortho(m_planeLeft, -m_planeLeft, m_planeBottom, -m_planeBottom);
 }

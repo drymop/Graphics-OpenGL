@@ -11,8 +11,10 @@ class PerspectiveView : public View
     /// and a FOV in the y-axis
     /// @param _frameWidth  Width of the frame, in pixel
     /// @param _frameHeight Height of the frame, in pixel
-    /// @param _fovY        Field of view angle, in radian
-    PerspectiveView(int _frameWidth, int _frameHeight, float _fovY);
+    /// @param _fovY        Field of view angle, in radians
+    /// @param _near        Near clipping plane
+    /// @param _far         Far clipping plane
+    PerspectiveView(int _frameWidth, int _frameHeight, float _fovY, float _near=0.001f, float _far=9999.f);
 
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Create a ray from the camera through the center of the virtual 
@@ -23,11 +25,16 @@ class PerspectiveView : public View
     /// The pixel coordinate is as follow: (0, 0) is at the bottom left of the 
     /// frame, with the x axis along the width of the frame, and the y axis 
     /// along the height of the frame.
+    /// @param _cam     Camera to shoot ray from
     /// @param _pixelX X-coordinate of the pixel
     /// @param _pixelY Y-coordinate of the pixel
     /// @param _xJitter Deviation in X-coordinate from the center of the pixel
     /// @param _yJitter Deviation in Y-coordinate from the center of the pixel
-    Ray castRay(int _pixelX, int _pixelY, float _xJitter, float _yJitter);
+    Ray castRay(const Camera& _cam, int _pixelX, int _pixelY, float _xJitter, float _yJitter) const;
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// @brief Generate the projection matrix
+    glm::mat4 getProjectionMatrix() const { return m_projMatrix; }
 
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Resize the view as the physical frame size changes, keeping the
@@ -42,6 +49,9 @@ class PerspectiveView : public View
     float m_planeHeight;
     float m_frameWidth;
     float m_frameHeight;
+    float m_planeNear;
+    float m_planeFar;
+    glm::mat4 m_projMatrix;
 
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Calculate the size of the viewing plane based on the frame size

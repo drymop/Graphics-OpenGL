@@ -21,11 +21,16 @@ class OrthographicView : public View
     /// The pixel coordinate is as follow: (0, 0) is at the bottom left of the 
     /// frame, with the x axis along the width of the frame, and the y axis 
     /// along the height of the frame.
-    /// @param _pixelX X-coordinate of the pixel
-    /// @param _pixelY Y-coordinate of the pixel
+    /// @param _cam     Camera to shoot ray from
+    /// @param _pixelX  X-coordinate of the pixel
+    /// @param _pixelY  Y-coordinate of the pixel
     /// @param _xJitter Deviation in X-coordinate from the center of the pixel
     /// @param _yJitter Deviation in Y-coordinate from the center of the pixel
-    Ray castRay(int _pixelX, int _pixelY, float _xJitter, float _yJitter);
+    Ray castRay(const Camera& _cam, int _pixelX, int _pixelY, float _xJitter, float _yJitter) const;
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// @brief Generate the projection matrix
+    glm::mat4 getProjectionMatrix() const { return m_projMatrix; }
 
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Resize the view as the physical frame size changes, keeping the
@@ -39,6 +44,7 @@ class OrthographicView : public View
     float m_planeHeight;
     float m_frameWidth;
     float m_frameHeight;
+    glm::mat4 m_projMatrix;
 
     ////////////////////////////////////////////////////////////////////////////
     /// @brief Calculate the size of the viewing plane based on the frame size

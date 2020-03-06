@@ -29,6 +29,7 @@
 // GLM
 #include <glm/glm.hpp>
 
+#include "Camera.h"
 #include "LightSource.h"
 #include "Material.h"
 #include "OrthographicView.h"
@@ -64,6 +65,7 @@ bool g_parallelize{true};
 const unsigned int N_ROWS_PER_TASK = 16;
 
 // Define view
+Camera g_cam{};
 std::unique_ptr<View> g_view{nullptr};
 bool g_isPerspectiveView;
 // Perspective view
@@ -156,7 +158,7 @@ renderPixel(int i, int j) {
   glm::vec3 color(0.f, 0.f, 0.f);
   for (auto& jitter : g_antiAliasJitters[g_antiAliasMode]) {
     // cast ray
-    Ray ray = g_view->castRay(i, j, jitter.x, jitter.y);
+    Ray ray = g_view->castRay(g_cam, i, j, jitter.x, jitter.y);
     color += g_rayTracer.shade(g_scene, ray, g_maxRayTracerRecursion);
   }
   color /= g_antiAliasJitters[g_antiAliasMode].size();
