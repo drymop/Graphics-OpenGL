@@ -29,8 +29,7 @@ initScene(Scene& scene) {
       // ignore non-point light
       continue;
     }
-    std::string lightIndex = "lights[" + std::to_string(i) + "].";
-    i++;
+    std::string lightIndex = "lights[" + std::to_string(i++) + "].";
     std::string posName = lightIndex + "pos";
     glUniform3fv(
       glGetUniformLocation(m_program, posName.c_str()), 1,
@@ -48,6 +47,7 @@ initScene(Scene& scene) {
       glGetUniformLocation(m_program, isName.c_str()), 1,
       glm::value_ptr(light->getIs()));
   }
+  glUniform1i(glGetUniformLocation(m_program, "numLights"), i);
   // Save material uniform location for each object
   MaterialUniformLocation materialLoc {
     glGetUniformLocation(m_program, "material.ka"),
