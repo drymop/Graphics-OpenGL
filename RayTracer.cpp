@@ -1,15 +1,5 @@
 #include "RayTracer.h"
 
-// GL
-#define GL_GLEXT_PROTOTYPES
-#if   defined(OSX)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#include <GLUT/glut.h>
-#elif defined(LINUX)
-#include <GL/glut.h>
-#endif
-
 RayTracer::
 RayTracer(int width, int height) 
   : Renderer(width, height)
@@ -104,8 +94,3 @@ shadeSurface(const Scene& scene, glm::vec3 pos, glm::vec3 normal, glm::vec3 view
   }
   return glm::min(color, glm::vec3(1, 1, 1)); // make sure color doesn't exceed 1
 }
-
-
-#if   defined(OSX)
-#pragma clang diagnostic pop
-#endif

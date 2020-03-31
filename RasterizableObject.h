@@ -3,22 +3,7 @@
 
 #include <string>
 
-// GL
-#define GL_GLEXT_PROTOTYPES
-#if   defined(OSX)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#include <GLUT/glut.h>
-#elif defined(LINUX)
-#include <GL/glut.h>
-#endif
-#include <GL/freeglut.h>
-
-// GLM
-#include <glm/glm.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/ext.hpp>
-
+#include "GLInclude.h"
 #include "ObjFileParser.h"
 #include "RenderableObject.h"
 
@@ -63,9 +48,5 @@ class RasterizableObject : public RenderableObject
     /// Location of uniform to send object data
     ObjectUniformLocations m_uniformLocations;
 };
-
-#if   defined(OSX)
-#pragma clang diagnostic pop
-#endif
 
 #endif // RASTERIZABLE_OBJECT_H_

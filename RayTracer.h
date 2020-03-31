@@ -5,9 +5,7 @@
 #include <vector>
 
 // GLM
-#include <glm/glm.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/ext.hpp>
+#include "GLInclude.h"
 
 #include "Ray.h"
 #include "Renderer.h"
@@ -62,6 +60,5 @@ class RayTracer : public Renderer
     /// shading algorithm
     glm::vec3 shadeSurface(const Scene& scene, glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& material);
 };
-
 
 #endif // RAY_TRACER_H_

@@ -9,14 +9,7 @@
 #include <string>
 
 // GL
-#define GL_GLEXT_PROTOTYPES
-#if   defined(OSX)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#include <GLUT/glut.h>
-#elif defined(LINUX)
-#include <GL/glut.h>
-#endif
+#include "GLInclude.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Compile a vertex shader and fragment shader together
@@ -26,8 +19,4 @@
 GLuint compileProgram(const std::string& _vertexShader,
                       const std::string& _fragmentShader);
 
-#if   defined(OSX)
-#pragma clang diagnostic pop
-#endif
-
-#endif
+#endif // COMPILE_SHADERS_H_

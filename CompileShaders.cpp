@@ -6,16 +6,6 @@
 #include <sstream>
 using namespace std;
 
-// GL
-#define GL_GLEXT_PROTOTYPES
-#if   defined(OSX)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#include <GLUT/glut.h>
-#elif defined(LINUX)
-#include <GL/glut.h>
-#endif
-
 string
 parseShader(const string& _shader) {
   ifstream ifs(_shader);
@@ -81,7 +71,3 @@ compileProgram(const string& _vertexShader,
 
   return shaderProgram;
 }
-
-#if   defined(OSX)
-#pragma clang diagnostic pop
-#endif
