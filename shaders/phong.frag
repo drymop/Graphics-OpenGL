@@ -58,12 +58,25 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
   for (int i = 0; i < numLights; i++) {
     // ambient
     color += material.ka * lights[i].ia;
+
+    // calculate direction and attenuation to light of specific type
+    float attenuation = 0;
+    vec3 lightDir;  // direction toward light
+    if (lights[i].type == TYPE_POINT_LIGHT) {
+      lightDir = lights[i].pos - pos;
+      float d = length(lightDir);
+      lightDir /= d;
+
+      vec3 al = lights[i].al;
+      attenuation = 1/(al[0] + al[1]*d + al[2]*d*d);
+    }
+
     // diffuse
-    vec3 lightDir = normalize(lights[i].pos - pos);  // direction toward light
-    color += material.kd * lights[i].id * max(0.0, dot(normal, lightDir));
+    color += attenuation * material.kd * lights[i].id * max(0.0, dot(normal, lightDir));
     // specular
     vec3 halfVec = normalize(viewDir + lightDir);
-    color += material.ks 
+    color += attenuation 
+             * material.ks 
              * lights[i].is 
              * pow(max(0.0, dot(normal, halfVec)), material.shininess);
   }

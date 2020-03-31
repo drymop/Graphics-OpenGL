@@ -23,4 +23,5 @@ sendLightData(LightUniformLocations locations) const {
   glUniform3fv(locations.intensityAmbient,  1, glm::value_ptr(m_intensityAmbient));
   glUniform3fv(locations.intensityDiffuse,  1, glm::value_ptr(m_intensityDiffuse));
   glUniform3fv(locations.intensitySpecular, 1, glm::value_ptr(m_intensitySpecular));
+  glUniform3fv(locations.linearAttenuation, 1, glm::value_ptr(m_linearAttenuation));
 }
