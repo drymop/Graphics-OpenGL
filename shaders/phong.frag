@@ -60,15 +60,16 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
     color += material.ka * lights[i].ia;
 
     // calculate direction and attenuation to light of specific type
-    float attenuation = 0;
+    float attenuation = 1;
     vec3 lightDir;  // direction toward light
     if (lights[i].type == TYPE_POINT_LIGHT) {
       lightDir = lights[i].pos - pos;
       float d = length(lightDir);
       lightDir /= d;
-
       vec3 al = lights[i].al;
       attenuation = 1/(al[0] + al[1]*d + al[2]*d*d);
+    } else if (lights[i].type == TYPE_DIR_LIGHT) {
+      lightDir = -lights[i].dir;
     }
 
     // diffuse
