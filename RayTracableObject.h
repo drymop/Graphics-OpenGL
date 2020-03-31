@@ -9,6 +9,7 @@ struct RayHit {
   float t;
   glm::vec3 position;
   glm::vec3 normal;
+  Material  material;
 };
 
 class RayTracableObject : public RenderableObject

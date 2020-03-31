@@ -16,10 +16,6 @@ class RenderableObject
     /// @brief  Virtual destructor to make class abstract
     virtual ~RenderableObject() {};
 
-    Material getMaterial() const {
-      return m_material;
-    }
-
   protected:
     Material m_material;
 };

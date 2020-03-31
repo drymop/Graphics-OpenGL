@@ -13,5 +13,5 @@ intersectRay(Ray _ray) const {
   }
   float t = glm::dot(m_point - p, m_normal) / denom;
   glm::vec3 hitPos = p + d * t;
-  return {t, hitPos, m_normal};
+  return {t, hitPos, m_normal, m_material};
 }

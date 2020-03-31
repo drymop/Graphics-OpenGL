@@ -26,5 +26,5 @@ intersectRay(Ray _ray) const {
   float t = -bHalf - sqrt(discriminant);
   glm::vec3 hitPos = p + d * t;
   glm::vec3 normal = glm::normalize(hitPos - m_center);
-  return {t, hitPos, normal};
+  return {t, hitPos, normal, m_material};
 }

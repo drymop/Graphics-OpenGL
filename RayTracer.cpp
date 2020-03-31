@@ -50,7 +50,7 @@ shade(const Scene& scene, Ray ray, int maxRecursion) {
     // black if nothing is hit by the ray
     return glm::vec4();
   }
-  Material material = hitObj->getMaterial();
+  Material material = firstHit.material;
   // shade with Blinn-Phong
   glm::vec3 color = shadeSurface(scene, firstHit.position, firstHit.normal, ray.getDirection(), material);
   // add reflection for mirror-like material
