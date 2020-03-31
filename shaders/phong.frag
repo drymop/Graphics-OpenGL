@@ -59,8 +59,8 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
     // ambient
     color += material.ka * lights[i].ia;
 
-    // calculate direction and attenuation to light of specific type
-    float attenuation = 1;
+    // calculate direction and attenuation to light of specific light types
+    float attenuation = 0;
     vec3 lightDir;  // direction toward light
     if (lights[i].type == TYPE_POINT_LIGHT) {
       lightDir = lights[i].pos - pos;
@@ -69,7 +69,17 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
       vec3 al = lights[i].al;
       attenuation = 1/(al[0] + al[1]*d + al[2]*d*d);
     } else if (lights[i].type == TYPE_DIR_LIGHT) {
+      attenuation = 1;
       lightDir = -lights[i].dir;
+    } else if (lights[i].type == TYPE_SPOT_LIGHT) {
+      lightDir = lights[i].pos - pos;
+      float d = length(lightDir);
+      lightDir /= d;
+      float dotProd = -dot(lightDir, lights[i].dir);
+      if (dotProd > lights[i].cutoffDot) {
+        vec3 al = lights[i].al;
+        attenuation = pow(dotProd, lights[i].aa) / (al[0] + al[1]*d + al[2]*d*d);
+      }
     }
 
     // diffuse
