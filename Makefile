@@ -43,6 +43,7 @@ OBJS = \
        Circle.o \
        CompileShaders.o \
        ConfigParser.o \
+       DirectionalLight.o \
        ObjFileParser.o \
        OrthographicView.o \
        PerspectiveView.o \

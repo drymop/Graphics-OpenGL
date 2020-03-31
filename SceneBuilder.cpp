@@ -6,11 +6,16 @@
 #include <iostream>
 #include <vector>
 
-#include "Circle.h"
 #include "Material.h"
 #include "ObjFileParser.h"
-#include "Plane.h"
+
+// lights
+#include "DirectionalLight.h"
 #include "PointLight.h"
+
+// scene objects
+#include "Circle.h"
+#include "Plane.h"
 #include "Portal.h"
 #include "RasterizableObject.h"
 #include "Sphere.h"
@@ -57,13 +62,24 @@ buildSceneFromJson(const Json& _sceneJson) {
   Json lightsJson = _sceneJson.at("lights");
   for (auto& j : lightsJson) {
     std::string type = j.at("type");
+    glm::vec3 ia{0, 0, 0};
+    if (j.find("i_a") != j.end()) {
+      ia = getVec3(j.at("i_a"));
+    }
     if (type == "point") {
       scene.addLightSource(std::move(std::make_unique<PointLight>(
-        getVec3(j.at("pos")), 
-        getVec3(j.at("i_a")), 
+        getVec3(j.at("pos")),
+        ia, 
         getVec3(j.at("i_d")), 
         getVec3(j.at("i_s")),
         getVec3(j.at("a_l"))
+      )));
+    } else if (type == "directional") {
+      scene.addLightSource(std::move(std::make_unique<DirectionalLight>(
+        getVec3(j.at("dir")),
+        ia, 
+        getVec3(j.at("i_d")), 
+        getVec3(j.at("i_s"))
       )));
     }
   }
