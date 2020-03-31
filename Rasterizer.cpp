@@ -48,19 +48,20 @@ initScene(Scene& scene) {
       glm::value_ptr(light->getIs()));
   }
   glUniform1i(glGetUniformLocation(m_program, "numLights"), i);
-  // Save material uniform location for each object
-  MaterialUniformLocation materialLoc {
-    glGetUniformLocation(m_program, "material.ka"),
-    glGetUniformLocation(m_program, "material.kd"),
-    glGetUniformLocation(m_program, "material.ks"),
-    glGetUniformLocation(m_program, "material.shininess")
+  
+  // Save uniform locations for each object
+  ObjectUniformLocations objUniformLocs {
+    glGetUniformLocation(m_program, "vertexModelMatrix"),
+    glGetUniformLocation(m_program, "normalModelMatrix"),
+    {
+      glGetUniformLocation(m_program, "material.ka"),
+      glGetUniformLocation(m_program, "material.kd"),
+      glGetUniformLocation(m_program, "material.ks"),
+      glGetUniformLocation(m_program, "material.shininess")
+    }
   };
-  GLint vModelToWorldLoc = glGetUniformLocation(m_program, "vertexModelMatrix");
-  GLint nModelToWorldLoc = glGetUniformLocation(m_program, "normalModelMatrix");
   for(auto& obj : scene.rasterizableObjects()) {
-    obj->setMaterialUniformLocation(materialLoc);
-    obj->setVertexModelMatrixUniformLocation(vModelToWorldLoc);
-    obj->setNormalModelMatrixUniformLocation(nModelToWorldLoc);
+    obj->setUniformLocations(objUniformLocs);
   }
 }
 

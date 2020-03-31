@@ -41,16 +41,18 @@ RasterizableObject(const Mesh& _mesh,
 void
 RasterizableObject::
 draw() {
-  // set tranformation uniform
-  glUniformMatrix4fv(m_vModelMatrixLocation, 
+  GLint vertexModelMatrix;
+  GLint normalModelMatrix;
+  // set tranformation uniforms
+  glUniformMatrix4fv(m_uniformLocations.vertexModelMatrix, 
                      1, GL_FALSE, glm::value_ptr(m_vModelMatrix));
-  glUniformMatrix4fv(m_nModelMatrixLocation, 
+  glUniformMatrix4fv(m_uniformLocations.normalModelMatrix, 
                      1, GL_FALSE, glm::value_ptr(m_nModelMatrix));
-  // set material uniform
-  glUniform3fv(m_materialUniformLocation.kaLoc, 1, glm::value_ptr(m_material.ka));
-  glUniform3fv(m_materialUniformLocation.kdLoc, 1, glm::value_ptr(m_material.kd));
-  glUniform3fv(m_materialUniformLocation.ksLoc, 1, glm::value_ptr(m_material.ks));
-  glUniform1f (m_materialUniformLocation.shininessLoc, m_material.shininess);
+  // set material uniforms
+  glUniform3fv(m_uniformLocations.material.ka, 1, glm::value_ptr(m_material.ka));
+  glUniform3fv(m_uniformLocations.material.kd, 1, glm::value_ptr(m_material.kd));
+  glUniform3fv(m_uniformLocations.material.ks, 1, glm::value_ptr(m_material.ks));
+  glUniform1f (m_uniformLocations.material.shininess, m_material.shininess);
   // draw
   glBindVertexArray(m_vao);
   glDrawArrays(GL_TRIANGLES, 0, m_nVertices);

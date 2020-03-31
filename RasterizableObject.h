@@ -23,12 +23,19 @@
 #include "RenderableObject.h"
 
 
-/// The locations of uniforms related to material in shader
-struct MaterialUniformLocation {
-  GLint kaLoc;
-  GLint kdLoc;
-  GLint ksLoc;
-  GLint shininessLoc;
+/// The locations of uniforms related to material in rasterizer
+struct MaterialUniformLocations {
+  GLint ka;
+  GLint kd;
+  GLint ks;
+  GLint shininess;
+};
+
+/// The locations of uniforms related the objects in rasterizer
+struct ObjectUniformLocations {
+  GLint vertexModelMatrix;
+  GLint normalModelMatrix;
+  MaterialUniformLocations material;
 };
 
 class RasterizableObject : public RenderableObject
@@ -38,17 +45,9 @@ class RasterizableObject : public RenderableObject
                        const Material& _material, 
                        const glm::mat4& _modelMatrix);
 
-    void setMaterialUniformLocation(const MaterialUniformLocation& _loc) {
-      m_materialUniformLocation = _loc;
-    }
-
-    void setVertexModelMatrixUniformLocation(GLint _loc) {
-      m_vModelMatrixLocation = _loc;
-    }
-
-    void setNormalModelMatrixUniformLocation(GLint _loc) {
-      m_nModelMatrixLocation = _loc;
-    }
+    void setUniformLocations(const ObjectUniformLocations& _locs) {
+      m_uniformLocations = _locs;
+    };
 
     void draw();
 
@@ -61,11 +60,8 @@ class RasterizableObject : public RenderableObject
     glm::mat4 m_nModelMatrix;
     /// Name of vertex array object for this object
     GLuint m_vao;
-    /// Location of uniform to store object material
-    MaterialUniformLocation m_materialUniformLocation;
-    /// Location of uniform to store object transform
-    GLint m_vModelMatrixLocation;
-    GLint m_nModelMatrixLocation;
+    /// Location of uniform to send object data
+    ObjectUniformLocations m_uniformLocations;
 };
 
 #if   defined(OSX)

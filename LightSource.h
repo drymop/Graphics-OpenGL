@@ -5,7 +5,18 @@
 #include <glm/glm.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Represent a light ray from a source
+/// Uniform locations to send data to rasterizer
+struct LightRay {
+  glm::vec3 direction;
+  float distance;
+  glm::vec3 intensityAmbient;
+  glm::vec3 intensityDiffuse;
+  glm::vec3 intensitySpecular;
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// Represent a light ray from a source to a point
 struct LightRay {
   glm::vec3 direction;
   float distance;
