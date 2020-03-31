@@ -1,19 +1,21 @@
 #ifndef LIGHT_SOURCE_H_
 #define LIGHT_SOURCE_H_
 
-// vector library
-#include <glm/glm.hpp>
+#include "GLInclude.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-/// Uniform locations to send data to rasterizer
-struct LightRay {
-  glm::vec3 direction;
-  float distance;
-  glm::vec3 intensityAmbient;
-  glm::vec3 intensityDiffuse;
-  glm::vec3 intensitySpecular;
+/// Uniform locations to send light data to rasterizer
+struct LightUniformLocations {
+  GLint type;
+  GLint pos;
+  GLint dir;
+  GLint cutoffAngle;
+  GLint intensityAmbient;
+  GLint intensityDiffuse;
+  GLint intensitySpecular;
+  GLint linearAttenuation;
+  GLint angleAttenuation;
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Represent a light ray from a source to a point
@@ -33,7 +35,11 @@ class LightSource
   public:
     ////////////////////////////////////////////////////////////////////////////
     /// @return LightRay from this light source to the destination
-    virtual struct LightRay getLightRay(glm::vec3 _destination) const = 0;
+    virtual LightRay getLightRay(glm::vec3 _destination) const = 0;
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Send light uniform data to the rasterizer
+    virtual void sendLightData(LightUniformLocations _locs) const = 0;
 };
 
 #endif // LIGHT_SOURCE_H_

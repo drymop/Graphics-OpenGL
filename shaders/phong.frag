@@ -9,12 +9,20 @@
 // Uniforms
 
 // Properties of the scene
-#define MAX_LIGHTS 32
+#define MAX_LIGHTS 8
+#define TYPE_POINT_LIGHT 1
+#define TYPE_SPOT_LIGHT  2
+#define TYPE_DIR_LIGHT   3
 struct Light {
-  vec3 pos; // position of light in world coordinate
-  vec3 ia;  // ambient intensity
-  vec3 id;  // diffuse intensity
-  vec3 is;  // specular intensity
+  int   type; // light type
+  vec3  pos;  // position of light, in world coordinate
+  vec3  dir;  // direction of light, in world coordinate
+  float cutoff; // min dot product, aka cos(maxAngle)
+  vec3  ia;   // ambient intensity
+  vec3  id;   // diffuse intensity
+  vec3  is;   // specular intensity
+  vec3  al;   // linear attenuation (1,x,x**2 coefficients)
+  float aa;   // angular attenuation
 };
 
 uniform int   numLights;          // number of lights in the scene

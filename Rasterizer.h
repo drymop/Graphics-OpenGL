@@ -1,7 +1,10 @@
 #ifndef RASTERIZER_H_
 #define RASTERIZER_H_
 
+#include <string>
+
 #include "Renderer.h"
+
 
 class Rasterizer : public Renderer
 {
@@ -14,6 +17,10 @@ class Rasterizer : public Renderer
 
   private:
     GLuint m_program; ///< Shader program ID
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Helper method to get uniform location from name
+    GLint getUniformLocation(const std::string& uniformName);
 };
 
 #endif // RASTERIZER_H_

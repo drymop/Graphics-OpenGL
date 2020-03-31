@@ -1,8 +1,7 @@
 #include "Rasterizer.h"
 
-#include <string>
-
 #include "CompileShaders.h"
+#include "GLInclude.h"
 #include "PointLight.h"
 
 using glm::vec3, glm::mat4;
@@ -23,41 +22,34 @@ Rasterizer::
 initScene(Scene& scene) {
   // Send lights
   int i = 0;
-  for(auto& lightSource : scene.lightSources()) {
-    PointLight* light = dynamic_cast<PointLight*>(lightSource);
-    if (light == nullptr) {
-      // ignore non-point light
-      continue;
-    }
-    std::string lightIndex = "lights[" + std::to_string(i++) + "].";
-    std::string posName = lightIndex + "pos";
-    glUniform3fv(
-      glGetUniformLocation(m_program, posName.c_str()), 1,
-      glm::value_ptr(light->getPosition()));
-    std::string iaName = lightIndex + "ia";
-    glUniform3fv(
-      glGetUniformLocation(m_program, iaName.c_str()), 1,
-      glm::value_ptr(light->getIa()));
-    std::string idName = lightIndex + "id";
-    glUniform3fv(
-      glGetUniformLocation(m_program, idName.c_str()), 1,
-      glm::value_ptr(light->getId()));
-    std::string isName = lightIndex + "is";
-    glUniform3fv(
-      glGetUniformLocation(m_program, isName.c_str()), 1,
-      glm::value_ptr(light->getIs()));
+  for(auto& light : scene.lightSources()) {
+    // light uniform name has format 
+    //   lights[i].attribute
+    std::string prefix = "lights[" + std::to_string(i++) + "].";
+    LightUniformLocations uniformLocations {
+      getUniformLocation(prefix + "type"),
+      getUniformLocation(prefix + "pos"),
+      getUniformLocation(prefix + "dir"),
+      getUniformLocation(prefix + "cutoff"),
+      getUniformLocation(prefix + "ia"),
+      getUniformLocation(prefix + "id"),
+      getUniformLocation(prefix + "is"),
+      getUniformLocation(prefix + "al"),
+      getUniformLocation(prefix + "aa"),
+    };
+    light->sendLightData(uniformLocations);
   }
-  glUniform1i(glGetUniformLocation(m_program, "numLights"), i);
+  glUniform1i(getUniformLocation("numLights"), i);
   
   // Save uniform locations for each object
   ObjectUniformLocations objUniformLocs {
-    glGetUniformLocation(m_program, "vertexModelMatrix"),
-    glGetUniformLocation(m_program, "normalModelMatrix"),
+    getUniformLocation("vertexModelMatrix"),
+    getUniformLocation("normalModelMatrix"),
     {
-      glGetUniformLocation(m_program, "material.ka"),
-      glGetUniformLocation(m_program, "material.kd"),
-      glGetUniformLocation(m_program, "material.ks"),
-      glGetUniformLocation(m_program, "material.shininess")
+      getUniformLocation("material.ka"),
+      getUniformLocation("material.kd"),
+      getUniformLocation("material.ks"),
+      getUniformLocation("material.shininess")
     }
   };
   for(auto& obj : scene.rasterizableObjects()) {
@@ -72,14 +64,20 @@ render(const Scene& scene) {
   // Set up camera
   const Camera& camera = scene.getCamera();
   vec3 eye = camera.getEye();
-  glUniform3f(glGetUniformLocation(m_program, "cameraPos"), eye.x, eye.y, eye.z);
+  glUniform3f(getUniformLocation("cameraPos"), eye.x, eye.y, eye.z);
   mat4 viewMatrix = glm::lookAt(eye, eye + camera.getAt(), camera.getUp());
   mat4 projMatrix = m_view->getProjectionMatrix();
   glUniformMatrix4fv(
-      glGetUniformLocation(m_program, "viewProjectionMatrix"), 
+      getUniformLocation("viewProjectionMatrix"), 
       1, GL_FALSE, glm::value_ptr(projMatrix * viewMatrix));
   // Draw
   for(auto& obj : scene.rasterizableObjects()) {
     obj->draw();
   }
+}
+
+GLint
+Rasterizer::
+getUniformLocation(const std::string& uniformName) {
+  return glGetUniformLocation(m_program, uniformName.c_str());
 }

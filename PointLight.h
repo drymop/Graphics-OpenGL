@@ -9,29 +9,34 @@ class PointLight : public LightSource
 {
   public:
     PointLight(glm::vec3 _pos, 
-        glm::vec3 _intensity_ambient,
-        glm::vec3 _intensity_diffuse, 
-        glm::vec3 _intensity_specular) 
+        glm::vec3 _intensityAmbient,
+        glm::vec3 _intensityDiffuse, 
+        glm::vec3 _intensitySpecular) 
     : m_pos(_pos),
-      m_intensity_ambient(_intensity_ambient),
-      m_intensity_diffuse(_intensity_diffuse),
-      m_intensity_specular(_intensity_specular)
+      m_intensityAmbient(_intensityAmbient),
+      m_intensityDiffuse(_intensityDiffuse),
+      m_intensitySpecular(_intensitySpecular)
       {};
 
     glm::vec3 getPosition() const { return m_pos; }
-    glm::vec3 getIa() const { return m_intensity_ambient; }
-    glm::vec3 getId() const { return m_intensity_diffuse; }
-    glm::vec3 getIs() const { return m_intensity_specular; }
+    glm::vec3 getIa() const { return m_intensityAmbient; }
+    glm::vec3 getId() const { return m_intensityDiffuse; }
+    glm::vec3 getIs() const { return m_intensitySpecular; }
     
     ////////////////////////////////////////////////////////////////////////////
     /// @return LightRay from this light source to the destination
-    struct LightRay getLightRay(glm::vec3 _destination) const;
+    LightRay getLightRay(glm::vec3 _destination) const;
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Send light uniform data to the rasterizer
+    void sendLightData(LightUniformLocations _locs) const;
+
 
   private:
     glm::vec3 m_pos;
-    glm::vec3 m_intensity_ambient;
-    glm::vec3 m_intensity_diffuse;
-    glm::vec3 m_intensity_specular;
+    glm::vec3 m_intensityAmbient;
+    glm::vec3 m_intensityDiffuse;
+    glm::vec3 m_intensitySpecular;
 };
 
 #endif // POINT_LIGHT_H_
