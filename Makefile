@@ -56,6 +56,7 @@ OBJS = \
        Scene.o \
        SceneBuilder.o \
        Sphere.o \
+       SpotLight.o \
 
 EXECUTABLE = main.out
 

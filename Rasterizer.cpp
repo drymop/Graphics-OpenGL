@@ -30,7 +30,7 @@ initScene(Scene& scene) {
       getUniformLocation(prefix + "type"),
       getUniformLocation(prefix + "pos"),
       getUniformLocation(prefix + "dir"),
-      getUniformLocation(prefix + "cutoff"),
+      getUniformLocation(prefix + "cutoffDot"),
       getUniformLocation(prefix + "ia"),
       getUniformLocation(prefix + "id"),
       getUniformLocation(prefix + "is"),

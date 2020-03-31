@@ -9,7 +9,7 @@ struct LightUniformLocations {
   GLint type;
   GLint pos;
   GLint dir;
-  GLint cutoffAngle;
+  GLint cutoffDot;
   GLint intensityAmbient;
   GLint intensityDiffuse;
   GLint intensitySpecular;

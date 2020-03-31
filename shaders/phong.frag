@@ -17,7 +17,7 @@ struct Light {
   int   type; // light type
   vec3  pos;  // position of light, in world coordinate
   vec3  dir;  // direction of light, in world coordinate
-  float cutoff; // min dot product, aka cos(maxAngle)
+  float cutoffDot; // min dot product, aka cos(maxAngle)
   vec3  ia;   // ambient intensity
   vec3  id;   // diffuse intensity
   vec3  is;   // specular intensity

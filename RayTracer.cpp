@@ -82,7 +82,11 @@ shadeSurface(const Scene& scene, glm::vec3 pos, glm::vec3 normal, glm::vec3 view
     LightRay light = lightSource->getLightRay(pos);
     // ambient light
     color += material.ka * light.intensityAmbient;
-    // make sure not blocked by other objects before adding diffuse and specular
+    // if light doesn't hit this object, continue on
+    if (light.direction == glm::vec3(0, 0, 0)) {
+      continue;
+    }
+    // if blocked by other objects, continue on
     Ray towardLight(pos, -light.direction);
     RayHit hitInfo;
     if (scene.firstRayHit(towardLight, &hitInfo)) {
