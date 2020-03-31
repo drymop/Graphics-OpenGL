@@ -4,12 +4,14 @@ LightRay
 PointLight::
 getLightRay(glm::vec3 _destination) const {
   glm::vec3 v = _destination - m_pos;
+  float d = glm::length(v);
+  float attenuation = m_linearAttenuation[0] + m_linearAttenuation[1]*d + m_linearAttenuation[2]*d*d;
   return {
-    glm::normalize(v), 
-    glm::length(v), 
-    m_intensityAmbient, 
-    m_intensityDiffuse, 
-    m_intensitySpecular
+    v/d, 
+    d,
+    m_intensityAmbient/attenuation, 
+    m_intensityDiffuse/attenuation, 
+    m_intensitySpecular/attenuation,
   };
 }
 

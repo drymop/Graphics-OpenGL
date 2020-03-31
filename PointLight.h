@@ -11,11 +11,13 @@ class PointLight : public LightSource
     PointLight(glm::vec3 _pos, 
         glm::vec3 _intensityAmbient,
         glm::vec3 _intensityDiffuse, 
-        glm::vec3 _intensitySpecular) 
+        glm::vec3 _intensitySpecular,
+        glm::vec3 _linearAttenuation) 
     : m_pos(_pos),
       m_intensityAmbient(_intensityAmbient),
       m_intensityDiffuse(_intensityDiffuse),
-      m_intensitySpecular(_intensitySpecular)
+      m_intensitySpecular(_intensitySpecular),
+      m_linearAttenuation(_linearAttenuation)
       {};
 
     glm::vec3 getPosition() const { return m_pos; }
@@ -37,6 +39,7 @@ class PointLight : public LightSource
     glm::vec3 m_intensityAmbient;
     glm::vec3 m_intensityDiffuse;
     glm::vec3 m_intensitySpecular;
+    glm::vec3 m_linearAttenuation;
 };
 
 #endif // POINT_LIGHT_H_

@@ -62,7 +62,8 @@ buildSceneFromJson(const Json& _sceneJson) {
         getVec3(j.at("pos")), 
         getVec3(j.at("i_a")), 
         getVec3(j.at("i_d")), 
-        getVec3(j.at("i_s"))
+        getVec3(j.at("i_s")),
+        getVec3(j.at("a_l"))
       )));
     }
   }
