@@ -14,11 +14,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 struct Vertex {
 
-  glm::vec3 m_p; ///< Position
-  glm::vec3 m_n; ///< Normal
+  glm::vec3 p; ///< Position
+  glm::vec3 n; ///< Normal
 
   Vertex(const glm::vec3& _p, const glm::vec3& _n) :
-    m_p(_p), m_n(_n) {}
+    p(_p), n(_n) {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////

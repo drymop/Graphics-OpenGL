@@ -5,7 +5,7 @@
 
 #include "GLInclude.h"
 #include "ObjFileParser.h"
-#include "RenderableObject.h"
+#include "RayTracableObject.h"
 
 
 /// The locations of uniforms related to material in rasterizer
@@ -23,7 +23,7 @@ struct ObjectUniformLocations {
   MaterialUniformLocations material;
 };
 
-class RasterizableObject : public RenderableObject
+class RasterizableObject : public RayTracableObject
 {
   public:
     RasterizableObject(const Mesh& _mesh, 
@@ -36,7 +36,15 @@ class RasterizableObject : public RenderableObject
 
     void draw();
 
+    /// Ray hit with t not exceeding this amount is treated as
+    /// an object hitting itself, and thus doesn't count as hitting
+    /// another object
+    static const float SELF_INTERSECTION_BIAS;
+
+    RayHit intersectRay(Ray _ray) const override;
+
   private:
+    Mesh m_mesh;
     /// Number of vertices in the mesh
     size_t m_nVertices;
     /// Transformation of vertex from model to world
@@ -47,6 +55,16 @@ class RasterizableObject : public RenderableObject
     GLuint m_vao;
     /// Location of uniform to send object data
     ObjectUniformLocations m_uniformLocations;
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// Check if ray intersect a triangle, and that the intersection is closer 
+    /// to the ray origin. Write hit result into hitResult param.
+    /// @return whether the ray intersects the triangle closer to the current hit
+    bool intersectRayTriangle(Ray ray,
+                              const Vertex& v0, 
+                              const Vertex& v1, 
+                              const Vertex& v2, 
+                              RayHit* hitResult) const;
 };
 
 #endif // RASTERIZABLE_OBJECT_H_

@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 
       Name: Tuan Le
-Assignment: Programming 2 (Rasterization)
+Assignment: Programming 3 (Texture mapping)
 
 --------------------------------------------------------------------------------
 -- Known Bugs/Issues
@@ -35,9 +35,8 @@ e.g., if you asked a question on stackoverflow. Be sure to cite sources again in
 the assignment body, e.g., copy website link into code. Do not list the
 instructor as a collaborator -- this is assumed.
 
- 1. https://computergraphics.stackexchange.com/questions/5323/dynamic-array-in-glsl/5326
- 2. David Qin
- 3. Sreya Aluri
+ 1. https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection
+ 2. 
 
 All students are expected to be in accordance with the student honor code.
 http://studentdevelopment.richmond.edu/student-handbook/honor/
