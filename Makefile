@@ -35,7 +35,7 @@ endif
 ## Rules
 ################################################################################
 INCL = $(GL_INCL)
-LIBS = $(GL_LIBS) -lpthread
+LIBS = $(GL_LIBS) SOIL2/libsoil2-debug.a -lpthread
 
 # OBJS for ray tracer
 OBJS = \

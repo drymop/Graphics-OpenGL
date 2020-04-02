@@ -16,9 +16,10 @@ struct Vertex {
 
   glm::vec3 p; ///< Position
   glm::vec3 n; ///< Normal
+  glm::vec2 t; ///< Texture
 
-  Vertex(const glm::vec3& _p, const glm::vec3& _n) :
-    p(_p), n(_n) {}
+  Vertex(const glm::vec3& _p, const glm::vec3& _n, const glm::vec2& _t) :
+    p(_p), n(_n), t(_t) {}
 };
 
 ////////////////////////////////////////////////////////////////////////////////

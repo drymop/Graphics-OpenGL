@@ -18,6 +18,7 @@
 
 // GL
 #include "GLInclude.h"
+#include "SOIL2.h"
 
 #include "Camera.h"
 #include "ConfigParser.h"
@@ -28,6 +29,7 @@
 #include "Renderer.h"
 
 using glm::vec2, glm::vec3, glm::vec4, glm::mat4;
+using std::cout, std::endl;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global variables - avoid these
@@ -64,6 +66,9 @@ std::unique_ptr<Renderer> g_renderer{nullptr};
 /// @brief Initialize settings
 void
 initialize(const std::string& sceneFile) {
+  GLuint textureID;
+  textureID = SOIL_load_OGL_texture("models/patchygrass_1.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+  cout << "Texture " << textureID << endl;
   // initialize scene
   SceneBuilder sceneBuilder;
   g_scene = sceneBuilder.buildSceneFromJsonFile(sceneFile);

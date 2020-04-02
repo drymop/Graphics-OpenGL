@@ -18,6 +18,7 @@ uniform mat4     normalModelMatrix;   // Transform normal from model to world co
 // Vertex input/output
 in  vec3 modelPos;    // Vertex position in model space
 in  vec3 modelNormal; // Vertex normal in model space
+in  vec2 texCoord;    // Texture coordinate
 out vec3 worldPos;    // Vertex position in world space
 out vec3 worldNormal; // Vertex normal in world space
 
