@@ -12,7 +12,7 @@ class Sphere : public RayTracableObject
         m_radius(_radius)
     {};
 
-    RayHit intersectRay(Ray _ray) const;
+    RayHit intersectRay(Ray _ray) const override;
 
   private:
     /// Center of the sphere

@@ -49,9 +49,9 @@
     },
     {
       "type": "rectangle",
-      "bot_left": [-2.5, -2, -5],
-      "right": [5, 0, 0],
-      "up": [0, 0, -5],
+      "bot_left": [-5, -2, -5],
+      "right": [10, 0, 0],
+      "up": [0, 0, -10],
       "material": "models/GroundPlane.mtl"
     }
   ]  
