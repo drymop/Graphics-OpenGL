@@ -20,6 +20,8 @@ struct Vertex {
 
   Vertex(const glm::vec3& _p, const glm::vec3& _n, const glm::vec2& _t) :
     p(_p), n(_n), t(_t) {}
+
+  Vertex() : Vertex({0,0,0},{0,0,0},{0,0}) {};
 };
 
 ////////////////////////////////////////////////////////////////////////////////
