@@ -62,7 +62,7 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
   // material of the current fragment, comes from either texture of default material
   vec3 ka = material.ka;
   vec3 kd = hasKdMap? texture(kdTextureSampler, texCoord).xyz : material.kd;
-  vec3 ks = hasKdMap? texture(ksTextureSampler, texCoord).xyz : material.ks;
+  vec3 ks = hasKsMap? texture(ksTextureSampler, texCoord).xyz : material.ks;
 
   // add illumination from each light source
   for (int i = 0; i < numLights; i++) {
