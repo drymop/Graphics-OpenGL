@@ -9,8 +9,7 @@ class Plane : public RayTracableObject
     Plane(
       glm::vec3 _point, 
       glm::vec3 _normal, 
-      const MaterialConfig& _materialConfig,
-      bool _generateMesh = false)
+      const MaterialConfig& _materialConfig)
       : RayTracableObject(_materialConfig),
         m_point(_point), 
         m_normal(glm::normalize(_normal))
