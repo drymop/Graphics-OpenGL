@@ -48,11 +48,11 @@
       "translate": [-1.5, 0, -10]
     },
     {
-      "type": "mesh",
-      "obj": "models/square.obj",
-      "material": "models/GroundPlane.mtl",
-      "scale": [10, 10, 10],
-      "translate":[0, -2, 0]
+      "type": "rectangle",
+      "bot_left": [-2.5, -2, -5],
+      "right": [5, 0, 0],
+      "up": [0, 0, -5],
+      "material": "models/GroundPlane.mtl"
     }
   ]  
 }

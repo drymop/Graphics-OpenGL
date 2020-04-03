@@ -19,6 +19,7 @@
 #include "Plane.h"
 #include "Portal.h"
 #include "RasterizableObject.h"
+#include "Rectangle.h"
 #include "Sphere.h"
 
 using Json = nlohmann::json;
@@ -134,6 +135,13 @@ buildSceneFromJson(const Json& _sceneJson) {
       scene.addObject(std::move(std::make_unique<Plane>(
         getVec3(j.at("point")), 
         getVec3(j.at("normal")), 
+        j.at("material").get<MaterialConfig>()
+      )));
+    } else if (type == "rectangle") {
+      scene.addObject(std::move(std::make_unique<Rectangle>(
+        getVec3(j.at("bot_left")),
+        getVec3(j.at("right")),
+        getVec3(j.at("up")),
         j.at("material").get<MaterialConfig>()
       )));
     } else if (type == "circle") {

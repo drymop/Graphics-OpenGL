@@ -40,25 +40,26 @@ LIBS = $(GL_LIBS) SOIL2/libsoil2-debug.a -lpthread
 # OBJS for ray tracer
 OBJS = \
        main.o \
-       Circle.o \
        CompileShaders.o \
        ConfigParser.o \
        DirectionalLight.o \
        ObjFileParser.o \
        OrthographicView.o \
        PerspectiveView.o \
-       Plane.o \
        PointLight.o \
-       Portal.o \
-       RasterizableObject.o \
        Rasterizer.o \
        RayTracer.o \
-       RenderableObject.o \
        Scene.o \
        SceneBuilder.o \
-       Sphere.o \
        SpotLight.o \
        Texture.o \
+       RenderableObject.o \
+       RasterizableObject.o \
+       Circle.o \
+       Plane.o \
+       Portal.o \
+       Rectangle.o \
+       Sphere.o \
 
 EXECUTABLE = main.out
 

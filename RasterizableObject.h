@@ -32,13 +32,13 @@ class RasterizableObject : public RayTracableObject
                        const MaterialConfig& _materialConfig,
                        const glm::mat4& _modelMatrix);
 
-    void setUniformLocations(const ObjectUniformLocations& _locs) {
+    virtual void setUniformLocations(const ObjectUniformLocations& _locs) {
       m_uniformLocations = _locs;
     };
 
-    void sendMeshData();
+    virtual void sendMeshData();
 
-    void draw();
+    virtual void draw();
 
     /// Ray hit with t not exceeding this amount is treated as
     /// an object hitting itself, and thus doesn't count as hitting
@@ -47,7 +47,7 @@ class RasterizableObject : public RayTracableObject
 
     RayHit intersectRay(Ray _ray) const override;
 
-  private:
+  protected:
     Mesh m_mesh;
     /// Number of vertices in the mesh
     size_t m_nVertices;
