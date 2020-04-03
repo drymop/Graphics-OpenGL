@@ -30,19 +30,24 @@ uniform Light lights[MAX_LIGHTS]; // lights in the scene
 uniform vec3  cameraPos;          // Position of camera in the world
 
 // Properties of the object
+uniform bool hasKdMap = false;  // Is object Kd from texture, or material?
+uniform bool hasKsMap = false;  // Is object Ks from texture, or material?
+uniform sampler2D kdTextureSampler;
+uniform sampler2D ksTextureSampler;
 struct Material {
   vec3 ka;
   vec3 kd;
   vec3 ks;
   float shininess;
 };
-uniform Material material;            // Material of the vertex
+uniform Material material;        // Default material of the object, if not texture mapped
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex input/output
 in  vec3 worldPos;    // Vertex position in world space
 in  vec3 worldNormal; // Vertex normal in world space
+in  vec2 texCoord;    // Texture coordinate
 out vec4 color;       // Assigned vertex color to send to rasterizer
 
 
@@ -51,13 +56,18 @@ out vec4 color;       // Assigned vertex color to send to rasterizer
 /// @param pos    Position of vertex in world space
 /// @param normal Normal of vertex in world space
 vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
-  vec3 color = vec3(0.0, 0.0, 0.0);
+  vec3 color = vec3(0.0, 0.0, 0.0);          // accumulate color
   vec3 viewDir = normalize(cameraPos - pos); // direction toward camera
+
+  // material of the current fragment, comes from either texture of default material
+  vec3 ka = material.ka;
+  vec3 kd = hasKdMap? vec3(0,1,0) : material.kd;
+  vec3 ks = hasKdMap? texture(kdTextureSampler, texCoord).xyz : material.ks;
 
   // add illumination from each light source
   for (int i = 0; i < numLights; i++) {
     // ambient
-    color += material.ka * lights[i].ia;
+    color += ka * lights[i].ia;
 
     // calculate direction and attenuation to light of specific light types
     float attenuation = 0;
@@ -83,11 +93,11 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
     }
 
     // diffuse
-    color += attenuation * material.kd * lights[i].id * max(0.0, dot(normal, lightDir));
+    color += attenuation * kd * lights[i].id * max(0.0, dot(normal, lightDir));
     // specular
     vec3 halfVec = normalize(viewDir + lightDir);
     color += attenuation 
-             * material.ks 
+             * ks 
              * lights[i].is 
              * pow(max(0.0, dot(normal, halfVec)), material.shininess);
   }

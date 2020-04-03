@@ -45,6 +45,8 @@ initScene(Scene& scene) {
   ObjectUniformLocations objUniformLocs {
     getUniformLocation("vertexModelMatrix"),
     getUniformLocation("normalModelMatrix"),
+    getUniformLocation("hasKdMap"),
+    getUniformLocation("hasKsMap"),
     {
       getUniformLocation("material.ka"),
       getUniformLocation("material.kd"),

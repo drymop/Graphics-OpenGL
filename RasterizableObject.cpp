@@ -58,14 +58,15 @@ RasterizableObject(const Mesh& _mesh,
 void
 RasterizableObject::
 draw() {
-  GLint vertexModelMatrix;
-  GLint normalModelMatrix;
   // set tranformation uniforms
   glUniformMatrix4fv(m_uniformLocations.vertexModelMatrix, 
                      1, GL_FALSE, value_ptr(m_vModelMatrix));
   glUniformMatrix4fv(m_uniformLocations.normalModelMatrix, 
                      1, GL_FALSE, value_ptr(m_nModelMatrix));
-  // set material uniforms
+  // set texture uniforms
+  glUniform1i(m_uniformLocations.hasKdMap, false);
+  glUniform1i(m_uniformLocations.hasKsMap, false);
+  // set default material uniforms
   glUniform3fv(m_uniformLocations.material.ka, 1, value_ptr(m_material.ka));
   glUniform3fv(m_uniformLocations.material.kd, 1, value_ptr(m_material.kd));
   glUniform3fv(m_uniformLocations.material.ks, 1, value_ptr(m_material.ks));

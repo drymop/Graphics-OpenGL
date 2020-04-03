@@ -20,6 +20,8 @@ struct MaterialUniformLocations {
 struct ObjectUniformLocations {
   GLint vertexModelMatrix;
   GLint normalModelMatrix;
+  GLint hasKdMap;
+  GLint hasKsMap;
   MaterialUniformLocations material;
 };
 

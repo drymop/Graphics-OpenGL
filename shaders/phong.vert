@@ -18,9 +18,11 @@ uniform mat4     normalModelMatrix;   // Transform normal from model to world co
 // Vertex input/output
 in  vec3 modelPos;    // Vertex position in model space
 in  vec3 modelNormal; // Vertex normal in model space
-in  vec2 texCoord;    // Texture coordinate
+in  vec2 texCoord_in; // Texture coordinate
+
 out vec3 worldPos;    // Vertex position in world space
 out vec3 worldNormal; // Vertex normal in world space
+out vec2 texCoord;    // Vertex's texture coordinate
 
 void main() {
   // Calculate position and normal of vector in world coordinate
@@ -28,6 +30,7 @@ void main() {
   vec4 normal = normalModelMatrix * vec4(modelNormal, 0);
   worldPos = pos.xyz;
   worldNormal = normalize(normal.xyz);
+  texCoord = texCoord_in;
 
   // Calculate homogeneous coordinate of vertex for clipping
   gl_Position = viewProjectionMatrix * pos;
