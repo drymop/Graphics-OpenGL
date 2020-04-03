@@ -5,7 +5,7 @@
 // test
 #include <iostream>
 
-using glm::cross, glm::dot, glm::value_ptr, glm::vec3, glm::vec4;
+using glm::cross, glm::dot, glm::value_ptr, glm::vec2, glm::vec3, glm::vec4;
 
 RasterizableObject::
 RasterizableObject(const Mesh& _mesh, 
@@ -147,7 +147,16 @@ intersectRayTriangle(
   hitResult->t = t;
   hitResult->position = rayOrigin + rayDir*t;
   hitResult->normal = a*v0.n + b*v1.n + c*v2.n;
-  // TODO compute material at intersection point using texture
+  
+  // compute material at intersection point using texture
   hitResult->material = m_defaultMaterial;
+  // interpolate texture coordinate
+  vec2 texCoord = a*v0.t + b*v1.t + c*v2.t;
+  if (m_kdTexture.isValid()) {
+    hitResult->material.kd = m_kdTexture.sample(texCoord);
+  }
+  if (m_ksTexture.isValid()) {
+    hitResult->material.ks = m_kdTexture.sample(texCoord);
+  }
   return true;
 }

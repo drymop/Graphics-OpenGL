@@ -1,0 +1,58 @@
+{
+  "lights": [
+    {
+      "type": "point",
+      "pos": [2, 1, -10],
+      "i_a": [0.1, 0.1, 0.1],
+      "i_d": [1, 1, 1],
+      "i_s": [1, 1, 1],
+      "a_l": [1, 0, 0.1]
+    },
+    {
+      "type": "point",
+      "pos": [-3, 5, -7],
+      "i_d": [1, 1, 1],
+      "i_s": [1, 1, 1],
+      "a_l": [1, 0, 0.1]
+    },
+    {
+      "type": "directional",
+      "dir": [-1, -1, 0],
+      "i_d": [0.2, 0.2, 0.2],
+      "i_s": [0.2, 0.2, 0.2]
+    }
+  ],
+
+  "objects": [
+    {
+      "type": "mesh",
+      "obj": "models/sphere.obj",
+      "material": {
+        "k_a": [0.5, 0.5, 0.5],
+        "k_d": [1, 0, 0],
+        "k_s": [0.8, 0.8, 0.8],
+        "shininess": 100
+      },
+      "scale": [0.1, 0.1, 0.1],
+      "translate": [1.5, 0, -15]
+    },
+    {
+      "type": "mesh",
+      "obj": "models/teapot.obj",
+      "material": "models/teapot.mtl",
+      "scale": [0.2, 0.2, 0.2],
+      "rotate": {
+        "angle": 0.7,
+        "axis": [-1, 0, 0]
+      },
+      "translate": [-1.5, 0, -10]
+    },
+    {
+      "type": "mesh",
+      "obj": "models/square.obj",
+      "material": "models/GroundPlane.mtl",
+      "scale": [10, 10, 10],
+      "translate":[0, -2, 0]
+    }
+  ]  
+}
