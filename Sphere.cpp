@@ -4,6 +4,16 @@
 
 #include "Sphere.h"
 
+Sphere::
+Sphere(glm::vec3 _center, float _radius, const MaterialConfig& _matConfig, bool _isRayTraced)
+  : RasterizableObject(
+      _isRayTraced? Mesh() : generateMesh(10),
+      _matConfig,
+      glm::scale(glm::translate(glm::mat4(1.0f), _center), glm::vec3(_radius))
+    ),
+    m_center(_center), 
+    m_radius(_radius)
+    {};
 
 RayHit 
 Sphere::
@@ -31,7 +41,6 @@ Sphere::
 generateMesh(int prec) {
   std::vector<Vertex> vertices{};
   int numVertices = (prec + 1) * (prec + 1);
-  int numIndices = prec * prec * 6;
   for (int i = 0; i < numVertices; i++) { vertices.push_back({}); } // std::vector::push_back()
   // calculate triangle vertices
   for (int i = 0; i <= prec; i++) {

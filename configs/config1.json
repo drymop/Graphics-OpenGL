@@ -1,5 +1,5 @@
 {
   "ray_tracing": true,
   "screen_size": [1280, 720],
-  "scene": "scene_data/meshes_raytrace.json"
+  "scene": "scene_data/meshes.json"
 }

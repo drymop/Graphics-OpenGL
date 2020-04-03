@@ -3,14 +3,10 @@
 
 #include "RasterizableObject.h"
 
-class Sphere : public RayTracableObject
+class Sphere : public RasterizableObject
 {
   public:
-    Sphere(glm::vec3 _center, float _radius, const MaterialConfig& _matConfig) 
-      : RayTracableObject(_matConfig),
-        m_center(_center), 
-        m_radius(_radius)
-    {};
+    Sphere(glm::vec3 _center, float _radius, const MaterialConfig& _matConfig, bool _isRayTraced);
 
     RayHit intersectRay(Ray _ray) const override;
 

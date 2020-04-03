@@ -8,5 +8,5 @@ Kd 0 0 1
 Ks 0.2 0.2 0.2
 d 1
 illum 2
-#map_Kd patchygrass_1.jpg
-map_Ks specular_half.png
+map_Kd patchygrass_1.jpg
+#map_Ks specular_half.png

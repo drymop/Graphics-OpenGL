@@ -129,7 +129,8 @@ buildSceneFromJson(const Json& _sceneJson) {
       scene.addObject(std::move(std::make_unique<Sphere>(
         getVec3(j.at("center")), 
         j.at("radius").get<float>(), 
-        j.at("material").get<MaterialConfig>()
+        j.at("material").get<MaterialConfig>(),
+        m_isRayTrace
       )));
     } else if (type == "plane") {
       scene.addObject(std::move(std::make_unique<Plane>(
