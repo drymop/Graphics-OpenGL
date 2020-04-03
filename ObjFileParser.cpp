@@ -53,34 +53,50 @@ Mesh parseObjFile(const std::string& _filename) {
   return Mesh(vertices);
 }
 
-Material parseMaterialFile(const std::string& _filename) {
+MaterialConfig parseMaterialFile(const std::string& _filename) {
   std::ifstream ifs(_filename);
   if(!ifs) {
     throw std::invalid_argument("Cannot open file");
   }
 
-  Material m{};
+  MaterialConfig m{};
+  m.hasKdMap = m.hasKsMap = false;
+
   std::string line;
-  
   while(ifs) {
     getline(ifs, line);
     std::istringstream iss(line);
     std::string tag;
     iss >> tag;
+    float x,y,z;
     if(tag == "Ka") {
-      iss >> m.ka.x >> m.ka.y >> m.ka.z;
+      iss >> x >> y >> z;
+      m.defaultMaterial.ka = {x,y,z};
     }
     else if (tag == "Kd") {
-      iss >> m.kd.x >> m.kd.y >> m.kd.z;
-    } 
+      iss >> x >> y >> z;
+      m.defaultMaterial.kd = {x,y,z};
+    }
     else if (tag == "Ks") {
-      iss >> m.ks.x >> m.ks.y >> m.ks.z;
+      iss >> x >> y >> z;
+      m.defaultMaterial.ks = {x,y,z};
     }
     else if (tag == "Kr") {
-      iss >> m.ks.x >> m.ks.y >> m.ks.z;
+      iss >> x >> y >> z;
+      m.defaultMaterial.kr = {x,y,z};
     }
     else if (tag == "Ns") {
-      iss >> m.shininess;
+      iss >> m.defaultMaterial.shininess;
+    }
+    else if (tag == "map_Kd") {
+      iss >> m.kdTextureFile;
+      m.kdTextureFile = "models/" + m.kdTextureFile;
+      m.hasKdMap = true;
+    }
+    else if (tag == "map_Ks") {
+      iss >> m.ksTextureFile;
+      m.ksTextureFile = "models/" + m.ksTextureFile;
+      m.hasKsMap = true;
     }
   }
   return m;

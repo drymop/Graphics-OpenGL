@@ -1,6 +1,10 @@
 #ifndef MATERIAL_H_
 #define MATERIAL_H_
 
+#include <string>
+#include <glm/glm.hpp>
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /// Contains paramters used for Blinn-Phong shading of a surface
 struct Material {
@@ -14,6 +18,17 @@ struct Material {
   float shininess;
   /// Reflection of light from other object, used for mirror like surface
   glm::vec3 kr;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+/// Configure the material of a surface, either through texture mapping or
+/// default material
+struct MaterialConfig {
+  bool hasKdMap;
+  bool hasKsMap;
+  std::string kdTextureFile;
+  std::string ksTextureFile;
+  Material defaultMaterial;
 };
 
 #endif // MATERIAL_H_

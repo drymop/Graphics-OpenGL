@@ -53,10 +53,12 @@ OBJS = \
        RasterizableObject.o \
        Rasterizer.o \
        RayTracer.o \
+       RenderableObject.o \
        Scene.o \
        SceneBuilder.o \
        Sphere.o \
        SpotLight.o \
+       Texture.o \
 
 EXECUTABLE = main.out
 

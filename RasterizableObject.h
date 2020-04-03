@@ -29,7 +29,7 @@ class RasterizableObject : public RayTracableObject
 {
   public:
     RasterizableObject(const Mesh& _mesh, 
-                       const Material& _material, 
+                       const MaterialConfig& _materialConfig,
                        const glm::mat4& _modelMatrix);
 
     void setUniformLocations(const ObjectUniformLocations& _locs) {

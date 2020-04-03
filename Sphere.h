@@ -6,8 +6,8 @@
 class Sphere : public RayTracableObject
 {
   public:
-    Sphere(glm::vec3 _center, float _radius, struct Material _material) 
-      : RayTracableObject(_material),
+    Sphere(glm::vec3 _center, float _radius, const MaterialConfig& _matConfig) 
+      : RayTracableObject(_matConfig),
         m_center(_center), 
         m_radius(_radius)
     {};

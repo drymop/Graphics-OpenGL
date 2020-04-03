@@ -15,7 +15,9 @@ struct RayHit {
 class RayTracableObject : public RenderableObject
 {
   public:
-    RayTracableObject(Material _m) : RenderableObject(_m) {};
+    RayTracableObject(const MaterialConfig& _m) : RenderableObject(_m) {};
+
+    RayTracableObject(const Material& _m) : RenderableObject(_m) {};
 
     ////////////////////////////////////////////////////////////////////////////
     /// @return Return the distance from the first point of this object hit by

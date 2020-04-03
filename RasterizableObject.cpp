@@ -9,9 +9,9 @@ using glm::cross, glm::dot, glm::value_ptr, glm::vec3, glm::vec4;
 
 RasterizableObject::
 RasterizableObject(const Mesh& _mesh, 
-                   const Material& _material, 
+                   const MaterialConfig& _materialConfig,
                    const glm::mat4& _modelMatrix)
-  : RayTracableObject(_material),
+  : RayTracableObject(_materialConfig),
     m_mesh(_mesh),
     m_nVertices(_mesh.vertices.size()),
     m_vModelMatrix(_modelMatrix),
@@ -63,14 +63,18 @@ draw() {
                      1, GL_FALSE, value_ptr(m_vModelMatrix));
   glUniformMatrix4fv(m_uniformLocations.normalModelMatrix, 
                      1, GL_FALSE, value_ptr(m_nModelMatrix));
+  // set material/texture uniform
+  const Material& m = m_defaultMaterial;
   // set texture uniforms
-  glUniform1i(m_uniformLocations.hasKdMap, false);
-  glUniform1i(m_uniformLocations.hasKsMap, false);
+  glUniform1i(m_uniformLocations.hasKdMap, m_kdTexture.isValid());
+  glUniform1i(m_uniformLocations.hasKsMap, m_ksTexture.isValid());
+  m_kdTexture.activate(GL_TEXTURE0);
+  m_kdTexture.activate(GL_TEXTURE1);
   // set default material uniforms
-  glUniform3fv(m_uniformLocations.material.ka, 1, value_ptr(m_material.ka));
-  glUniform3fv(m_uniformLocations.material.kd, 1, value_ptr(m_material.kd));
-  glUniform3fv(m_uniformLocations.material.ks, 1, value_ptr(m_material.ks));
-  glUniform1f (m_uniformLocations.material.shininess, m_material.shininess);
+  glUniform3fv(m_uniformLocations.material.ka, 1, value_ptr(m.ka));
+  glUniform3fv(m_uniformLocations.material.kd, 1, value_ptr(m.kd));
+  glUniform3fv(m_uniformLocations.material.ks, 1, value_ptr(m.ks));
+  glUniform1f (m_uniformLocations.material.shininess, m.shininess);
   // draw
   glBindVertexArray(m_vao);
   glDrawArrays(GL_TRIANGLES, 0, m_nVertices);
@@ -143,6 +147,7 @@ intersectRayTriangle(
   hitResult->t = t;
   hitResult->position = rayOrigin + rayDir*t;
   hitResult->normal = a*v0.n + b*v1.n + c*v2.n;
-  hitResult->material = m_material;
+  // TODO compute material at intersection point using texture
+  hitResult->material = m_defaultMaterial;
   return true;
 }

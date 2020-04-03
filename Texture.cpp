@@ -12,7 +12,9 @@ Texture(const std::string& _imgFile) {
 
 void
 Texture::
-activeTexture(GLenum _textureUnit) {
-  glActiveTexture(_textureUnit);
-  glBindTexture(GL_TEXTURE_2D, m_textureId);
+activate(GLenum _textureUnit) {
+  if (m_textureId) {
+    glActiveTexture(_textureUnit);
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
+  }
 }

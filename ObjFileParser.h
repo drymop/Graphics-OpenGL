@@ -46,7 +46,7 @@ Mesh parseObjFile(const std::string& _filename);
 /// @brief Parse an mtl file to a material
 /// @param _filename Filename
 /// @return Loaded material
-Material parseMaterialFile(const std::string& _filename);
+MaterialConfig parseMaterialFile(const std::string& _filename);
 
 
 #endif // OBJ_FILE_PARSER_H_

@@ -30,11 +30,12 @@ getVec3(const Json& j) {
 }
 
 void
-from_json(const Json& j, Material& m) {
+from_json(const Json& j, MaterialConfig& mc) {
   if (j.is_string()) {
     // name of material file
-    m = parseMaterialFile(j.get<std::string>());
+    mc = parseMaterialFile(j.get<std::string>());
   } else {
+    Material m{}; 
     m.ka = getVec3(j.at("k_a"));
     m.kd = getVec3(j.at("k_d"));
     m.ks = getVec3(j.at("k_s"));
@@ -42,6 +43,8 @@ from_json(const Json& j, Material& m) {
       m.kr = getVec3(j.at("k_r"));
     }
     j.at("shininess").get_to(m.shininess);
+    mc.defaultMaterial = m;
+    mc.hasKdMap = mc.hasKsMap = false;
   }
 }
 
@@ -118,27 +121,27 @@ buildSceneFromJson(const Json& _sceneJson) {
       }
       scene.addObject(std::move(std::make_unique<RasterizableObject>(
         mesh,
-        j.at("material").get<Material>(),
+        j.at("material").get<MaterialConfig>(),
         transform
       )));
     } else if (type == "sphere") {
       scene.addObject(std::move(std::make_unique<Sphere>(
         getVec3(j.at("center")), 
         j.at("radius").get<float>(), 
-        j.at("material").get<Material>()
+        j.at("material").get<MaterialConfig>()
       )));
     } else if (type == "plane") {
       scene.addObject(std::move(std::make_unique<Plane>(
         getVec3(j.at("point")), 
         getVec3(j.at("normal")), 
-        j.at("material").get<Material>()
+        j.at("material").get<MaterialConfig>()
       )));
     } else if (type == "circle") {
       scene.addObject(std::move(std::make_unique<Circle>(
         getVec3(j.at("center")),
         j.at("radius").get<float>(), 
         getVec3(j.at("normal")), 
-        j.at("material").get<Material>()
+        j.at("material").get<MaterialConfig>()
       )));
     } else if (type == "portal") {
       scene.addObject(std::move(std::make_unique<Portal>(

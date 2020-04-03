@@ -9,9 +9,13 @@
 class Texture
 {
   public:
+    Texture() : m_textureId(0) {};
+
     Texture(const std::string& _imgFile);
 
-    void activeTexture(GLenum _textureUnit);
+    bool isValid() {return m_textureId != 0;}
+
+    void activate(GLenum _textureUnit);
 
   private:
     GLuint m_textureId;
