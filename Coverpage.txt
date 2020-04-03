@@ -23,7 +23,9 @@ Please list all issues/bugs/missing features for this assignment.
 
 Please list all extra work completed for this assignment.
 
-1. 
+1. Supporting triangulated meshes in ray tracer.
+2. Supporting multiple light types in ray tracer.
+3. Supporting texture mapping in your tracer.
 
 --------------------------------------------------------------------------------
 -- Collaborators and Sources
@@ -36,7 +38,7 @@ the assignment body, e.g., copy website link into code. Do not list the
 instructor as a collaborator -- this is assumed.
 
  1. https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection
- 2. 
+ 2. Text book (for generating sphere)
 
 All students are expected to be in accordance with the student honor code.
 http://studentdevelopment.richmond.edu/student-handbook/honor/
@@ -54,5 +56,5 @@ contrary to the letter or the spirit of the collaboration guidelines for this
 assignment.
 
 Signature (Type full name): Tuan Le
-                      Date: 3/5/2020
+                      Date: 4/3/2020
 
