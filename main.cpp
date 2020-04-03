@@ -54,9 +54,9 @@ bool g_hasAntiAliasing{false};
 // Scene to render
 Scene g_scene;
 
-// Ray tracer
-// RayTracer g_renderer->g_width, g_height};
+// Rendererr
 std::unique_ptr<Renderer> g_renderer{nullptr};
+bool g_isRayTrace;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Functions
@@ -66,7 +66,7 @@ std::unique_ptr<Renderer> g_renderer{nullptr};
 void
 initialize(const std::string& sceneFile) {
   // initialize scene
-  SceneBuilder sceneBuilder;
+  SceneBuilder sceneBuilder{g_isRayTrace};
   g_scene = sceneBuilder.buildSceneFromJsonFile(sceneFile);
   g_renderer->initScene(g_scene);
 }
@@ -283,12 +283,13 @@ main(int _argc, char** _argv) {
   Config config = configParser.parse(_argv[1]);
   g_width = config.screenWidth;
   g_height = config.screenHeight;
+  g_isRayTrace = config.rayTracing;
 
   //////////////////////////////////////////////////////////////////////////////
   // Initialize GLUT Window
   std::cout << "Initializing GLUTWindow" << std::endl;
   // GLUT
-  if (!config.rayTracing) {
+  if (!g_isRayTrace) {
     // rasterizing
     glutInitContextVersion(3, 3);
     glutInitContextProfile(GLUT_CORE_PROFILE);
@@ -300,7 +301,7 @@ main(int _argc, char** _argv) {
 
   //////////////////////////////////////////////////////////////////////////////
   // Initialize scene
-  if (config.rayTracing) {
+  if (g_isRayTrace) {
     g_renderer = std::make_unique<RayTracer>(g_width, g_height);
   } else {
     g_renderer = std::make_unique<Rasterizer>(g_width, g_height);

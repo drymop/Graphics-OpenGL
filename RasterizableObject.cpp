@@ -15,8 +15,14 @@ RasterizableObject(const Mesh& _mesh,
     m_mesh(_mesh),
     m_nVertices(_mesh.vertices.size()),
     m_vModelMatrix(_modelMatrix),
-    m_nModelMatrix(glm::transpose(glm::inverse(_modelMatrix)))
-{
+    m_nModelMatrix(glm::transpose(glm::inverse(_modelMatrix))),
+    m_vao(0)
+{}
+
+
+void
+RasterizableObject::
+sendMeshData() {
   // Create vertex array object
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
@@ -27,7 +33,7 @@ RasterizableObject(const Mesh& _mesh,
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, 
                sizeof(Vertex) * m_nVertices, 
-               &_mesh.vertices[0], 
+               &m_mesh.vertices[0], 
                GL_STATIC_DRAW);
   // Specify vertex attributes within buffer (interleave)
   // - positions
@@ -46,14 +52,7 @@ RasterizableObject(const Mesh& _mesh,
   // Unbind
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
-
-  // mesh stuff
-  for(auto& v : m_mesh.vertices) {
-    v.p = vec3(m_vModelMatrix * vec4(v.p, 1));
-    v.n = glm::normalize(vec3(m_nModelMatrix * vec4(v.n, 0)));
-  }
 }
-
 
 void
 RasterizableObject::
@@ -81,6 +80,16 @@ draw() {
   glBindVertexArray(0);
 }
 
+Vertex 
+RasterizableObject::
+vertexToWorld(const Vertex& v) const {
+  return {
+    vec3(m_vModelMatrix * vec4(v.p, 1)),
+    glm::normalize(vec3(m_nModelMatrix * vec4(v.n, 0))),
+    v.t,
+  };
+}
+
 const float RasterizableObject::SELF_INTERSECTION_BIAS = 1e-3f;
 
 RayHit
@@ -92,7 +101,9 @@ intersectRay(Ray _ray) const {
   for (int i = 0; i < m_nVertices; i+=3) {
     isHit = isHit || intersectRayTriangle(
       _ray,
-      m_mesh.vertices[i], m_mesh.vertices[i+1], m_mesh.vertices[i+2], 
+      vertexToWorld(m_mesh.vertices[i]), 
+      vertexToWorld(m_mesh.vertices[i+1]), 
+      vertexToWorld(m_mesh.vertices[i+2]), 
       &hitResult);
   }
   if (!isHit) return RayHit();

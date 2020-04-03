@@ -56,6 +56,7 @@ initScene(Scene& scene) {
   };
   for(auto& obj : scene.rasterizableObjects()) {
     obj->setUniformLocations(objUniformLocs);
+    obj->sendMeshData();
   }
 }
 

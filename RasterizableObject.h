@@ -36,6 +36,8 @@ class RasterizableObject : public RayTracableObject
       m_uniformLocations = _locs;
     };
 
+    void sendMeshData();
+
     void draw();
 
     /// Ray hit with t not exceeding this amount is treated as
@@ -57,6 +59,10 @@ class RasterizableObject : public RayTracableObject
     GLuint m_vao;
     /// Location of uniform to send object data
     ObjectUniformLocations m_uniformLocations;
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Transform the vertex to world coordinate
+    Vertex vertexToWorld(const Vertex& v) const;
 
     ////////////////////////////////////////////////////////////////////////////
     /// Check if ray intersect a triangle, and that the intersection is closer 

@@ -1,34 +1,50 @@
 {
   "lights": [
     {
-      "type": "directional",
-      "dir": [-1, -1, 0],
-      "i_d": [0.4, 0.4, 0.4],
-      "i_s": [0, 0, 0]
+      "type": "point",
+      "pos": [2, 1, -10],
+      "i_a": [0.1, 0.1, 0.1],
+      "i_d": [1, 1, 1],
+      "i_s": [1, 1, 1],
+      "a_l": [1, 0, 0.02]
     },
     {
-      "type": "spot",
-      "pos": [0, 5, -5],
-      "dir": [0, -1, 0],
-      "angle": 1,
-      "i_d": [0.4, 0.4, 0.4],
-      "i_s": [0.4, 0.4, 0.4],
-      "a_l": [1, 0, 0.001],
-      "a_a": 10
+      "type": "directional",
+      "dir": [-1, -1, 0],
+      "i_d": [0.8, 0.8, 0.8],
+      "i_s": [0.8, 0.8, 0.8]
     }
   ],
 
   "objects": [
     {
+      "type": "sphere",
+      "center": [1.5, 0, -15],
+      "radius": 2,
+      "material": {
+        "k_a": [0.5, 0.5, 0.5],
+        "k_d": [1, 0, 0],
+        "k_s": [0.2, 0.2, 0.2],
+        "shininess": 50,
+        "k_r": [0, 0, 0]
+      }
+    },
+    {
+      "type": "sphere",
+      "center": [-1.5, 0, -10],
+      "radius": 2,
+      "material": {
+        "k_a": [0.5, 0.5, 0.5],
+        "k_d": [0, 1, 0],
+        "k_s": [0.8, 0.8, 0.8],
+        "shininess": 100,
+        "k_r": [0.1, 0.1, 0.1]
+      }
+    },
+    {
       "type": "mesh",
       "obj": "models/square.obj",
       "material": "models/GroundPlane.mtl",
-      "xxxmaterial": {
-        "k_a": [0.5, 0.5, 0.5],
-        "k_d": [0, 0, 0.5],
-        "k_s": [0.8, 0.8, 0.8],
-        "shininess": 100
-      },
       "scale": [5, 5, 5],
       "translate":[0, -2, -10]
     }
