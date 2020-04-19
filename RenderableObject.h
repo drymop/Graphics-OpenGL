@@ -29,6 +29,7 @@ class RenderableObject
   protected:
     Texture  m_kdTexture;
     Texture  m_ksTexture;
+    Texture  m_keTexture;
     Material m_defaultMaterial;
 };
 

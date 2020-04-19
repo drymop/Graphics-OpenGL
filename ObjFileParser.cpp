@@ -85,6 +85,10 @@ MaterialConfig parseMaterialFile(const std::string& _filename) {
       iss >> x >> y >> z;
       m.defaultMaterial.kr = {x,y,z};
     }
+    else if (tag == "Ke") {
+      iss >> x >> y >> z;
+      m.defaultMaterial.ke = {x,y,z};
+    }
     else if (tag == "Ns") {
       iss >> m.defaultMaterial.shininess;
     }
@@ -97,6 +101,11 @@ MaterialConfig parseMaterialFile(const std::string& _filename) {
       iss >> m.ksTextureFile;
       m.ksTextureFile = "models/" + m.ksTextureFile;
       m.hasKsMap = true;
+    }
+    else if (tag == "map_Ke") {
+      iss >> m.keTextureFile;
+      m.ksTextureFile = "models/" + m.keTextureFile;
+      m.hasKeMap = true;
     }
   }
   return m;

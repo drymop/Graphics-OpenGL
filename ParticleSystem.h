@@ -2,7 +2,7 @@
 #define PARTICLE_SYSTEM_H_
 
 #include <vector>
-#include "GLInclude.h"
+#include "RasterizableObject.h"
 
 struct Particle {
   glm::vec3 p;     ///< position

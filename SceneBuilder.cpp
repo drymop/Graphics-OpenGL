@@ -43,9 +43,12 @@ from_json(const Json& j, MaterialConfig& mc) {
     if (j.find("k_r") != j.end()) {
       m.kr = getVec3(j.at("k_r"));
     }
+    if (j.find("k_e") != j.end()) {
+      m.ke = getVec3(j.at("k_e"));
+    }
     j.at("shininess").get_to(m.shininess);
     mc.defaultMaterial = m;
-    mc.hasKdMap = mc.hasKsMap = false;
+    mc.hasKdMap = mc.hasKsMap = mc.hasKeMap = false;
   }
 }
 

@@ -18,6 +18,8 @@ struct Material {
   float shininess;
   /// Reflection of light from other object, used for mirror like surface
   glm::vec3 kr;
+  /// Emission of light
+  glm::vec3 ke;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,8 +28,10 @@ struct Material {
 struct MaterialConfig {
   bool hasKdMap;
   bool hasKsMap;
+  bool hasKeMap;
   std::string kdTextureFile;
   std::string ksTextureFile;
+  std::string keTextureFile;
   Material defaultMaterial;
 };
 
