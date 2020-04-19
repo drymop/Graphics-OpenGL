@@ -32,12 +32,15 @@ uniform vec3  cameraPos;          // Position of camera in the world
 // Properties of the object
 uniform bool hasKdMap = false;  // Is object Kd from texture, or material?
 uniform bool hasKsMap = false;  // Is object Ks from texture, or material?
+uniform bool hasKeMap = false;  // Is object Ke from texture, or material?
 uniform sampler2D kdTextureSampler;
 uniform sampler2D ksTextureSampler;
+uniform sampler2D keTextureSampler;
 struct Material {
   vec3 ka;
   vec3 kd;
   vec3 ks;
+  vec3 ke;
   float shininess;
 };
 uniform Material material;        // Default material of the object, if not texture mapped
@@ -56,7 +59,10 @@ out vec4 color;       // Assigned vertex color to send to rasterizer
 /// @param pos    Position of vertex in world space
 /// @param normal Normal of vertex in world space
 vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
-  vec3 color = vec3(0.0, 0.0, 0.0);          // accumulate color
+  // accumulated color
+  vec3 color = hasKeMap 
+      ? texture(keTextureSampler, texCoord).xyz 
+      : material.ke;
   vec3 viewDir = normalize(cameraPos - pos); // direction toward camera
 
   // material of the current fragment, comes from either texture of default material

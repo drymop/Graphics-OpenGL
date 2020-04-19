@@ -67,12 +67,15 @@ draw() {
   // set texture uniforms
   glUniform1i(m_uniformLocations.hasKdMap, m_kdTexture.isValid());
   glUniform1i(m_uniformLocations.hasKsMap, m_ksTexture.isValid());
+  glUniform1i(m_uniformLocations.hasKeMap, m_keTexture.isValid());
   m_kdTexture.activate(GL_TEXTURE0);
-  m_kdTexture.activate(GL_TEXTURE1);
+  m_ksTexture.activate(GL_TEXTURE1);
+  m_keTexture.activate(GL_TEXTURE2);
   // set default material uniforms
   glUniform3fv(m_uniformLocations.material.ka, 1, value_ptr(m.ka));
   glUniform3fv(m_uniformLocations.material.kd, 1, value_ptr(m.kd));
   glUniform3fv(m_uniformLocations.material.ks, 1, value_ptr(m.ks));
+  glUniform3fv(m_uniformLocations.material.ke, 1, value_ptr(m.ke));
   glUniform1f (m_uniformLocations.material.shininess, m.shininess);
   // draw
   glBindVertexArray(m_vao);

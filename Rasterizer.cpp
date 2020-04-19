@@ -47,10 +47,12 @@ initScene(Scene& scene) {
     getUniformLocation("normalModelMatrix"),
     getUniformLocation("hasKdMap"),
     getUniformLocation("hasKsMap"),
+    getUniformLocation("hasKeMap"),
     {
       getUniformLocation("material.ka"),
       getUniformLocation("material.kd"),
       getUniformLocation("material.ks"),
+      getUniformLocation("material.ke"),
       getUniformLocation("material.shininess")
     }
   };

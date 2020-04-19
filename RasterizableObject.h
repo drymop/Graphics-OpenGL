@@ -13,6 +13,7 @@ struct MaterialUniformLocations {
   GLint ka;
   GLint kd;
   GLint ks;
+  GLint ke;
   GLint shininess;
 };
 
@@ -22,6 +23,7 @@ struct ObjectUniformLocations {
   GLint normalModelMatrix;
   GLint hasKdMap;
   GLint hasKsMap;
+  GLint hasKeMap;
   MaterialUniformLocations material;
 };
 
