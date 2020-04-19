@@ -169,5 +169,8 @@ intersectRayTriangle(
   if (m_ksTexture.isValid()) {
     hitResult->material.ks = m_kdTexture.sample(texCoord);
   }
+  if (m_keTexture.isValid()) {
+    hitResult->material.ke = m_keTexture.sample(texCoord);
+  }
   return true;
 }

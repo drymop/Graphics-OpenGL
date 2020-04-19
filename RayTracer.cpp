@@ -65,7 +65,7 @@ shade(const Scene& scene, Ray ray, int maxRecursion) {
 glm::vec3
 RayTracer::
 shadeSurface(const Scene& scene, glm::vec3 pos, glm::vec3 normal, glm::vec3 viewDir, const Material& material) {
-  glm::vec3 color(0, 0, 0);
+  glm::vec3 color = material.ke; // object can emit light from surface
 
   // for each light source, add the ambient, diffuse and specular lighting
   for (auto& lightSource : scene.lightSources()) {

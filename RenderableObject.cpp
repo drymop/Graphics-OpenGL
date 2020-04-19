@@ -1,6 +1,7 @@
 #include "RenderableObject.h"
 
 #include <utility>
+#include <iostream>
 
 RenderableObject::
 RenderableObject(const MaterialConfig& _config)
@@ -13,6 +14,6 @@ RenderableObject(const MaterialConfig& _config)
     m_ksTexture = std::move(Texture(_config.ksTextureFile));
   }
   if (_config.hasKeMap) {
-    m_ksTexture = std::move(Texture(_config.keTextureFile));
+    m_keTexture = std::move(Texture(_config.keTextureFile));
   }
 }    

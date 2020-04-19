@@ -4,7 +4,6 @@
 #include <sstream>
 #include <stdexcept>
 
-
 Mesh parseObjFile(const std::string& _filename) {
   std::ifstream ifs(_filename);
   if(!ifs) {
@@ -60,7 +59,7 @@ MaterialConfig parseMaterialFile(const std::string& _filename) {
   }
 
   MaterialConfig m{};
-  m.hasKdMap = m.hasKsMap = false;
+  m.hasKdMap = m.hasKsMap = m.hasKeMap = false;
 
   std::string line;
   while(ifs) {
@@ -104,7 +103,7 @@ MaterialConfig parseMaterialFile(const std::string& _filename) {
     }
     else if (tag == "map_Ke") {
       iss >> m.keTextureFile;
-      m.ksTextureFile = "models/" + m.keTextureFile;
+      m.keTextureFile = "models/" + m.keTextureFile;
       m.hasKeMap = true;
     }
   }
