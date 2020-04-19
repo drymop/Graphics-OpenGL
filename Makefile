@@ -60,6 +60,7 @@ OBJS = \
        Portal.o \
        Rectangle.o \
        Sphere.o \
+       ParticleSystem.o \
 
 EXECUTABLE = main.out
 
