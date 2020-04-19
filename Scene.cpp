@@ -60,3 +60,11 @@ rasterizableObjects() const {
   }
   return objs;
 }
+
+void
+Scene::
+update(float deltaTime) {
+  for(auto& obj : m_objects) {
+    obj->update(deltaTime);
+  }
+}

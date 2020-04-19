@@ -6,7 +6,7 @@
 class Sphere : public RasterizableObject
 {
   public:
-    Sphere(glm::vec3 _center, float _radius, const MaterialConfig& _matConfig, bool _isRayTraced);
+    Sphere(glm::vec3 _center, float _radius, const MaterialConfig& _matConfig, bool _isRayTraced, int _prec = 10);
 
     RayHit intersectRay(Ray _ray) const override;
 

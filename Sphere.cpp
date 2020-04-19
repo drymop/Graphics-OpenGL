@@ -5,9 +5,9 @@
 #include "Sphere.h"
 
 Sphere::
-Sphere(glm::vec3 _center, float _radius, const MaterialConfig& _matConfig, bool _isRayTraced)
+Sphere(glm::vec3 _center, float _radius, const MaterialConfig& _matConfig, bool _isRayTraced, int _prec)
   : RasterizableObject(
-      _isRayTraced? Mesh() : generateMesh(10),
+      _isRayTraced? Mesh() : generateMesh(_prec),
       _matConfig,
       glm::scale(glm::translate(glm::mat4(1.0f), _center), glm::vec3(_radius))
     ),

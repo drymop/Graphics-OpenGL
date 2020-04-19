@@ -16,6 +16,10 @@ class RenderableObject
     RenderableObject(const Material& _material) : m_defaultMaterial(_material) {};
     
     ////////////////////////////////////////////////////////////////////////////
+    /// @brief Update object between frames
+    virtual void update(float deltaTime) {};
+
+    ////////////////////////////////////////////////////////////////////////////
     /// @brief  Virtual destructor to make class abstract
     virtual ~RenderableObject() {};
 

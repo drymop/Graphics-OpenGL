@@ -42,6 +42,10 @@ class Scene
     /// @brief Provide an iterable of rasterizable objects
     std::vector<RasterizableObject*> rasterizableObjects() const;
 
+    ////////////////////////////////////////////////////////////////////////////
+    /// @brief Update the scene between frames
+    void update(float deltaTime);
+
   private:
     std::vector<std::unique_ptr<RenderableObject>> m_objects;
     std::vector<std::unique_ptr<LightSource>> m_lights;

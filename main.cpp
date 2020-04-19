@@ -107,7 +107,7 @@ timer(int _v) {
 /// @brief Draw function for single frame
 void
 draw() {
-  using namespace std::chrono;
+  using namespace std::chrono;  
 
   //////////////////////////////////////////////////////////////////////////////
   // Draw
@@ -122,8 +122,12 @@ draw() {
   high_resolution_clock::time_point time = high_resolution_clock::now();
   g_frameRate = duration_cast<duration<float>>(time - g_frameTime).count();
   g_frameTime = time;
-  g_framesPerSecond = 1.f/(g_delay + g_frameRate);
+  g_framesPerSecond = 1.f/(g_frameRate);
   printf("FPS: %6.2f\n", g_framesPerSecond);
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Update scene
+  g_scene.update(g_frameRate);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
