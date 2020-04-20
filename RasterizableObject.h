@@ -63,6 +63,10 @@ class RasterizableObject : public RayTracableObject
     ObjectUniformLocations m_uniformLocations;
 
     ////////////////////////////////////////////////////////////////////////////
+    // Set the object uniforms before draw call
+    void sendUniformData();
+
+    ////////////////////////////////////////////////////////////////////////////
     // Transform the vertex to world coordinate
     Vertex vertexToWorld(const Vertex& v) const;
 

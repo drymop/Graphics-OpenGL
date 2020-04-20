@@ -56,7 +56,7 @@ sendMeshData() {
 
 void
 RasterizableObject::
-draw() {
+sendUniformData() {
   // set tranformation uniforms
   glUniformMatrix4fv(m_uniformLocations.vertexModelMatrix, 
                      1, GL_FALSE, value_ptr(m_vModelMatrix));
@@ -77,6 +77,13 @@ draw() {
   glUniform3fv(m_uniformLocations.material.ks, 1, value_ptr(m.ks));
   glUniform3fv(m_uniformLocations.material.ke, 1, value_ptr(m.ke));
   glUniform1f (m_uniformLocations.material.shininess, m.shininess);
+}
+
+void
+RasterizableObject::
+draw() {
+  // set the object uniform data
+  sendUniformData();
   // draw
   glBindVertexArray(m_vao);
   glDrawArrays(GL_TRIANGLES, 0, m_nVertices);

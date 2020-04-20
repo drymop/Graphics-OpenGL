@@ -17,6 +17,7 @@
 // scene objects
 #include "Circle.h"
 #include "Plane.h"
+#include "ParticleSystem.h"
 #include "Portal.h"
 #include "RasterizableObject.h"
 #include "Rectangle.h"
@@ -168,6 +169,8 @@ buildSceneFromJson(const Json& _sceneJson) {
       )));
     }
   }
+
+  scene.addObject(std::move(std::make_unique<ParticleSystem>()));
 
   return scene;
 }
