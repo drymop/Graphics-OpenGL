@@ -12,10 +12,6 @@ Assignment: Programming 3 (Texture mapping)
 Please list all issues/bugs/missing features for this assignment.
 
 1.
-2.
-3.
-4.
-5.
 
 --------------------------------------------------------------------------------
 -- Extra Credit
@@ -23,9 +19,9 @@ Please list all issues/bugs/missing features for this assignment.
 
 Please list all extra work completed for this assignment.
 
-1. Supporting triangulated meshes in ray tracer.
-2. Supporting multiple light types in ray tracer.
-3. Supporting texture mapping in your tracer.
+1. Emission mapping
+2. Extra particle forces
+3.
 
 --------------------------------------------------------------------------------
 -- Collaborators and Sources
@@ -56,5 +52,5 @@ contrary to the letter or the spirit of the collaboration guidelines for this
 assignment.
 
 Signature (Type full name): Tuan Le
-                      Date: 4/3/2020
+                      Date: 4/20/2020
 
