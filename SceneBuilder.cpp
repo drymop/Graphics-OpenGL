@@ -24,10 +24,12 @@
 
 // particle system
 #include "LineAttractor.h"
-#include "ParticleSystem.h"
 #include "ParticleDrag.h"
+#include "ParticleSystem.h"
+#include "ParticleGenerator.h"
 #include "ParticleGravity.h"
 #include "PointAttractor.h"
+#include "PointGenerator.h"
 
 using Json = nlohmann::json;
 using glm::vec3, glm::mat4;
@@ -186,6 +188,22 @@ buildSceneFromJson(const Json& _sceneJson) {
 void
 SceneBuilder::
 buildParticleSystem(Scene& scene, const Json& json) {
+  // read all generators
+  vector<unique_ptr<ParticleGenerator>> gens{};
+  for (auto& j : json.at("generators")) {
+    string type = j.at("type");
+    if (type == "point") {
+      gens.push_back(move(make_unique<PointGenerator>(
+        getVec3(j.at("point")),
+        j.at("speed").get<float>(),
+        j.at("mass").get<float>(),
+        j.at("age").get<float>(),
+        j.at("gen_size").get<int>(),
+        j.at("period").get<float>()
+      )));
+    }
+  }
+
   // read all forces
   vector<unique_ptr<ParticleForce>> forces{};
   if (json.find("forces") != json.end()) {
@@ -215,6 +233,7 @@ buildParticleSystem(Scene& scene, const Json& json) {
   scene.addObject(move(make_unique<ParticleSystem>(
     getVec3(json.at("color")),
     json.at("g").get<float>(),
+    move(gens),
     move(forces)
   )));
 }

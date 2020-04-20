@@ -1,8 +1,4 @@
 #include "ParticleSystem.h"
-#include "PointAttractor.h"
-#include "LineAttractor.h"
-#include "ParticleDrag.h"
-
 using glm::vec3, glm::mat4;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -19,27 +15,17 @@ ParticleSystem::
 ParticleSystem(
     glm::vec3 _color,
     float _interraction,
+    std::vector<std::unique_ptr<ParticleGenerator>>&& _particleGens,
     std::vector<std::unique_ptr<ParticleForce>>&& _particleForces
 )
   : RasterizableObject(
       Mesh(), generateMaterial(_color), mat4(1.f)
     ),
-    m_nParticles(100),
+    m_nParticles(0),
     m_interraction_coef(_interraction),
+    m_generators(std::move(_particleGens)),
     m_particleForces(std::move(_particleForces))
-{
-  int pInd = 0;
-  for(int i = 0; i < 10; i++) {
-    for (int j = 0; j < 10; j++) {
-      m_particles[pInd].p = {i, j, -10.f};
-      m_particles[pInd].m = 1.f;
-      m_particles[pInd].age = i*10 + 20*j;
-      m_particles[pInd].color = {1.f, 1.f, 1.f};
-      m_particles[pInd].v = {0.f, 0.f, 0.f};
-      pInd++;
-    }
-  }
-}
+{}
 
 void
 ParticleSystem::
@@ -119,18 +105,15 @@ update(float deltaTime) {
       Particle& p2 = m_particles[j];
       vec3 dir = p2.p - p1.p;
       float dist = glm::length(dir);
-      dir /= dist;
-      float f = m_interraction_coef * p1.m * p2.m / dist / dist;
-      p1.force += f * dir;
-      p2.force -= f * dir;
+      if (dist != 0) {
+        dir /= dist;
+        dist += 1; // modify the formula a bit, so there is no singularity at dist = 0
+        float f = m_interraction_coef * p1.m * p2.m / (dist * dist);
+        p1.force += f * dir;
+        p2.force -= f * dir;
+      }
     }
   }
-
-  // // gravity
-  // vec3 gravity = {0.f, -0.01f, 0.f};
-  // for (int i = 0; i < m_nParticles; i++) {
-  //   m_particles[i].force += m_particles[i].m * gravity;
-  // }
 
   // point attractor
   for(auto& force : m_particleForces) {
@@ -143,5 +126,12 @@ update(float deltaTime) {
   for (int i = 0; i < m_nParticles; i++) {
     m_particles[i].p += m_particles[i].v * deltaTime;
     m_particles[i].v += m_particles[i].force / m_particles[i].m;
+  }
+
+  // generate new particles
+  for(auto& gen : m_generators) {
+    int nNewParticles = gen->generate(
+        &m_particles[m_nParticles], MAX_N_PARTICLES - m_nParticles, deltaTime);
+    m_nParticles += nNewParticles;  
   }
 }

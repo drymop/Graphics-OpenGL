@@ -53,25 +53,36 @@
       "type": "particles",
       "color": [1, 1, 1],
       "g": 0.0,
+      "generators": [
+        {
+          "type": "point",
+          "point": [1, 1, -10],
+          "speed": 0.5,
+          "mass": 1.0,
+          "age": 15.0,
+          "gen_size": 100,
+          "period": 3.0
+        }
+      ],
       "forces": [
         {
           "type": "point",
           "point": [5, 0, -10],
-          "g": 0.01
+          "g": 0.0
         },
         {
           "type": "line",
           "point": [0, 0, -10],
           "dir": [1, 0.5, 0],
-          "g": 0.01
+          "g": 0.0
         },
         {
           "type": "drag",
-          "k": 0.003
+          "k": 0.00
         },
         {
           "type": "gravity",
-          "g": [0, -0.001, 0]
+          "g": [0, -0.00, 0]
         }
       ]
     }

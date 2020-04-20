@@ -15,6 +15,7 @@ Rasterizer(int frameWidth, int frameHeight)
   m_program = compileProgram("shaders/phong.vert",
                              "shaders/phong.frag");
   glUseProgram(m_program);
+  glPointSize(3.0f);
 }
 
 void

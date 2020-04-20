@@ -63,6 +63,8 @@ OBJS = \
        ParticleSystem.o \
        LineAttractor.o \
        PointAttractor.o \
+       ParticleGenerator.o \
+       PointGenerator.o \
 
 EXECUTABLE = main.out
 
