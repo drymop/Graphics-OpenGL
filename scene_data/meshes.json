@@ -48,6 +48,32 @@
       "right": [5, 0, 0],
       "up": [0, 0, -5],
       "material": "models/GroundPlane.mtl"
+    },
+    {
+      "type": "particles",
+      "color": [1, 1, 1],
+      "g": 0.0,
+      "forces": [
+        {
+          "type": "point",
+          "point": [5, 0, -10],
+          "g": 0.01
+        },
+        {
+          "type": "line",
+          "point": [0, 0, -10],
+          "dir": [1, 0.5, 0],
+          "g": 0.01
+        },
+        {
+          "type": "drag",
+          "k": 0.003
+        },
+        {
+          "type": "gravity",
+          "g": [0, -0.001, 0]
+        }
+      ]
     }
-  ]  
+  ]
 }

@@ -16,13 +16,17 @@ generateMaterial(vec3 color) {
 }
 
 ParticleSystem::
-ParticleSystem() 
+ParticleSystem(
+    glm::vec3 _color,
+    float _interraction,
+    std::vector<std::unique_ptr<ParticleForce>>&& _particleForces
+)
   : RasterizableObject(
-      Mesh(), 
-      generateMaterial(vec3(1.f, 0.f, 1.f)),
-      mat4(1.f)
+      Mesh(), generateMaterial(_color), mat4(1.f)
     ),
-    m_nParticles(100)
+    m_nParticles(100),
+    m_interraction_coef(_interraction),
+    m_particleForces(std::move(_particleForces))
 {
   int pInd = 0;
   for(int i = 0; i < 10; i++) {
@@ -35,15 +39,6 @@ ParticleSystem()
       pInd++;
     }
   }
-
-  // m_particleForces.push_back(std::move(std::make_unique<PointAttractor>(
-  //   vec3(5.0f, 0.f, -10.f), 0.01f)));
-  m_particleForces.push_back(std::move(std::make_unique<LineAttractor>(
-    vec3(0, 0, -10.f), vec3(1, 0.5, 0), 0.1f
-  )));
-  m_particleForces.push_back(std::move(std::make_unique<ParticleDrag>(
-    0.003f
-  )));
 }
 
 void
@@ -117,7 +112,6 @@ update(float deltaTime) {
     }
   }
 
-  float g = 0.00f;
   // particle interactions
   for (int i = 0; i < m_nParticles; i++) {
     for (int j = 0; j < i; j++) {
@@ -126,7 +120,7 @@ update(float deltaTime) {
       vec3 dir = p2.p - p1.p;
       float dist = glm::length(dir);
       dir /= dist;
-      float f = g * p1.m * p2.m / dist / dist;
+      float f = m_interraction_coef * p1.m * p2.m / dist / dist;
       p1.force += f * dir;
       p2.force -= f * dir;
     }

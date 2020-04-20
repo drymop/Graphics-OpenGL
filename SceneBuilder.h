@@ -20,6 +20,8 @@ class SceneBuilder
 
   private:
     bool m_isRayTrace;
+
+    void buildParticleSystem(Scene& scene, const nlohmann::json& json);
 };
 
 #endif // SCENE_BUILDER_H_

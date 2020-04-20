@@ -17,14 +17,21 @@
 // scene objects
 #include "Circle.h"
 #include "Plane.h"
-#include "ParticleSystem.h"
 #include "Portal.h"
 #include "RasterizableObject.h"
 #include "Rectangle.h"
 #include "Sphere.h"
 
+// particle system
+#include "LineAttractor.h"
+#include "ParticleSystem.h"
+#include "ParticleDrag.h"
+#include "ParticleGravity.h"
+#include "PointAttractor.h"
+
 using Json = nlohmann::json;
 using glm::vec3, glm::mat4;
+using std::make_unique, std::move, std::string, std::unique_ptr, std::vector;
 
 vec3
 getVec3(const Json& j) {
@@ -35,7 +42,7 @@ void
 from_json(const Json& j, MaterialConfig& mc) {
   if (j.is_string()) {
     // name of material file
-    mc = parseMaterialFile(j.get<std::string>());
+    mc = parseMaterialFile(j.get<string>());
   } else {
     Material m{}; 
     m.ka = getVec3(j.at("k_a"));
@@ -55,7 +62,7 @@ from_json(const Json& j, MaterialConfig& mc) {
 
 Scene
 SceneBuilder::
-buildSceneFromJsonFile(const std::string& _jsonFileName) {
+buildSceneFromJsonFile(const string& _jsonFileName) {
   std::ifstream i(_jsonFileName);
   Json j;
   i >> j;
@@ -70,13 +77,13 @@ buildSceneFromJson(const Json& _sceneJson) {
   // lights
   Json lightsJson = _sceneJson.at("lights");
   for (auto& j : lightsJson) {
-    std::string type = j.at("type");
+    string type = j.at("type");
     glm::vec3 ia{0, 0, 0};
     if (j.find("i_a") != j.end()) {
       ia = getVec3(j.at("i_a"));
     }
     if (type == "point") {
-      scene.addLightSource(std::move(std::make_unique<PointLight>(
+      scene.addLightSource(move(make_unique<PointLight>(
         getVec3(j.at("pos")),
         ia, 
         getVec3(j.at("i_d")), 
@@ -84,14 +91,14 @@ buildSceneFromJson(const Json& _sceneJson) {
         getVec3(j.at("a_l"))
       )));
     } else if (type == "directional") {
-      scene.addLightSource(std::move(std::make_unique<DirectionalLight>(
+      scene.addLightSource(move(make_unique<DirectionalLight>(
         getVec3(j.at("dir")),
         ia, 
         getVec3(j.at("i_d")), 
         getVec3(j.at("i_s"))
       )));
     } else if (type == "spot") {
-      scene.addLightSource(std::move(std::make_unique<SpotLight>(
+      scene.addLightSource(move(make_unique<SpotLight>(
         getVec3(j.at("pos")),
         getVec3(j.at("dir")),
         j.at("angle").get<float>(),
@@ -107,9 +114,9 @@ buildSceneFromJson(const Json& _sceneJson) {
   // objects
   Json objectsJson = _sceneJson.at("objects");
   for (auto& j : objectsJson) {
-    std::string type = j.at("type");
+    string type = j.at("type");
     if (type == "mesh") {
-      Mesh mesh = parseObjFile(j.at("obj").get<std::string>());
+      Mesh mesh = parseObjFile(j.at("obj").get<string>());
       mat4 transform = mat4(1.f);
       if (j.find("translate") != j.end()) {
         vec3 translate = getVec3(j.at("translate"));
@@ -124,40 +131,40 @@ buildSceneFromJson(const Json& _sceneJson) {
         vec3 scale = getVec3(j.at("scale"));
         transform = glm::scale(transform, scale);
       }
-      scene.addObject(std::move(std::make_unique<RasterizableObject>(
+      scene.addObject(move(make_unique<RasterizableObject>(
         mesh,
         j.at("material").get<MaterialConfig>(),
         transform
       )));
     } else if (type == "sphere") {
-      scene.addObject(std::move(std::make_unique<Sphere>(
+      scene.addObject(move(make_unique<Sphere>(
         getVec3(j.at("center")), 
         j.at("radius").get<float>(), 
         j.at("material").get<MaterialConfig>(),
         m_isRayTrace
       )));
     } else if (type == "plane") {
-      scene.addObject(std::move(std::make_unique<Plane>(
+      scene.addObject(move(make_unique<Plane>(
         getVec3(j.at("point")), 
         getVec3(j.at("normal")), 
         j.at("material").get<MaterialConfig>()
       )));
     } else if (type == "rectangle") {
-      scene.addObject(std::move(std::make_unique<Rectangle>(
+      scene.addObject(move(make_unique<Rectangle>(
         getVec3(j.at("bot_left")),
         getVec3(j.at("right")),
         getVec3(j.at("up")),
         j.at("material").get<MaterialConfig>()
       )));
     } else if (type == "circle") {
-      scene.addObject(std::move(std::make_unique<Circle>(
+      scene.addObject(move(make_unique<Circle>(
         getVec3(j.at("center")),
         j.at("radius").get<float>(), 
         getVec3(j.at("normal")), 
         j.at("material").get<MaterialConfig>()
       )));
     } else if (type == "portal") {
-      scene.addObject(std::move(std::make_unique<Portal>(
+      scene.addObject(move(make_unique<Portal>(
         getVec3(j.at("center1")),
         j.at("radius1").get<float>(), 
         getVec3(j.at("normal1")),
@@ -167,10 +174,47 @@ buildSceneFromJson(const Json& _sceneJson) {
         getVec3(j.at("normal2")),
         getVec3(j.at("up2"))
       )));
+    } else if (type == "particles") {
+      buildParticleSystem(scene, j);
     }
   }
 
-  scene.addObject(std::move(std::make_unique<ParticleSystem>()));
 
   return scene;
+}
+
+void
+SceneBuilder::
+buildParticleSystem(Scene& scene, const Json& json) {
+  // read all forces
+  vector<unique_ptr<ParticleForce>> forces{};
+  if (json.find("forces") != json.end()) {
+    const Json& fJson = json.at("forces");
+    for (auto& j : fJson) {
+      string type = j.at("type");
+      if (type == "drag") {
+        forces.push_back(move(make_unique<ParticleDrag>(j.at("k").get<float>())));
+      } else if (type == "point") {
+        forces.push_back(move(make_unique<PointAttractor>(
+          getVec3(j.at("point")),
+          j.at("g").get<float>()
+        )));
+      } else if (type == "line") {
+        forces.push_back(move(make_unique<LineAttractor>(
+          getVec3(j.at("point")),
+          getVec3(j.at("dir")),
+          j.at("g").get<float>()
+        )));
+      } else if (type == "gravity") {
+        forces.push_back(move(make_unique<ParticleGravity>(
+          getVec3(j.at("g"))
+        )));
+      }
+    }
+  }
+  scene.addObject(move(make_unique<ParticleSystem>(
+    getVec3(json.at("color")),
+    json.at("g").get<float>(),
+    move(forces)
+  )));
 }
