@@ -1,15 +1,12 @@
 #ifndef PARTICLE_SYSTEM_H_
 #define PARTICLE_SYSTEM_H_
 
+#include <memory>
+
+#include "Particle.h"
+#include "ParticleForce.h"
 #include "RasterizableObject.h"
 
-struct Particle {
-  glm::vec3 p;     ///< position
-  glm::vec3 v;     ///< velocity
-  glm::vec3 a;     ///< aceleration
-  glm::vec3 color; ///< color
-  float age;       ///< remaining life time
-};
 
 class ParticleSystem : public RasterizableObject
 {
@@ -37,6 +34,8 @@ class ParticleSystem : public RasterizableObject
     Particle m_particles[MAX_N_PARTICLES];
     /// number of currently alive particles
     int m_nParticles;
+    /// global forces acting on all particles
+    std::vector<std::unique_ptr<ParticleForce>> m_particleForces;
     /// VBO used to store particles info
     GLuint m_vbo;
     /// Buffer to transfer particle positions

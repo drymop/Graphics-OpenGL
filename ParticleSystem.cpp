@@ -1,4 +1,7 @@
 #include "ParticleSystem.h"
+#include "PointAttractor.h"
+#include "LineAttractor.h"
+#include "ParticleDrag.h"
 
 using glm::vec3, glm::mat4;
 
@@ -19,18 +22,28 @@ ParticleSystem()
       generateMaterial(vec3(1.f, 0.f, 1.f)),
       mat4(1.f)
     ),
-    m_nParticles(16)
+    m_nParticles(100)
 {
   int pInd = 0;
-  for(int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
+  for(int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; j++) {
       m_particles[pInd].p = {i, j, -10.f};
-      m_particles[pInd].age = i + 2*j;
+      m_particles[pInd].m = 1.f;
+      m_particles[pInd].age = i*10 + 20*j;
       m_particles[pInd].color = {1.f, 1.f, 1.f};
-      m_particles[pInd].v = {1.f, 0.f, 0.f};
+      m_particles[pInd].v = {0.f, 0.f, 0.f};
       pInd++;
     }
   }
+
+  // m_particleForces.push_back(std::move(std::make_unique<PointAttractor>(
+  //   vec3(5.0f, 0.f, -10.f), 0.01f)));
+  m_particleForces.push_back(std::move(std::make_unique<LineAttractor>(
+    vec3(0, 0, -10.f), vec3(1, 0.5, 0), 0.1f
+  )));
+  m_particleForces.push_back(std::move(std::make_unique<ParticleDrag>(
+    0.003f
+  )));
 }
 
 void
@@ -96,11 +109,45 @@ ParticleSystem::
 update(float deltaTime) {
   // iterate backward to remove dead particles
   for (int i = m_nParticles-1; i>=0; i--) {
-    m_particles[i].p += m_particles[i].v * deltaTime;
     m_particles[i].age -= deltaTime;
+    m_particles[i].force = {0.f, 0.f, 0.f};
     if (m_particles[i].age <= 0) {
       m_nParticles--;
       std::swap(m_particles[i], m_particles[m_nParticles]);
     }
+  }
+
+  float g = 0.00f;
+  // particle interactions
+  for (int i = 0; i < m_nParticles; i++) {
+    for (int j = 0; j < i; j++) {
+      Particle& p1 = m_particles[i];
+      Particle& p2 = m_particles[j];
+      vec3 dir = p2.p - p1.p;
+      float dist = glm::length(dir);
+      dir /= dist;
+      float f = g * p1.m * p2.m / dist / dist;
+      p1.force += f * dir;
+      p2.force -= f * dir;
+    }
+  }
+
+  // // gravity
+  // vec3 gravity = {0.f, -0.01f, 0.f};
+  // for (int i = 0; i < m_nParticles; i++) {
+  //   m_particles[i].force += m_particles[i].m * gravity;
+  // }
+
+  // point attractor
+  for(auto& force : m_particleForces) {
+    for (int i = 0; i < m_nParticles; i++) {
+      force->applyForce(m_particles[i]);
+    }
+  }
+
+  // final update
+  for (int i = 0; i < m_nParticles; i++) {
+    m_particles[i].p += m_particles[i].v * deltaTime;
+    m_particles[i].v += m_particles[i].force / m_particles[i].m;
   }
 }

@@ -61,6 +61,8 @@ OBJS = \
        Rectangle.o \
        Sphere.o \
        ParticleSystem.o \
+       LineAttractor.o \
+       PointAttractor.o \
 
 EXECUTABLE = main.out
 
