@@ -41,7 +41,7 @@ Sphere::
 generateMesh(int prec) {
   std::vector<Vertex> vertices{};
   int numVertices = (prec + 1) * (prec + 1);
-  for (int i = 0; i < numVertices; i++) { vertices.push_back({}); } // std::vector::push_back()
+  for (int i = 0; i < numVertices; i++) { vertices.push_back({}); }
   // calculate triangle vertices
   for (int i = 0; i <= prec; i++) {
     for (int j = 0; j <= prec; j++) {
@@ -51,6 +51,7 @@ generateMesh(int prec) {
       Vertex& v = vertices[i*(prec + 1) + j];
       v.p = {x, y, z};
       v.n = {x, y, z};
+      v.tg = glm::normalize(glm::vec3(z, 0, -x));
       v.t = {(float)j/prec, (float)i/prec};
     }
   }
