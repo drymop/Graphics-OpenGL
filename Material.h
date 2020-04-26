@@ -30,10 +30,12 @@ struct MaterialConfig {
   bool hasKsMap = false;
   bool hasKeMap = false;
   bool hasNormalMap = false;
+  bool hasParallaxMap = false;
   std::string kdTextureFile;
   std::string ksTextureFile;
   std::string keTextureFile;
   std::string normalTextureFile;
+  std::string depthTextureFile;
   Material defaultMaterial;
 };
 

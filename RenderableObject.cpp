@@ -18,4 +18,7 @@ RenderableObject(const MaterialConfig& _config)
   if (_config.hasNormalMap) {
     m_normalTexture = std::move(Texture(_config.normalTextureFile));
   }
+  if (_config.hasParallaxMap) {
+    m_depthTexture = std::move(Texture(_config.depthTextureFile));
+  }
 }    

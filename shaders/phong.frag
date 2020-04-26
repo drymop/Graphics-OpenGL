@@ -33,11 +33,14 @@ uniform vec3  cameraPos;          // Position of camera in the world
 uniform bool hasKdMap = false;  // Is object Kd from texture, or material?
 uniform bool hasKsMap = false;  // Is object Ks from texture, or material?
 uniform bool hasKeMap = false;  // Is object Ke from texture, or material?
-uniform bool hasNormalMap = false;  // Is object normal mapped?
-uniform sampler2D kdTextureSampler;
-uniform sampler2D ksTextureSampler;
-uniform sampler2D keTextureSampler;
-uniform sampler2D normalTextureSampler;
+uniform bool hasNormalMap = false;    // Is object normal mapped?
+uniform bool hasParallaxMap = false;  // Is object parallax mapped?
+uniform sampler2D kdTextureSampler;     // diffuse mapping
+uniform sampler2D ksTextureSampler;     // specular mapping
+uniform sampler2D keTextureSampler;     // emission mapping
+uniform sampler2D normalTextureSampler; // normal mapping
+uniform sampler2D depthTextureSampler;  // parallax mapping
+
 struct Material {
   vec3 ka;
   vec3 kd;

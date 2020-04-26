@@ -26,6 +26,7 @@ initScene(Scene& scene) {
   glUniform1i(getUniformLocation("ksTextureSampler"), 1);
   glUniform1i(getUniformLocation("keTextureSampler"), 2);
   glUniform1i(getUniformLocation("normalTextureSampler"), 3);
+  glUniform1i(getUniformLocation("depthTextureSampler"), 4);
 
   // Send lights
   int i = 0;
@@ -56,6 +57,7 @@ initScene(Scene& scene) {
     getUniformLocation("hasKsMap"),
     getUniformLocation("hasKeMap"),
     getUniformLocation("hasNormalMap"),
+    getUniformLocation("hasParallaxMap"),
     {
       getUniformLocation("material.ka"),
       getUniformLocation("material.kd"),

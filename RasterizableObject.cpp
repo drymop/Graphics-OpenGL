@@ -73,10 +73,12 @@ sendUniformData() {
   glUniform1i(m_uniformLocations.hasKsMap, m_ksTexture.isValid());
   glUniform1i(m_uniformLocations.hasKeMap, m_keTexture.isValid());
   glUniform1i(m_uniformLocations.hasNormalMap, m_normalTexture.isValid());
+  glUniform1i(m_uniformLocations.hasParallaxMap, m_depthTexture.isValid());
   m_kdTexture.activate(GL_TEXTURE0);
   m_ksTexture.activate(GL_TEXTURE1);
   m_keTexture.activate(GL_TEXTURE2);
   m_normalTexture.activate(GL_TEXTURE3);
+  m_depthTexture.activate(GL_TEXTURE4);
   // set default material uniforms
   glUniform3fv(m_uniformLocations.material.ka, 1, value_ptr(m.ka));
   glUniform3fv(m_uniformLocations.material.kd, 1, value_ptr(m.kd));

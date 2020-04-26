@@ -4,3 +4,4 @@ Kd 0 0 0
 Ks 0.4 0.4 0.4
 map_Kd brick_diffuse.jpg
 map_N brick_normal.jpg
+map_P brick_depth.jpg
