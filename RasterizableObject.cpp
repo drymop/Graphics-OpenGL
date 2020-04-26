@@ -47,7 +47,13 @@ sendMeshData() {
   // - textures
   glEnableVertexAttribArray(2);
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
-                        sizeof(Vertex), (void*)(sizeof(vec3)+sizeof(vec3)));
+                        sizeof(Vertex), 
+                        (void*)(sizeof(vec3)*2));
+  // - tangent
+  glEnableVertexAttribArray(3);
+  glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE,
+                        sizeof(Vertex), 
+                        (void*)(sizeof(vec3)*2+sizeof(vec2)));
 
   // Unbind
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -68,9 +74,11 @@ sendUniformData() {
   glUniform1i(m_uniformLocations.hasKdMap, m_kdTexture.isValid());
   glUniform1i(m_uniformLocations.hasKsMap, m_ksTexture.isValid());
   glUniform1i(m_uniformLocations.hasKeMap, m_keTexture.isValid());
+  glUniform1i(m_uniformLocations.hasNormalMap, m_normalTexture.isValid());
   m_kdTexture.activate(GL_TEXTURE0);
   m_ksTexture.activate(GL_TEXTURE1);
   m_keTexture.activate(GL_TEXTURE2);
+  m_normalTexture.activate(GL_TEXTURE3);
   // set default material uniforms
   glUniform3fv(m_uniformLocations.material.ka, 1, value_ptr(m.ka));
   glUniform3fv(m_uniformLocations.material.kd, 1, value_ptr(m.kd));

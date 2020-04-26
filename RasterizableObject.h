@@ -24,6 +24,7 @@ struct ObjectUniformLocations {
   GLint hasKdMap;
   GLint hasKsMap;
   GLint hasKeMap;
+  GLint hasNormalMap;
   MaterialUniformLocations material;
 };
 

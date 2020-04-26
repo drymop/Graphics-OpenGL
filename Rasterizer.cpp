@@ -49,6 +49,7 @@ initScene(Scene& scene) {
     getUniformLocation("hasKdMap"),
     getUniformLocation("hasKsMap"),
     getUniformLocation("hasKeMap"),
+    getUniformLocation("hasNormalMap"),
     {
       getUniformLocation("material.ka"),
       getUniformLocation("material.kd"),
