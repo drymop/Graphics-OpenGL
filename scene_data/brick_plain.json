@@ -1,0 +1,21 @@
+{
+  "lights": [
+    {
+      "type": "point",
+      "pos": [4, 3, -5],
+      "i_d": [1, 1, 1],
+      "i_s": [1, 1, 1],
+      "a_l": [1, 0, 0.03]
+    }
+  ],
+
+  "objects": [
+    {
+      "type": "rectangle",
+      "bot_left": [-5, -5, -10],
+      "right": [10, 0, 0],
+      "up": [0, 10, 0],
+      "material": "models/brick_plain.mtl"
+    }
+  ]  
+}

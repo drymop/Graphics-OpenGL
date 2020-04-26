@@ -26,9 +26,10 @@ generateMesh(
   glm::vec3 p2 = bottomLeft + up + right;
   glm::vec3 p3 = bottomLeft + up;
   glm::vec3 n  = glm::normalize(glm::cross(right, up));
-  Vertex v0 {p0, n, {0, 0}};
-  Vertex v1 {p1, n, {1, 0}};
-  Vertex v2 {p2, n, {1, 1}};
-  Vertex v3 {p3, n, {0, 1}};
+  glm::vec3 tangent = glm::normalize(right);
+  Vertex v0 {p0, n, {0, 0}, tangent};
+  Vertex v1 {p1, n, {1, 0}, tangent};
+  Vertex v2 {p2, n, {1, 1}, tangent};
+  Vertex v3 {p3, n, {0, 1}, tangent};
   return Mesh({v0, v1, v2, v0, v2, v3});
 }
