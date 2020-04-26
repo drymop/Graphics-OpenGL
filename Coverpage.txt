@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 
       Name: Tuan Le
-Assignment: Programming 3 (Texture mapping)
+Assignment: Programming 5 (Extra features)
 
 --------------------------------------------------------------------------------
 -- Known Bugs/Issues
@@ -19,9 +19,7 @@ Please list all issues/bugs/missing features for this assignment.
 
 Please list all extra work completed for this assignment.
 
-1. Emission mapping
-2. Extra particle forces
-3.
+1.
 
 --------------------------------------------------------------------------------
 -- Collaborators and Sources
@@ -33,7 +31,7 @@ e.g., if you asked a question on stackoverflow. Be sure to cite sources again in
 the assignment body, e.g., copy website link into code. Do not list the
 instructor as a collaborator -- this is assumed.
 
- 1. https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection
+ 1. https://learnopengl.com/Advanced-Lighting/Normal-Mapping
  2. Text book (for generating sphere)
 
 All students are expected to be in accordance with the student honor code.

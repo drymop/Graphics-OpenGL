@@ -115,6 +115,7 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
   return vec4(color, 1.0);
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 /// Determine the fragment's normal from normal mapping texture
 vec3 calculateNormal() {
