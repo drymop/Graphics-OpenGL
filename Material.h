@@ -35,7 +35,7 @@ struct MaterialConfig {
   std::string ksTextureFile;
   std::string keTextureFile;
   std::string normalTextureFile;
-  std::string depthTextureFile;
+  std::string parallaxTextureFile;
   Material defaultMaterial;
 };
 

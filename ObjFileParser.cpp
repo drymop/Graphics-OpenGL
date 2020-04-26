@@ -111,8 +111,8 @@ MaterialConfig parseMaterialFile(const std::string& _filename) {
       m.hasNormalMap = true;
     }
     else if (tag == "map_P") {
-      iss >> m.depthTextureFile;
-      m.depthTextureFile = "models/" + m.depthTextureFile;
+      iss >> m.parallaxTextureFile;
+      m.parallaxTextureFile = "models/" + m.parallaxTextureFile;
       m.hasParallaxMap = true;
     }
   }

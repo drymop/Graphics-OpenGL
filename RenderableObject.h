@@ -31,7 +31,7 @@ class RenderableObject
     Texture  m_ksTexture;
     Texture  m_keTexture;
     Texture  m_normalTexture;
-    Texture  m_depthTexture;
+    Texture  m_parallaxTexture;
     Material m_defaultMaterial;
 };
 

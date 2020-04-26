@@ -39,7 +39,9 @@ uniform sampler2D kdTextureSampler;     // diffuse mapping
 uniform sampler2D ksTextureSampler;     // specular mapping
 uniform sampler2D keTextureSampler;     // emission mapping
 uniform sampler2D normalTextureSampler; // normal mapping
-uniform sampler2D depthTextureSampler;  // parallax mapping
+uniform sampler2D parallaxTextureSampler;  // parallax mapping
+
+uniform float parallaxScale = 0.1;
 
 struct Material {
   vec3 ka;
@@ -65,12 +67,11 @@ out vec4 color;       // Assigned vertex color to send to rasterizer
 /// Determine the vertex's color using Blinn-Phong illumination model
 /// @param pos    Position of vertex in world space
 /// @param normal Normal of vertex in world space
-vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
+vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal, in vec3 viewDir, in vec2 texCoord) {
   // accumulated color
   vec3 color = hasKeMap 
       ? texture(keTextureSampler, texCoord).xyz 
       : material.ke;
-  vec3 viewDir = normalize(cameraPos - pos); // direction toward camera
 
   // material of the current fragment, comes from either texture of default material
   vec3 ka = material.ka;
@@ -121,21 +122,45 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Determine the fragment's normal from normal mapping texture
-vec3 calculateNormal() {
+vec3 calculateNormal(in vec2 texCoord, in mat3 tbnMatrix) {
   if (!hasNormalMap) {
     return normalize(worldNormal);
   }
   // normal in tangent space
   vec3 tsNormal = texture(normalTextureSampler, texCoord).xyz;
   tsNormal = 2 * tsNormal - vec3(1, 1, 1);
-  // convert to world space using normal, tangent, and bitangent vectors
-  vec3 n = normalize(worldNormal);
-  vec3 t = normalize(worldTangent);
-  vec3 b = cross(n, t);
-  return normalize(mat3(t, b, n) * tsNormal);
+  return normalize(tbnMatrix* tsNormal);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// Determine the fragment's parallax texture coordinate
+/// @param  texCoord Texture coordinate of fragment
+/// @param  viewDir  View direction, in tangent space
+/// @return The parallax texture coordinate
+vec2 calculateParallaxTexCoord(in vec2 texCoord, in vec3 viewDir) {
+  float depth = texture(parallaxTextureSampler, texCoord).x;
+  return texCoord - viewDir.xy * depth * parallaxScale;
 }
 
 
 void main() {
-  color = shadeBlinnPhong(worldPos, calculateNormal());
+  // convert to/from tangent space using TBN (tangent, bitangent, normal) matrix
+  vec3 n = normalize(worldNormal);
+  vec3 t = normalize(worldTangent);
+  vec3 b = cross(n, t);
+  mat3 tbnMatrix = mat3(t, b, n);
+
+  // parallax mapping: shift the texture coordinate based on parallax map
+  vec3 viewDir = normalize(cameraPos - worldPos); // direction toward camera
+  vec3 tangentViewDir = transpose(tbnMatrix) * viewDir;
+  vec2 parallaxTexCoord = calculateParallaxTexCoord(texCoord, tangentViewDir);
+  
+  // if texture coordinate is out of range, don't show fragment
+  if (parallaxTexCoord.x < 0.0 || parallaxTexCoord.x > 1.0 
+      || parallaxTexCoord.y < 0.0 || parallaxTexCoord.y > 1.0) {
+    discard;
+  }
+
+  vec3 normal = calculateNormal(parallaxTexCoord, tbnMatrix);
+  color = shadeBlinnPhong(worldPos, normal, viewDir, parallaxTexCoord);
 }
