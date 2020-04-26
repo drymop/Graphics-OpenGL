@@ -115,7 +115,23 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal) {
   return vec4(color, 1.0);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/// Determine the fragment's normal from normal mapping texture
+vec3 calculateNormal() {
+  if (!hasNormalMap) {
+    return normalize(worldNormal);
+  }
+  // normal in tangent space
+  vec3 tsNormal = texture(normalTextureSampler, texCoord).xyz;
+  tsNormal = 2 * tsNormal - vec3(1, 1, 1);
+  // convert to world space using normal, tangent, and bitangent vectors
+  vec3 n = normalize(worldNormal);
+  vec3 t = normalize(worldTangent);
+  vec3 b = cross(n, t);
+  return normalize(mat3(t, b, n) * tsNormal);
+}
+
 
 void main() {
-  color = shadeBlinnPhong(worldPos, normalize(worldNormal));
+  color = shadeBlinnPhong(worldPos, calculateNormal());
 }
