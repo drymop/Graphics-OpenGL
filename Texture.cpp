@@ -5,17 +5,13 @@
 // image library
 #include "SOIL2.h"
 
-#include <iostream>
-using namespace std;
+
 Texture::
 Texture(const std::string& _imgFile) {
   m_textureId = SOIL_load_OGL_texture(_imgFile.c_str(),
       SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
   m_texData = SOIL_load_image(
       _imgFile.c_str(), &m_width, &m_height, 0, SOIL_LOAD_RGB);
-  if (!isValid()) {
-    cout << "Fucked: " << m_textureId <<" "<<_imgFile<< endl;
-  }
 }
 
 Texture::

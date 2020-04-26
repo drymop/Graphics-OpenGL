@@ -21,6 +21,12 @@ Rasterizer(int frameWidth, int frameHeight)
 void
 Rasterizer::
 initScene(Scene& scene) {
+  // Set up texture samplers
+  glUniform1i(getUniformLocation("kdTextureSampler"), 0);
+  glUniform1i(getUniformLocation("ksTextureSampler"), 1);
+  glUniform1i(getUniformLocation("keTextureSampler"), 2);
+  glUniform1i(getUniformLocation("normalTextureSampler"), 3);
+
   // Send lights
   int i = 0;
   for(auto& light : scene.lightSources()) {

@@ -104,7 +104,8 @@ MaterialConfig parseMaterialFile(const std::string& _filename) {
       iss >> m.keTextureFile;
       m.keTextureFile = "models/" + m.keTextureFile;
       m.hasKeMap = true;
-    } else if (tag == "map_N") {
+    } 
+    else if (tag == "map_N") {
       iss >> m.normalTextureFile;
       m.normalTextureFile = "models/" + m.normalTextureFile;
       m.hasNormalMap = true;

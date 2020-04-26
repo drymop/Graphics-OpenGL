@@ -2,10 +2,8 @@
 
 #include <limits>
 
-// test
-#include <iostream>
-
 using glm::cross, glm::dot, glm::value_ptr, glm::vec2, glm::vec3, glm::vec4;
+
 
 RasterizableObject::
 RasterizableObject(const Mesh& _mesh, 

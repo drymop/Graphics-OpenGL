@@ -26,10 +26,10 @@ struct Material {
 /// Configure the material of a surface, either through texture mapping or
 /// default material
 struct MaterialConfig {
-  bool hasKdMap;
-  bool hasKsMap;
-  bool hasKeMap;
-  bool hasNormalMap;
+  bool hasKdMap = false;
+  bool hasKsMap = false;
+  bool hasKeMap = false;
+  bool hasNormalMap = false;
   std::string kdTextureFile;
   std::string ksTextureFile;
   std::string keTextureFile;

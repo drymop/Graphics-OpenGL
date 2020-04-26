@@ -9,5 +9,5 @@ Ks 0.2 0.2 0.2
 d 1
 illum 2
 #map_Kd patchygrass_1.jpg
-#map_Ks specular_half.png
+#map_Kd specular_half.png
 map_Ke spray.png

@@ -1,7 +1,6 @@
 #include "RenderableObject.h"
 
 #include <utility>
-#include <iostream>
 
 RenderableObject::
 RenderableObject(const MaterialConfig& _config)
