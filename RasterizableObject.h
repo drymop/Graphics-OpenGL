@@ -4,7 +4,7 @@
 #include <string>
 
 #include "GLInclude.h"
-#include "ObjFileParser.h"
+#include "Mesh.h"
 #include "RayTracableObject.h"
 
 

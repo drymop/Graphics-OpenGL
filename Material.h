@@ -29,9 +29,11 @@ struct MaterialConfig {
   bool hasKdMap;
   bool hasKsMap;
   bool hasKeMap;
+  bool hasNormalMap;
   std::string kdTextureFile;
   std::string ksTextureFile;
   std::string keTextureFile;
+  std::string normalTextureFile;
   Material defaultMaterial;
 };
 

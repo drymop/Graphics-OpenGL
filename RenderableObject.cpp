@@ -16,4 +16,7 @@ RenderableObject(const MaterialConfig& _config)
   if (_config.hasKeMap) {
     m_keTexture = std::move(Texture(_config.keTextureFile));
   }
+  if (_config.hasNormalMap) {
+    m_normalTexture = std::move(Texture(_config.normalTextureFile));
+  }
 }    

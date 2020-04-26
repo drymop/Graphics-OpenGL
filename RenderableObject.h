@@ -30,6 +30,7 @@ class RenderableObject
     Texture  m_kdTexture;
     Texture  m_ksTexture;
     Texture  m_keTexture;
+    Texture  m_normalTexture;
     Material m_defaultMaterial;
 };
 
