@@ -15,46 +15,44 @@ parseShader(const string& _shader) {
 }
 
 GLuint
+compileSingleShader(const string& shaderFile, GLenum shaderType, char* infoLog) {
+  string shaderFromFile = parseShader(shaderFile);
+  const char* prog = shaderFromFile.c_str();
+
+  GLuint shader = glCreateShader(shaderType);
+  glShaderSource(shader, 1, &prog, NULL);
+  glCompileShader(shader);
+
+  int success;
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+  if(!success) {
+    glGetShaderInfoLog(shader, 512, NULL, infoLog);
+    cerr << "Error compiling shader " << shaderFile
+      << "'\n" << infoLog << endl;
+    exit(1);
+  }
+  return shader;
+}
+
+GLuint
 compileProgram(const string& _vertexShader,
+               const string& _tessEvalShader,
                const string& _fragmentShader) {
   int success;
   char infoLog[512];
 
-  // Compile the vertex shader
-  string vertexShaderFromFile = parseShader(_vertexShader);
-  const char* prog = vertexShaderFromFile.c_str();
+  // Compile each single shader
+  GLuint vertexShader = compileSingleShader(
+      _vertexShader, GL_VERTEX_SHADER, infoLog);
+  // GLuint tessEvalShader = compileSingleShader(
+  //     _tessEvalShader, GL_TESS_EVALUATION_SHADER, infoLog);
+  GLuint fragmentShader = compileSingleShader(
+      _fragmentShader, GL_FRAGMENT_SHADER, infoLog);
 
-  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &prog, NULL);
-  glCompileShader(vertexShader);
-
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if(!success) {
-    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-    cerr << "Error compiling vertex shader '" << _vertexShader
-      << "'\n" << infoLog << endl;
-    exit(1);
-  }
-
-  // Compile the fragment shader
-  string fragmentShaderFromFile = parseShader(_fragmentShader);
-  prog = fragmentShaderFromFile.c_str();
-
-  GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &prog, NULL);
-  glCompileShader(fragmentShader);
-
-  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-  if(!success) {
-    glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-    cerr << "Error compiling fragment shader '" << _fragmentShader
-      << "'\n" << infoLog << endl;
-    exit(1);
-  }
-
-  // Link the vertex and fragment shader into a shader program
+  // Link the shaders into a shader program
   GLuint shaderProgram = glCreateProgram();
   glAttachShader(shaderProgram, vertexShader);
+  // glAttachShader(shaderProgram, tessEvalShader);
   glAttachShader(shaderProgram, fragmentShader);
   glLinkProgram(shaderProgram);
 
@@ -67,6 +65,7 @@ compileProgram(const string& _vertexShader,
   }
 
   glDeleteShader(vertexShader);
+  // glDeleteShader(tessEvalShader);
   glDeleteShader(fragmentShader);
 
   return shaderProgram;
