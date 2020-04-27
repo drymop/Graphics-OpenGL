@@ -12,7 +12,7 @@ Rasterizer(int frameWidth, int frameHeight)
 {
   glEnable(GL_COLOR_MATERIAL);
   glEnable(GL_DEPTH_TEST);
-  m_program = compileProgram("shaders/phong.vert", "",
+  m_program = compileProgram("shaders/phong.vert", 
                              "shaders/phong.frag");
   glUseProgram(m_program);
   glPointSize(3.0f);

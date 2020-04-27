@@ -36,7 +36,6 @@ compileSingleShader(const string& shaderFile, GLenum shaderType, char* infoLog) 
 
 GLuint
 compileProgram(const string& _vertexShader,
-               const string& _tessEvalShader,
                const string& _fragmentShader) {
   int success;
   char infoLog[512];
@@ -44,15 +43,12 @@ compileProgram(const string& _vertexShader,
   // Compile each single shader
   GLuint vertexShader = compileSingleShader(
       _vertexShader, GL_VERTEX_SHADER, infoLog);
-  // GLuint tessEvalShader = compileSingleShader(
-  //     _tessEvalShader, GL_TESS_EVALUATION_SHADER, infoLog);
   GLuint fragmentShader = compileSingleShader(
       _fragmentShader, GL_FRAGMENT_SHADER, infoLog);
 
   // Link the shaders into a shader program
   GLuint shaderProgram = glCreateProgram();
   glAttachShader(shaderProgram, vertexShader);
-  // glAttachShader(shaderProgram, tessEvalShader);
   glAttachShader(shaderProgram, fragmentShader);
   glLinkProgram(shaderProgram);
 
@@ -65,7 +61,6 @@ compileProgram(const string& _vertexShader,
   }
 
   glDeleteShader(vertexShader);
-  // glDeleteShader(tessEvalShader);
   glDeleteShader(fragmentShader);
 
   return shaderProgram;
