@@ -12,6 +12,8 @@ Rasterizer(int frameWidth, int frameHeight)
 {
   glEnable(GL_COLOR_MATERIAL);
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND); // blending for transparency
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   m_program = compileProgram("shaders/phong.vert", 
                              "shaders/phong.frag");
   glUseProgram(m_program);
