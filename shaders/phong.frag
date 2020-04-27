@@ -55,10 +55,12 @@ uniform Material material;        // Default material of the object, if not text
 
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex input/output
-in  vec3 worldPos;     // Vertex position in world space
-in  vec3 worldNormal;  // Vertex normal in world space
-in  vec2 texCoord;     // Texture coordinate
-in  vec3 worldTangent; // Vertex tangent in world space
+in VS_OUT {
+  vec3 worldPos;     // Vertex position in world space
+  vec3 worldNormal;  // Vertex normal in world space
+  vec2 texCoord;     // Vertex's texture coordinate
+  vec3 worldTangent; // Vertex tangent in world space
+} fsIn;
 
 out vec4 color;       // Assigned vertex color to send to rasterizer
 
@@ -124,10 +126,10 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal, in vec3 viewDir, in vec2 texCo
 /// Determine the fragment's normal from normal mapping texture
 vec3 calculateNormal(in vec2 texCoord, in mat3 tbnMatrix) {
   if (!hasNormalMap) {
-    return normalize(worldNormal);
+    return normalize(fsIn.worldNormal);
   }
   // normal in tangent space
-  vec3 tsNormal = texture(normalTextureSampler, texCoord).xyz;
+  vec3 tsNormal = texture(normalTextureSampler, fsIn.texCoord).xyz;
   tsNormal = 2 * tsNormal - vec3(1, 1, 1);
   return normalize(tbnMatrix* tsNormal);
 }
@@ -145,15 +147,15 @@ vec2 calculateParallaxTexCoord(in vec2 texCoord, in vec3 viewDir) {
 
 void main() {
   // convert to/from tangent space using TBN (tangent, bitangent, normal) matrix
-  vec3 n = normalize(worldNormal);
-  vec3 t = normalize(worldTangent);
+  vec3 n = normalize(fsIn.worldNormal);
+  vec3 t = normalize(fsIn.worldTangent);
   vec3 b = cross(n, t);
   mat3 tbnMatrix = mat3(t, b, n);
 
   // parallax mapping: shift the texture coordinate based on parallax map
-  vec3 viewDir = normalize(cameraPos - worldPos); // direction toward camera
+  vec3 viewDir = normalize(cameraPos - fsIn.worldPos); // direction toward camera
   vec3 tangentViewDir = transpose(tbnMatrix) * viewDir;
-  vec2 parallaxTexCoord = calculateParallaxTexCoord(texCoord, tangentViewDir);
+  vec2 parallaxTexCoord = calculateParallaxTexCoord(fsIn.texCoord, tangentViewDir);
   
   // if texture coordinate is out of range, don't show fragment
   if (parallaxTexCoord.x < 0.0 || parallaxTexCoord.x > 1.0 
@@ -162,5 +164,5 @@ void main() {
   }
 
   vec3 normal = calculateNormal(parallaxTexCoord, tbnMatrix);
-  color = shadeBlinnPhong(worldPos, normal, viewDir, parallaxTexCoord);
+  color = shadeBlinnPhong(fsIn.worldPos, normal, viewDir, parallaxTexCoord);
 }
