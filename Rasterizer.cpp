@@ -3,6 +3,7 @@
 #include "CompileShaders.h"
 #include "GLInclude.h"
 
+#include <algorithm>
 #include <vector>
 #include "PointLight.h"
 
@@ -78,6 +79,19 @@ initScene(Scene& scene) {
   }
 }
 
+// Store an object and distance to camera, used for sorting
+struct TransparentObject {
+  float dist;
+  RasterizableObject* obj;
+
+  TransparentObject(float _dist, RasterizableObject* _obj)
+    : dist(_dist), obj(_obj) {}
+
+  bool operator<(const TransparentObject& other) const { 
+    return dist > other.dist; 
+  }
+};
+
 void
 Rasterizer::
 render(const Scene& scene) {
@@ -93,19 +107,23 @@ render(const Scene& scene) {
       getUniformLocation("viewProjectionMatrix"), 
       1, GL_FALSE, glm::value_ptr(projMatrix * viewMatrix));
   // Draw
-  std::vector<RasterizableObject*> transparentObjs{};
+  std::vector<TransparentObject> transparentObjs{};
   // First render all opaque objects
   for(auto& obj : scene.rasterizableObjects()) {
     if (obj->hasTransparency()) {
-      transparentObjs.emplace_back(obj);
+      // save transparent object for rendering later
+      vec3 pos = obj->getRoughPosition();
+      transparentObjs.emplace_back(glm::length2(eye-pos), obj);
     } else {
+      // draw opaque object
       obj->draw();
     }
   }
-  // Then render all transparent objects
+  // Then render all transparent objects in sorted distance
   glDepthMask(GL_FALSE);
-  for(auto& obj : transparentObjs) {
-    obj->draw();
+  std::sort(transparentObjs.begin(), transparentObjs.end());
+  for(auto& tObj : transparentObjs) {
+    tObj.obj->draw();
   }
 }
 
