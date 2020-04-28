@@ -20,12 +20,15 @@ struct Material {
   glm::vec3 kr;
   /// Emission of light
   glm::vec3 ke;
+  /// Alpha transparency (0 is full transparent)
+  float transparency = 1;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Configure the material of a surface, either through texture mapping or
 /// default material
 struct MaterialConfig {
+  bool hasTransparency = false;
   bool hasKdMap = false;
   bool hasKsMap = false;
   bool hasKeMap = false;

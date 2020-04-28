@@ -67,7 +67,12 @@ MaterialConfig parseMaterialFile(const std::string& _filename) {
     std::string tag;
     iss >> tag;
     float x,y,z;
-    if(tag == "Ka") {
+    if (tag == "d") {
+      iss >> x;
+      m.hasTransparency = x < 1.f;
+      m.defaultMaterial.transparency = x;
+    }
+    else if(tag == "Ka") {
       iss >> x >> y >> z;
       m.defaultMaterial.ka = {x,y,z};
     }

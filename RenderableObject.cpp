@@ -4,7 +4,8 @@
 
 RenderableObject::
 RenderableObject(const MaterialConfig& _config)
-  : m_defaultMaterial(_config.defaultMaterial)
+  : m_defaultMaterial(_config.defaultMaterial),
+    m_hasTransparency(_config.hasTransparency)
 {
   if (_config.hasKdMap) {
     m_kdTexture = std::move(Texture(_config.kdTextureFile));

@@ -51,6 +51,8 @@ class RasterizableObject : public RayTracableObject
 
     RayHit intersectRay(Ray _ray) const override;
 
+    virtual glm::vec3 getRoughPosition() const { return m_vModelMatrix[3]; };
+
   protected:
     Mesh m_mesh;
     /// Number of vertices in the mesh

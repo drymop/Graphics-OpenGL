@@ -20,13 +20,18 @@ class RenderableObject
     virtual void update(float deltaTime) {};
 
     ////////////////////////////////////////////////////////////////////////////
-    /// @brief  Virtual destructor to make class abstract
+    /// @brief Virtual destructor to make class abstract
     virtual ~RenderableObject() {};
+
+    ////////////////////////////////////////////////////////////////////////////
+    /// @brief Check if object has any transparency, for special consideration
+    virtual bool hasTransparency() { return m_hasTransparency; }
 
     // there will be more stuff added, but for now this is just the base for
     // all objects
 
   protected:
+    bool     m_hasTransparency;
     Texture  m_kdTexture;
     Texture  m_ksTexture;
     Texture  m_keTexture;
