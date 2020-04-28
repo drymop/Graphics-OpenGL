@@ -18,7 +18,9 @@ class Rectangle : public RasterizableObject
     );
 
   private:
-    static Mesh generateMesh(
+    static Mesh generateMesh();
+    
+    static glm::mat4 generateTransform(
       glm::vec3 _bottomLeft,
       glm::vec3 _right,
       glm::vec3 _up
