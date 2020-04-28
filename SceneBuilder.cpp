@@ -46,7 +46,7 @@ from_json(const Json& j, MaterialConfig& mc) {
     // name of material file
     mc = parseMaterialFile(j.get<string>());
   } else {
-    Material& m = mc.defaultMaterial; 
+    Material m = {}; 
     m.ka = getVec3(j.at("k_a"));
     m.kd = getVec3(j.at("k_d"));
     m.ks = getVec3(j.at("k_s"));
@@ -61,9 +61,9 @@ from_json(const Json& j, MaterialConfig& mc) {
       j.at("transparency").get_to(m.transparency);
       mc.hasTransparency = m.transparency < 1.f;
     }
+    mc.defaultMaterial = m;
     mc.hasKdMap = mc.hasKsMap = mc.hasKeMap = false;
   }
-  std::cout << "Tr: " << mc.hasTransparency << " " << mc.defaultMaterial.transparency << std::endl;
 }
 
 Scene

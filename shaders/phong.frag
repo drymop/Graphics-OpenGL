@@ -126,6 +126,7 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal, in vec3 viewDir, in vec2 texCo
              * pow(max(0.0, dot(normal, halfVec)), material.shininess);
   }
   color = min(color, vec3(1.0, 1.0, 1.0));
+  // color = material.ke;
   return vec4(color, transparency);
 }
 
