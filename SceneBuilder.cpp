@@ -59,6 +59,7 @@ from_json(const Json& j, MaterialConfig& mc) {
     j.at("shininess").get_to(m.shininess);
     if (j.find("transparency") != j.end()) {
       j.at("transparency").get_to(m.transparency);
+      mc.hasTransparency = m.transparency < 1.f;
     }
     mc.hasKdMap = mc.hasKsMap = mc.hasKeMap = false;
   }

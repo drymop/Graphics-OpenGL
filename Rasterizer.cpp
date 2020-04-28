@@ -2,6 +2,8 @@
 
 #include "CompileShaders.h"
 #include "GLInclude.h"
+
+#include <vector>
 #include "PointLight.h"
 
 using glm::vec3, glm::mat4;
@@ -67,7 +69,7 @@ initScene(Scene& scene) {
       getUniformLocation("material.ks"),
       getUniformLocation("material.ke"),
       getUniformLocation("material.shininess"),
-      getUniformLocation("transparency")
+      getUniformLocation("material.transparency")
     }
   };
   for(auto& obj : scene.rasterizableObjects()) {
@@ -79,6 +81,7 @@ initScene(Scene& scene) {
 void
 Rasterizer::
 render(const Scene& scene) {
+  glDepthMask(GL_TRUE);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // Set up camera
   const Camera& camera = scene.getCamera();
@@ -90,7 +93,18 @@ render(const Scene& scene) {
       getUniformLocation("viewProjectionMatrix"), 
       1, GL_FALSE, glm::value_ptr(projMatrix * viewMatrix));
   // Draw
+  std::vector<RasterizableObject*> transparentObjs{};
+  // First render all opaque objects
   for(auto& obj : scene.rasterizableObjects()) {
+    if (obj->hasTransparency()) {
+      transparentObjs.emplace_back(obj);
+    } else {
+      obj->draw();
+    }
+  }
+  // Then render all transparent objects
+  glDepthMask(GL_FALSE);
+  for(auto& obj : transparentObjs) {
     obj->draw();
   }
 }
