@@ -69,6 +69,7 @@ sendUniformData() {
   // set material/texture uniform
   const Material& m = m_defaultMaterial;
   // set texture uniforms
+  glUniform1i(m_uniformLocations.hasTransparency, m_hasTransparency);
   glUniform1i(m_uniformLocations.hasKdMap, m_kdTexture.isValid());
   glUniform1i(m_uniformLocations.hasKsMap, m_ksTexture.isValid());
   glUniform1i(m_uniformLocations.hasKeMap, m_keTexture.isValid());
@@ -85,6 +86,7 @@ sendUniformData() {
   glUniform3fv(m_uniformLocations.material.ks, 1, value_ptr(m.ks));
   glUniform3fv(m_uniformLocations.material.ke, 1, value_ptr(m.ke));
   glUniform1f (m_uniformLocations.material.shininess, m.shininess);
+  glUniform1f (m_uniformLocations.material.transparency, m.transparency);
 }
 
 void

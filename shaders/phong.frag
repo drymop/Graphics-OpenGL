@@ -30,6 +30,7 @@ uniform Light lights[MAX_LIGHTS]; // lights in the scene
 uniform vec3  cameraPos;          // Position of camera in the world
 
 // Properties of the object
+uniform bool hasTransparency = false; // Any part of the object is transparent?
 uniform bool hasKdMap = false;  // Is object Kd from texture, or material?
 uniform bool hasKsMap = false;  // Is object Ks from texture, or material?
 uniform bool hasKeMap = false;  // Is object Ke from texture, or material?
@@ -49,6 +50,7 @@ struct Material {
   vec3 ks;
   vec3 ke;
   float shininess;
+  float transparency;
 };
 uniform Material material;        // Default material of the object, if not texture mapped
 
@@ -76,8 +78,14 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal, in vec3 viewDir, in vec2 texCo
       : material.ke;
 
   // material of the current fragment, comes from either texture of default material
+  vec3 kd = material.kd;
+  float transparency = hasTransparency? material.transparency : 1;
+  if (hasKdMap) {
+    vec4 texel = texture(kdTextureSampler, texCoord);
+    kd = texel.rgb;
+    transparency = hasTransparency? texel.a : 1; 
+  }
   vec3 ka = material.ka;
-  vec3 kd = hasKdMap? texture(kdTextureSampler, texCoord).xyz : material.kd;
   vec3 ks = hasKsMap? texture(ksTextureSampler, texCoord).xyz : material.ks;
 
   // add illumination from each light source
@@ -118,7 +126,7 @@ vec4 shadeBlinnPhong(in vec3 pos, in vec3 normal, in vec3 viewDir, in vec2 texCo
              * pow(max(0.0, dot(normal, halfVec)), material.shininess);
   }
   color = min(color, vec3(1.0, 1.0, 1.0));
-  return vec4(color, 1.0);
+  return vec4(color, transparency);
 }
 
 

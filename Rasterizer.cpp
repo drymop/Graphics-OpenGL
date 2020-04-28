@@ -55,6 +55,7 @@ initScene(Scene& scene) {
   ObjectUniformLocations objUniformLocs {
     getUniformLocation("vertexModelMatrix"),
     getUniformLocation("normalModelMatrix"),
+    getUniformLocation("hasTransparency"),
     getUniformLocation("hasKdMap"),
     getUniformLocation("hasKsMap"),
     getUniformLocation("hasKeMap"),
@@ -65,7 +66,8 @@ initScene(Scene& scene) {
       getUniformLocation("material.kd"),
       getUniformLocation("material.ks"),
       getUniformLocation("material.ke"),
-      getUniformLocation("material.shininess")
+      getUniformLocation("material.shininess"),
+      getUniformLocation("transparency")
     }
   };
   for(auto& obj : scene.rasterizableObjects()) {

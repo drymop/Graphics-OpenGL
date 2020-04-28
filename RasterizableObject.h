@@ -15,12 +15,14 @@ struct MaterialUniformLocations {
   GLint ks;
   GLint ke;
   GLint shininess;
+  GLint transparency;
 };
 
 /// The locations of uniforms related the objects in rasterizer
 struct ObjectUniformLocations {
   GLint vertexModelMatrix;
   GLint normalModelMatrix;
+  GLint hasTransparency;
   GLint hasKdMap;
   GLint hasKsMap;
   GLint hasKeMap;
