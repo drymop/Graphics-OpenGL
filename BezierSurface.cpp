@@ -40,7 +40,7 @@ generateMesh(const std::vector<glm::vec3>& controlPoints, int prec) {
       vert.p = vec3(0, 0, 0);
       vert.n = vec3(0, 1, 0);
       vert.t = vec2(u/(float)prec, v/(float)prec);
-      vert.t = vec3(1, 0, 0);
+      vert.tg = vec3(1, 0, 0);
       // interpolate between 4x4 control points
       for (int j = 0, k = 0; j < 4; j++) {
         for (int i = 0; i < 4; i++, k++) {

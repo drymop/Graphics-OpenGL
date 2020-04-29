@@ -196,7 +196,6 @@ buildSceneFromJson(const Json& _sceneJson) {
       for (int i = 0; i < 16; i++) {
         controls.emplace_back(getVec3(controlsJson.at(i)));
       }
-      std::cout << "TRa " << glm::to_string(getTransform(j)) << std::endl;
       scene.addObject(move(make_unique<BezierSurface>(
         controls,
         j.at("material").get<MaterialConfig>(),
