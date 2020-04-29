@@ -43,6 +43,7 @@ uniform sampler2D normalTextureSampler; // normal mapping
 uniform sampler2D parallaxTextureSampler;  // parallax mapping
 
 uniform float parallaxScale = 0.1;
+uniform int parallaxSteps = 50;
 
 struct Material {
   vec3 ka;
@@ -149,8 +150,20 @@ vec3 calculateNormal(in vec2 texCoord, in mat3 tbnMatrix) {
 /// @param  viewDir  View direction, in tangent space
 /// @return The parallax texture coordinate
 vec2 calculateParallaxTexCoord(in vec2 texCoord, in vec3 viewDir) {
-  float depth = texture(parallaxTextureSampler, texCoord).x;
-  return texCoord - viewDir.xy * depth * parallaxScale;
+  vec2 deltaTexCoord = viewDir.xy * parallaxScale / parallaxSteps / viewDir.z;
+  vec2 curTexCoord = texCoord;
+  float curDepth = 0; // depth from depth map
+  float layerDepth = 0; // depth of layer we are considering
+  float deltaLayerDepth = 1.0 / parallaxSteps;
+  for (int i = 0; i < parallaxSteps; i++) {
+    float curDepth = texture(parallaxTextureSampler, curTexCoord).x;
+    if (layerDepth >= curDepth) {
+      break;
+    }
+    layerDepth += deltaLayerDepth;
+    curTexCoord -= deltaTexCoord;
+  }
+  return curTexCoord;
 }
 
 
