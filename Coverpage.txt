@@ -19,7 +19,9 @@ Please list all issues/bugs/missing features for this assignment.
 
 Please list all extra work completed for this assignment.
 
-1.
+1. Normal mapping (8 stars)
+2. Parallax mapping (8 stars)
+3. Transparency in rasterizer (4 stars)
 
 --------------------------------------------------------------------------------
 -- Collaborators and Sources
@@ -32,7 +34,7 @@ the assignment body, e.g., copy website link into code. Do not list the
 instructor as a collaborator -- this is assumed.
 
  1. https://learnopengl.com/Advanced-Lighting/Normal-Mapping
- 2. Text book (for generating sphere)
+ 2. https://learnopengl.com/Advanced-Lighting/Parallax-Mapping
 
 All students are expected to be in accordance with the student honor code.
 http://studentdevelopment.richmond.edu/student-handbook/honor/
@@ -50,5 +52,5 @@ contrary to the letter or the spirit of the collaboration guidelines for this
 assignment.
 
 Signature (Type full name): Tuan Le
-                      Date: 4/20/2020
+                      Date: 4/30/2020
 
