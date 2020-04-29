@@ -55,6 +55,7 @@ OBJS = \
        Texture.o \
        RenderableObject.o \
        RasterizableObject.o \
+       BezierSurface.o \
        Circle.o \
        Plane.o \
        Portal.o \

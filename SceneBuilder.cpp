@@ -15,6 +15,7 @@
 #include "SpotLight.h"
 
 // scene objects
+#include "BezierSurface.h"
 #include "Circle.h"
 #include "Plane.h"
 #include "Portal.h"
@@ -38,6 +39,25 @@ using std::make_unique, std::move, std::string, std::unique_ptr, std::vector;
 vec3
 getVec3(const Json& j) {
   return vec3(j.at(0).get<float>(), j.at(1).get<float>(), j.at(2).get<float>());
+}
+
+mat4
+getTransform(const Json& j) {
+  mat4 transform = mat4(1.f);
+  if (j.find("translate") != j.end()) {
+    vec3 translate = getVec3(j.at("translate"));
+    transform = glm::translate(transform, translate);
+  }
+  if (j.find("rotate") != j.end()) {
+    vec3 axis = getVec3(j.at("rotate").at("axis"));
+    float angle = j.at("rotate").at("angle").get<float>();
+    transform = glm::rotate(transform, angle, axis);
+  }
+  if (j.find("scale") != j.end()) {
+    vec3 scale = getVec3(j.at("scale"));
+    transform = glm::scale(transform, scale);
+  }
+  return transform;
 }
 
 void
@@ -123,20 +143,7 @@ buildSceneFromJson(const Json& _sceneJson) {
     string type = j.at("type");
     if (type == "mesh") {
       Mesh mesh = parseObjFile(j.at("obj").get<string>());
-      mat4 transform = mat4(1.f);
-      if (j.find("translate") != j.end()) {
-        vec3 translate = getVec3(j.at("translate"));
-        transform = glm::translate(transform, translate);
-      }
-      if (j.find("rotate") != j.end()) {
-        vec3 axis = getVec3(j.at("rotate").at("axis"));
-        float angle = j.at("rotate").at("angle").get<float>();
-        transform = glm::rotate(transform, angle, axis);
-      }
-      if (j.find("scale") != j.end()) {
-        vec3 scale = getVec3(j.at("scale"));
-        transform = glm::scale(transform, scale);
-      }
+      mat4 transform = getTransform(j);
       scene.addObject(move(make_unique<RasterizableObject>(
         mesh,
         j.at("material").get<MaterialConfig>(),
@@ -182,6 +189,19 @@ buildSceneFromJson(const Json& _sceneJson) {
       )));
     } else if (type == "particles") {
       buildParticleSystem(scene, j);
+    } else if (type == "bezier_surface") {
+      vector<vec3> controls{};
+      controls.reserve(16);
+      Json& controlsJson = j.at("controls");
+      for (int i = 0; i < 16; i++) {
+        controls.emplace_back(getVec3(controlsJson.at(i)));
+      }
+      std::cout << "TRa " << glm::to_string(getTransform(j)) << std::endl;
+      scene.addObject(move(make_unique<BezierSurface>(
+        controls,
+        j.at("material").get<MaterialConfig>(),
+        getTransform(j)
+      )));
     }
   }
 
