@@ -57,7 +57,8 @@ generateMesh(const std::vector<glm::vec3>& controlPoints, int prec) {
           biTangent += b[i][u] * dB[j][v] * controlPoints[k];
         }
       }
-      // calculate vertex normal from tange
+      vert.tg = glm::normalize(vert.tg);
+      // calculate vertex normal from tangent
       vert.n = glm::normalize(glm::cross(vert.tg, biTangent));
     }
   }
