@@ -138,7 +138,7 @@ vec3 calculateNormal(in vec2 texCoord, in mat3 tbnMatrix) {
     return normalize(fsIn.worldNormal);
   }
   // normal in tangent space
-  vec3 tsNormal = texture(normalTextureSampler, fsIn.texCoord).xyz;
+  vec3 tsNormal = texture(normalTextureSampler, texCoord).xyz;
   tsNormal = 2 * tsNormal - vec3(1, 1, 1);
   return normalize(tbnMatrix* tsNormal);
 }
